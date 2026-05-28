@@ -41,4 +41,12 @@ public class MusculoService {
     public List<Musculo> getMusculos(){
         return musculoRepository.findAll();
     }
+
+    public Musculo updateMusculo(Musculo musculo){
+        Musculo musculoExistente = musculoRepository.findById(musculo.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Musculo no encontrado"));
+
+        musculoExistente.setNombre(musculo.getNombre());
+        return musculoRepository.save(musculoExistente);
+    }
 }
