@@ -14,6 +14,7 @@ import com.proyectoFinal.gymtracker.Enum.Rol;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UsuarioService {
 
+    private final PasswordEncoder passwordEncoder;
     private final UsuarioRepository usuarioRepository;
     private final RutinaRepository rutinaRepository;
 
@@ -58,7 +60,7 @@ public class UsuarioService {
         Usuario usuario = Usuario.builder()
                 .username(usuarioRequest.getUsername())
                 .email(usuarioRequest.getEmail())
-                .password(usuarioRequest.getPassword())
+                .password(passwordEncoder.encode(usuarioRequest.getPassword()))
                 .peso(usuarioRequest.getPeso())
                 .altura(usuarioRequest.getAltura())
                 .rol(Rol.USUARIO)
@@ -75,8 +77,8 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
-        if (!usuario.getPassword().equals(loginRequest.getPassword())) {
-            throw new BusinessLogicException("Password incorrecta");
+        if (!passwordEncoder.matches(loginRequest.getPassword(), usuario.getPassword())) {
+            throw new BusinessLogicException("Contrasena incorrecta");
         }
         return toResponse(usuario);
     }
