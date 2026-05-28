@@ -4,6 +4,8 @@ import com.proyectoFinal.gymtracker.DTO.Request.EntrenamientoLogRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.EntrenamientoLogResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.HistorialEjercicioResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.MarcaEjercicioResponse;
+import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
+import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.*;
 import com.proyectoFinal.gymtracker.Repositories.*;
 import jakarta.transaction.Transactional;
@@ -28,10 +30,10 @@ public class EntrenamientoLogService {
     @Transactional
     public EntrenamientoLogResponse addEntrenamientoLog (EntrenamientoLogRequest entrenamientoLogRequest) {
         Usuario user = usuarioRepository.findById(entrenamientoLogRequest.getIdUsuario())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
         Rutina rutina = rutinaRepository.findById(entrenamientoLogRequest.getIdRutina())
-                .orElseThrow(() -> new RuntimeException("Rutina no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
 
         EntrenamientoLog entrenamientoLog = EntrenamientoLog.builder()
                 .usuario(user).fecha(LocalDate.now()).rutinaEjecutada(rutina).build();
@@ -39,7 +41,7 @@ public class EntrenamientoLogService {
         List<MarcaEjercicio> marcaEjercicioList = entrenamientoLogRequest.getMarcasEjercicio()
                 .stream().map(marca -> {
                     EjercicioRutina ejercicioRutina = ejercicioRutinaRepository
-                            .findById(marca.getEjercicioRutinaId()).orElseThrow(() -> new RuntimeException("Ejercicio no encontrada"));
+                            .findById(marca.getEjercicioRutinaId()).orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrada"));
 
                     return MarcaEjercicio.builder()
                             .pesoLevantado(marca.getPesoLevantado())
@@ -93,14 +95,14 @@ public class EntrenamientoLogService {
 
     public EntrenamientoLogResponse getEntrenamientoLogById (Long idEntrenamientoLog) {
         EntrenamientoLog entrenamientoLog = entrenamientoLogRepository.findById(idEntrenamientoLog)
-                .orElseThrow(()-> new RuntimeException("Entrenamiento no encontrado"));
+                .orElseThrow(()-> new ResourceNotFoundException("Entrenamiento no encontrado"));
 
         return mapEntrenamientoLogResponse(entrenamientoLog);
     }
 
     public List<EntrenamientoLogResponse> getEntrenamientoLogByUsuarioId(Long idUsuario) {
         Usuario usuario =  usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
         List<EntrenamientoLog> entrenamientosUsuario = entrenamientoLogRepository.findByUsuarioId(usuario.getId());
 
@@ -114,7 +116,7 @@ public class EntrenamientoLogService {
 
     public Map<String, List<HistorialEjercicioResponse>> getHistorialEjercicio(Long idUsuario, Long idEjercicio) {
         Ejercicio ejercicio = ejercicioRepository.findById(idEjercicio)
-                .orElseThrow(() -> new RuntimeException("Ejercicio no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
         return Map.of(ejercicio.getNombre(), entrenamientoLogRepository.historialEjercicio(idUsuario, idEjercicio));
     }
 

@@ -2,6 +2,7 @@ package com.proyectoFinal.gymtracker.Services;
 
 import com.proyectoFinal.gymtracker.DTO.Request.EjercicioRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.EjercicioResponse;
+import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Ejercicio;
 import com.proyectoFinal.gymtracker.Repositories.EjercicioRepository;
 import com.proyectoFinal.gymtracker.Repositories.MusculoRepository;
@@ -56,7 +57,7 @@ public class EjercicioService {
 
     public EjercicioResponse getById(Long id) {
         Ejercicio saved = ejercicioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ejercicio no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
 
         return toResponse(saved);
     }
