@@ -1,6 +1,5 @@
 package com.proyectoFinal.gymtracker.DTO.Response;
 
-import com.proyectoFinal.gymtracker.DTO.Request.MarcaEjercicioRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

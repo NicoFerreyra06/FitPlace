@@ -9,7 +9,6 @@ import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.*;
 import com.proyectoFinal.gymtracker.Repositories.*;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -62,13 +61,13 @@ public class EntrenamientoLogService {
                                                         Long idEntrenamiento) {
 
         EntrenamientoLog entrenamientoExistente = entrenamientoLogRepository.findById(idEntrenamiento)
-                .orElseThrow(() -> new RuntimeException("Entrenamiento no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Entrenamiento no encontrado"));
 
         Rutina rutina = rutinaRepository.findById(entrenamientoLogRequest.getIdRutina())
-                        .orElseThrow(() -> new RuntimeException("Rutina no encontrada"));
+                        .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
 
         Usuario user = usuarioRepository.findById(entrenamientoLogRequest.getIdUsuario())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
         entrenamientoExistente.setUsuario(user);
         entrenamientoExistente.setRutinaEjecutada(rutina);
@@ -78,7 +77,7 @@ public class EntrenamientoLogService {
         List<MarcaEjercicio> nuevasMarcas = entrenamientoLogRequest.getMarcasEjercicio()
                 .stream().map(marcaEjercicioRequest -> {
                     EjercicioRutina ejercicioRutina = ejercicioRutinaRepository.findById(marcaEjercicioRequest.getEjercicioRutinaId())
-                            .orElseThrow(() -> new RuntimeException("Ejercicio no encontrado"));
+                            .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
 
                     return MarcaEjercicio.builder()
                             .pesoLevantado(marcaEjercicioRequest.getPesoLevantado())

@@ -1,6 +1,5 @@
 package com.proyectoFinal.gymtracker.Services;
 
-import com.proyectoFinal.gymtracker.DTO.Request.DiaRutinaRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.RutinaRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.DiaRutinaResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.EjercicioRutinaResponse;

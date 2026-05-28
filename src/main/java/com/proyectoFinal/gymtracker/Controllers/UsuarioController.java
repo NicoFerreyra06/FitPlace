@@ -29,7 +29,7 @@ public class UsuarioController {
 
     //agregado asi se ve el perfil propio
     @GetMapping("/{idUsuario}")
-    public ResponseEntity<UsuarioResponse> getUsuario(@PathVariable("idUsuario") Long idUsuario) {
+    public ResponseEntity<UsuarioResponse> getUsuario(@PathVariable Long idUsuario) {
         return ResponseEntity.ok(usuarioService.getById(idUsuario));
     }
 

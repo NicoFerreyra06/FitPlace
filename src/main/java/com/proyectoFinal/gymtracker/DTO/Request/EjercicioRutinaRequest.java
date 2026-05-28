@@ -1,6 +1,5 @@
 package com.proyectoFinal.gymtracker.DTO.Request;
 
-import com.proyectoFinal.gymtracker.Services.RutinaService;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
