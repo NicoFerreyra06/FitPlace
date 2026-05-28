@@ -1,6 +1,9 @@
 package com.proyectoFinal.gymtracker.Services;
 
 import com.proyectoFinal.gymtracker.DTO.Request.RecordPersonalRequest;
+import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
+import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
+import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Ejercicio;
 import com.proyectoFinal.gymtracker.Modelo.RecordPersonal;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
@@ -32,10 +35,10 @@ public class RecordPersonalService {
 
     public RecordPersonal updateRecordPersonal(RecordPersonalRequest recordPersonalRequest) {
         Usuario usuario = usuarioRepository.findById(recordPersonalRequest.getIdUsuario())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
         Ejercicio ejercicio = ejercicioRepository.findById(recordPersonalRequest.getIdEjercicio())
-                .orElseThrow(() -> new RuntimeException("Ejercicio no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
 
         RecordPersonal recordExistente = recordPersonalRepository
                 .findByUsuarioIdAndEjercicioId(usuario.getId(), ejercicio.getId());
@@ -45,7 +48,7 @@ public class RecordPersonalService {
                 recordExistente.setPesoMaximo(recordPersonalRequest.getPesoMaximo());
                 recordExistente.setFechaLogro(LocalDate.now());
             } else {
-                throw new RuntimeException("El peso ingresado no supera el record actual.");
+                throw new BusinessLogicException("El peso ingresado no supera el record actual.");
             }
         }
 

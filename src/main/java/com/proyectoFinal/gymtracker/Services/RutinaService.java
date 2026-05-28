@@ -5,6 +5,9 @@ import com.proyectoFinal.gymtracker.DTO.Response.DiaRutinaResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.EjercicioRutinaResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.RutinaResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
+import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
+import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
+import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.*;
 import com.proyectoFinal.gymtracker.Repositories.DiaRutinaRepository;
 import com.proyectoFinal.gymtracker.Repositories.EjercicioRepository;
@@ -32,7 +35,7 @@ public class RutinaService {
     @Transactional
     public RutinaResponse createRutina(RutinaRequest rutinaRequest) {
         Usuario creador = usuarioRepository.findById(rutinaRequest.getCreadorId())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
         validarPrecioYrol(rutinaRequest, creador);
 
@@ -54,7 +57,7 @@ public class RutinaService {
                             List<EjercicioRutina> ejercicioRutinas = diaDto.getEjercicios()
                                     .stream().map(ejDto -> {
                                         Ejercicio ejBase = ejercicioRepository.findById(ejDto.getEjercicioId())
-                                                .orElseThrow(() -> new RuntimeException("Ejercicio no encontrado"));
+                                                .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
                                         return EjercicioRutina.builder()
                                                 .dia(dia)
                                                 .ejercicio(ejBase)
@@ -74,7 +77,7 @@ public class RutinaService {
 
     public RutinaResponse getRutinaById(Long idRutina) {
         Rutina rutinaSaved = rutinaRepository.findById(idRutina)
-                .orElseThrow(() -> new RuntimeException("Rutina no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
         return mapRutinaResponse(rutinaSaved);
     }
 
@@ -85,25 +88,25 @@ public class RutinaService {
     //para ver la rutina de hoy
     public DiaRutinaResponse getDiaRutinaActual(Long idUsuario) {
         Usuario u = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        if (u.getRutinaActiva() == null) throw new RuntimeException("No tiene rutina activa");
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+        if (u.getRutinaActiva() == null) throw new BusinessLogicException("No tiene rutina activa");
         DayOfWeek hoy = LocalDate.now().getDayOfWeek();
         DiaRutina dia = diaRutinaRepository
                 .findByRutinaIdAndDiaDeLaSemana(u.getRutinaActiva().getId(), hoy)
-                .orElseThrow(() -> new RuntimeException("La rutina no tiene día configurado para hoy"));
+                .orElseThrow(() -> new BusinessLogicException("La rutina no tiene día configurado para hoy"));
         return mapToDiaRutinaResponse(dia);
     }
         
     public void deleteRutina(Long idRutina) {
         if (!rutinaRepository.existsById(idRutina)) {
-            throw new RuntimeException("La rutina no existe");
+            throw new ResourceNotFoundException("La rutina no existe");
         }
 
         try {
             rutinaRepository.deleteById(idRutina);
 
         } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException("No se puede eliminar la rutina porque actualmente está asignada a un usuario o existe en un historial de entrenamiento.");
+            throw new BusinessLogicException("No se puede eliminar la rutina porque actualmente está asignada a un usuario o existe en un historial de entrenamiento.");
         }
     }
 
@@ -145,7 +148,7 @@ public class RutinaService {
         boolean esEntrenador = creador.getRol().equals(Rol.ENTRENADOR);
 
         if (tienePrecio && !esEntrenador) {
-            throw new RuntimeException("Solo los usuarios con rol ENTRENADOR pueden asignar un precio a las rutinas.");
+            throw new BusinessLogicException("Solo los usuarios con rol ENTRENADOR pueden asignar un precio a las rutinas.");
         }
     }
 

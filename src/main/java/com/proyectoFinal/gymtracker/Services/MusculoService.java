@@ -1,5 +1,7 @@
 package com.proyectoFinal.gymtracker.Services;
 
+import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
+import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Musculo;
 import com.proyectoFinal.gymtracker.Repositories.MusculoRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,14 +28,14 @@ public class MusculoService {
         try{
             musculoRepository.deleteById(idMusculo);
         } catch (DataIntegrityViolationException e){
-            throw new RuntimeException("No se puede eliminar el musculo porque esta relacionado a ejercicios");
+            throw new BusinessLogicException("No se puede eliminar el musculo porque esta relacionado a ejercicios");
         }
 
     }
 
     public Musculo getMusculoById(Long idMusculo){
         return musculoRepository.findById(idMusculo)
-                .orElseThrow(()-> new RuntimeException("Musculo no encontrado"));
+                .orElseThrow(()-> new ResourceNotFoundException("Musculo no encontrado"));
     }
 
     public List<Musculo> getMusculos(){
