@@ -29,4 +29,10 @@ public class GlobalHandlerException {
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), LocalDateTime.now().toString());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleUnexpectedException(Exception ex) {
+        return new ResponseEntity<>(new ErrorResponse(("Error interno"),  LocalDateTime.now().toString()),
+                HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
