@@ -3,6 +3,9 @@ package com.proyectoFinal.gymtracker.Services;
 import com.proyectoFinal.gymtracker.DTO.Request.LoginRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.UsuarioRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
+import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
+import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
+import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Rutina;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Repositories.RutinaRepository;
@@ -41,15 +44,15 @@ public class UsuarioService {
     public UsuarioResponse registrar(UsuarioRequest usuarioRequest) {
 
         if (usuarioRequest.getEmail() == null || usuarioRequest.getEmail().isEmpty()) {
-            throw new RuntimeException("Email obligatorio");
+            throw new BusinessLogicException("Email obligatorio");
         }
 
         if (usuarioRepository.findByEmail(usuarioRequest.getEmail()).isPresent()) {
-            throw new RuntimeException("Email ya registrado");
+            throw new BusinessLogicException("Email ya registrado");
         }
 
         if (usuarioRepository.findByUsername(usuarioRequest.getUsername()).isPresent()) {
-            throw new RuntimeException("Username ya existe");
+            throw new BusinessLogicException("Username ya existe");
         }
 
         Usuario usuario = Usuario.builder()
@@ -70,23 +73,23 @@ public class UsuarioService {
     public UsuarioResponse login(LoginRequest loginRequest) {
 
         Usuario usuario = usuarioRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
         if (!usuario.getPassword().equals(loginRequest.getPassword())) {
-            throw new RuntimeException("Password incorrecta");
+            throw new BusinessLogicException("Password incorrecta");
         }
         return toResponse(usuario);
     }
 
     public UsuarioResponse getById(Long idUsuario) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
         return toResponse(usuario);
     }
 
     public UsuarioResponse editarPerfil(Long idUsuario, UsuarioRequest request) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
         usuario.setPeso(request.getPeso());
         usuario.setAltura(request.getAltura());
@@ -98,9 +101,9 @@ public class UsuarioService {
     @Transactional
     public UsuarioResponse activarRutina(Long idUsuario, Long idRutina) {
         Usuario u = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
         Rutina r = rutinaRepository.findById(idRutina)
-                .orElseThrow(() -> new RuntimeException("Rutina no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
         u.setRutinaActiva(r);
         u.setRutinaActivaDesde(LocalDate.now());
         return toResponse(usuarioRepository.save(u));
