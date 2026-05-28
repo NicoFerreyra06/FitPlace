@@ -41,4 +41,9 @@ public class MusculoController {
     public ResponseEntity<List<Musculo>> getMusculos(){
         return ResponseEntity.status(HttpStatus.OK).body(musculoService.getMusculos());
     }
+
+    @PutMapping
+    public ResponseEntity<Musculo> updateNombreMusculo(@RequestBody Musculo musculo){
+        return ResponseEntity.status(HttpStatus.OK).body(musculoService.updateMusculo(musculo));
+    }
 }
