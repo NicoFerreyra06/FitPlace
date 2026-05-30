@@ -6,6 +6,7 @@ import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Ejercicio;
 import com.proyectoFinal.gymtracker.Repositories.EjercicioRepository;
 import com.proyectoFinal.gymtracker.Repositories.MusculoRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,16 +18,6 @@ public class EjercicioService {
 
     private final EjercicioRepository ejercicioRepository;
     private final MusculoRepository musculoRepository;
-
-    private EjercicioResponse toResponse(Ejercicio ejercicio) {
-        return EjercicioResponse.builder()
-                .id(ejercicio.getId())
-                .nombre(ejercicio.getNombre())
-                .descripcion(ejercicio.getDescripcion())
-                .musculosPrincipales(ejercicio.getMusculosPrincipales())
-                .musculosSecundarios(ejercicio.getMusculosSecundarios())
-                .build();
-    }
 
     public EjercicioResponse addEjercicio(EjercicioRequest request) {
         Ejercicio ejercicio = Ejercicio.builder()
@@ -53,6 +44,19 @@ public class EjercicioService {
         return ejercicioRepository.saveAll(ejercicios).stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    @Transactional
+    public EjercicioResponse updateEjercicio(EjercicioRequest ejercicioRequest, Long idEjercicio) {
+        Ejercicio ejercicio = ejercicioRepository.findById(idEjercicio)
+                .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
+
+        ejercicio.setNombre(ejercicioRequest.getNombre());
+        ejercicio.setDescripcion(ejercicioRequest.getDescripcion());
+        ejercicio.setMusculosPrincipales(musculoRepository.findAllById(ejercicioRequest.getMusculoPrincipalId()));
+        ejercicio.setMusculosSecundarios(musculoRepository.findAllById(ejercicioRequest.getMusculoSecundarioId()));
+
+        return toResponse(ejercicioRepository.save(ejercicio));
     }
 
     public EjercicioResponse getById(Long id) {
@@ -91,5 +95,13 @@ public class EjercicioService {
                 .toList();
     }
 
-
+    private EjercicioResponse toResponse(Ejercicio ejercicio) {
+        return EjercicioResponse.builder()
+                .id(ejercicio.getId())
+                .nombre(ejercicio.getNombre())
+                .descripcion(ejercicio.getDescripcion())
+                .musculosPrincipales(ejercicio.getMusculosPrincipales())
+                .musculosSecundarios(ejercicio.getMusculosSecundarios())
+                .build();
+    }
 }
