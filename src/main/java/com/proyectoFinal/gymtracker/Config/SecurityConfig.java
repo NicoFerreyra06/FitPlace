@@ -51,6 +51,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/ejercicios/**").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.POST, "/musculos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT,    "/musculos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/musculos/**").hasRole("ADMIN")
 
                         .requestMatchers("/rutinas/**").authenticated()
