@@ -73,12 +73,36 @@ public class RecordPersonalService {
     }
 
     // Muestra el ranking de records personales de todos los usuarios.
-    // Falta implementarlo
     public List<RecordPersonal> getRankingRecordsPersonalesByEjercicioId(Long ejercicioId) {
         List<RecordPersonal> ranking = recordPersonalRepository.findByEjercicioIdOrderByPesoMaximoDesc(ejercicioId);
 
         return ranking.stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    //este sin endpoint, lo llama el service de EntrenamientoLog
+    public void actualizarRecordSiCorresponde(Usuario usuario, Ejercicio ejercicio, Double pesoNuevo) {
+        RecordPersonal recordExistente = recordPersonalRepository
+                .findByUsuarioIdAndEjercicioId(usuario.getId(), ejercicio.getId());
+
+        if (recordExistente == null) {
+            RecordPersonal nuevo = RecordPersonal.builder()
+                    .usuario(usuario)
+                    .ejercicio(ejercicio)
+                    .pesoMaximo(pesoNuevo)
+                    .fechaLogro(LocalDate.now())
+                    .build();
+            recordPersonalRepository.save(nuevo);
+
+        } else if (pesoNuevo > recordExistente.getPesoMaximo()) {
+            recordExistente.setPesoMaximo(pesoNuevo);
+            recordExistente.setFechaLogro(LocalDate.now());
+            recordPersonalRepository.save(recordExistente);
+
+        } else if (pesoNuevo.equals(recordExistente.getPesoMaximo())) {
+            recordExistente.setFechaLogro(LocalDate.now());
+            recordPersonalRepository.save(recordExistente);
+        }
     }
 }

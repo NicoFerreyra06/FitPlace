@@ -112,10 +112,13 @@ public class UsuarioService {
     }
 
     private String calcularCategoriaImc(Double imc) {
-        if (imc == null) return null;
-        if (imc < 18.5) return "bajo peso";
-        if (imc < 25.0) return "normal";
-        if (imc < 30.0) return "sobrepeso";
-        return "obesidad";
+        if (imc == null || imc == 0) return null;
+        if (imc > 1.0  && imc < 18.5) return "bajo peso";
+        if (imc >= 18.5 && imc < 25.0) return "normal";
+        if (imc >= 25.0 && imc < 30.0) return "sobrepeso";
+        else return "obesidad";
     }
+
+
+
 }

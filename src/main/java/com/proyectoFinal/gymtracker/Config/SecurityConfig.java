@@ -63,4 +63,7 @@ public class SecurityConfig {
                 .httpBasic(org.springframework.security.config.Customizer.withDefaults())
                 .build();
     }
+
+
+
 }

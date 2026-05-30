@@ -54,9 +54,11 @@ public class EntrenamientoLogController {
                 .body(entrenamientoLogService.getHistorialEjercicio(idUsuario, idEjercicio));
     }
 
-    @DeleteMapping("/{idEjercicio}")
-    public ResponseEntity<Void> deleteEntrenamientoLog(@PathVariable Long idEjercicio){
-        entrenamientoLogService.deleteEntrenamientoLog(idEjercicio);
+    @DeleteMapping("/{idEntrenamiento}")
+    public ResponseEntity<Void> deleteEntrenamientoLog(@PathVariable Long idEntrenamiento){
+        entrenamientoLogService.deleteEntrenamientoLog(idEntrenamiento);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+
 }

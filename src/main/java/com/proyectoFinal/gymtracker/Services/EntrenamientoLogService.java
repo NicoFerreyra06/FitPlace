@@ -4,6 +4,7 @@ import com.proyectoFinal.gymtracker.DTO.Request.EntrenamientoLogRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.EntrenamientoLogResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.HistorialEjercicioResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.MarcaEjercicioResponse;
+import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.*;
@@ -25,6 +26,7 @@ public class EntrenamientoLogService {
     private final RutinaRepository rutinaRepository;
     private final EjercicioRutinaRepository ejercicioRutinaRepository;
     private final EjercicioRepository ejercicioRepository;
+    private final RecordPersonalService  recordPersonalService;
 
     @Transactional
     public EntrenamientoLogResponse addEntrenamientoLog (EntrenamientoLogRequest entrenamientoLogRequest) {
@@ -40,7 +42,15 @@ public class EntrenamientoLogService {
         List<MarcaEjercicio> marcaEjercicioList = entrenamientoLogRequest.getMarcasEjercicio()
                 .stream().map(marca -> {
                     EjercicioRutina ejercicioRutina = ejercicioRutinaRepository
-                            .findById(marca.getEjercicioRutinaId()).orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrada"));
+                            .findById(marca.getEjercicioRutinaId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrada"));
+
+                    //para actualizar el record automaticamente
+                    recordPersonalService.actualizarRecordSiCorresponde(
+                            user,
+                            ejercicioRutina.getEjercicio(),
+                            marca.getPesoLevantado()
+                    );
 
                     return MarcaEjercicio.builder()
                             .pesoLevantado(marca.getPesoLevantado())
@@ -51,9 +61,10 @@ public class EntrenamientoLogService {
 
         entrenamientoLog.setMarcas(marcaEjercicioList);
 
-        EntrenamientoLog entrenamientoLogSaved = entrenamientoLogRepository.save(entrenamientoLog);
+        EntrenamientoLog saved = entrenamientoLogRepository.save(entrenamientoLog);
 
-        return mapEntrenamientoLogResponse(entrenamientoLogSaved);
+        return mapEntrenamientoLogResponse(saved);
+
     }
 
     @Transactional
@@ -62,6 +73,12 @@ public class EntrenamientoLogService {
 
         EntrenamientoLog entrenamientoExistente = entrenamientoLogRepository.findById(idEntrenamiento)
                 .orElseThrow(() -> new ResourceNotFoundException("Entrenamiento no encontrado"));
+
+        //solo puedo editar el entrenamiento de hoy (por si hoy puse mal una marca)
+        //asi no cambio los registros historicos
+        if (!entrenamientoExistente.getFecha().equals(LocalDate.now())) {
+            throw new BusinessLogicException("Solo podés editar el entrenamiento de hoy.");
+        }
 
         Rutina rutina = rutinaRepository.findById(entrenamientoLogRequest.getIdRutina())
                         .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
@@ -78,6 +95,12 @@ public class EntrenamientoLogService {
                 .stream().map(marcaEjercicioRequest -> {
                     EjercicioRutina ejercicioRutina = ejercicioRutinaRepository.findById(marcaEjercicioRequest.getEjercicioRutinaId())
                             .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
+
+                    recordPersonalService.actualizarRecordSiCorresponde(
+                            user,
+                            ejercicioRutina.getEjercicio(),
+                            marcaEjercicioRequest.getPesoLevantado()
+                    );
 
                     return MarcaEjercicio.builder()
                             .pesoLevantado(marcaEjercicioRequest.getPesoLevantado())
