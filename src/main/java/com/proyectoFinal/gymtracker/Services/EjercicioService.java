@@ -8,6 +8,8 @@ import com.proyectoFinal.gymtracker.Repositories.EjercicioRepository;
 import com.proyectoFinal.gymtracker.Repositories.MusculoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -66,10 +68,9 @@ public class EjercicioService {
         return toResponse(saved);
     }
 
-    public List<EjercicioResponse> getAll() {
-        return ejercicioRepository.findAll().stream()
-                .map(this::toResponse)
-                .toList();
+    public Page<EjercicioResponse> getAll(Pageable pageable) {
+        return ejercicioRepository.findAll(pageable)
+                .map(this::toResponse);
     }
 
     public void deleteEjercicio(Long id) {

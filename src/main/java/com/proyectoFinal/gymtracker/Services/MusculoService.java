@@ -6,6 +6,8 @@ import com.proyectoFinal.gymtracker.Modelo.Musculo;
 import com.proyectoFinal.gymtracker.Repositories.MusculoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,8 +40,8 @@ public class MusculoService {
                 .orElseThrow(()-> new ResourceNotFoundException("Musculo no encontrado"));
     }
 
-    public List<Musculo> getMusculos(){
-        return musculoRepository.findAll();
+    public Page<Musculo> getMusculos(Pageable pageable){
+        return musculoRepository.findAll(pageable);
     }
 
     public Musculo updateMusculo(Musculo musculo){

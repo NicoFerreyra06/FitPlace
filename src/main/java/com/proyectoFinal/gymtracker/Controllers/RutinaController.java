@@ -6,6 +6,9 @@ import com.proyectoFinal.gymtracker.DTO.Response.RutinaResponse;
 import com.proyectoFinal.gymtracker.Services.RutinaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,8 +40,8 @@ public class RutinaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RutinaResponse>> getAllRutinas(){
-        return ResponseEntity.status(HttpStatus.OK).body(rutinaService.getAllRutinas());
+    public ResponseEntity<Page<RutinaResponse>> getAllRutinas(@PageableDefault(size = 10) Pageable pageable){
+        return ResponseEntity.status(HttpStatus.OK).body(rutinaService.getAllRutinas(pageable));
     }
 
     @DeleteMapping("/{idRutina}")
