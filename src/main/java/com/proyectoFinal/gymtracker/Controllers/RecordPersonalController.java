@@ -1,11 +1,15 @@
 package com.proyectoFinal.gymtracker.Controllers;
 
 
+import com.proyectoFinal.gymtracker.DTO.Response.RecordPersonalResponse;
 import com.proyectoFinal.gymtracker.Modelo.RecordPersonal;
+import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Services.RecordPersonalService;
 import com.proyectoFinal.gymtracker.Services.UsuarioService;
 import lombok.Generated;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,24 +25,26 @@ public class RecordPersonalController {
     private final RecordPersonalService recordPersonalService;
 
     @GetMapping("/ejercicio/{ejercicioId}")
-    public RecordPersonal getRecordPersonalByEjercicioId(@PathVariable Long ejercicioId) {
-
-        //puesto asi hasta ver jwt y sacar el usuario del token
-        return recordPersonalService.getRecordPersonalByEjercicioId(null, ejercicioId);
-
+    public ResponseEntity<RecordPersonalResponse> getRecordPersonalByEjercicioId(
+            @PathVariable Long ejercicioId,
+            @AuthenticationPrincipal Usuario usuarioAutenticado) {
+        return ResponseEntity.ok(recordPersonalService.getRecordPersonalByEjercicioId(
+                        usuarioAutenticado.getId(),
+                        ejercicioId)
+        );
     }
 
     //ver records de cada ejercicio de x usuario
     @GetMapping("/usuario/{id}")
-    public List<RecordPersonal> getRecordsPersonalesByUsuarioId(@PathVariable Long id) {
-        return recordPersonalService.getRecordsPersonalesByUsuarioId(id);
+    public ResponseEntity<List<RecordPersonalResponse>> getRecordsPersonalesByUsuarioId(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                recordPersonalService.getRecordsPersonalesByUsuarioId(id));
     }
-
 
     //ver ranking de records de todos los usuarios en x ejercicio
     @GetMapping("/ranking/{ejercicioId}")
-    public List<RecordPersonal> getRankingRecordsPersonalesByEjercicioId(@PathVariable Long ejercicioId){
-        return recordPersonalService.getRankingRecordsPersonalesByEjercicioId(ejercicioId);
+    public ResponseEntity<List<RecordPersonalResponse>> getRankingRecordsPersonalesByEjercicioId(@PathVariable Long ejercicioId) {
+        return ResponseEntity.ok(recordPersonalService.getRankingRecordsPersonalesByEjercicioId(ejercicioId));
     }
 
 }

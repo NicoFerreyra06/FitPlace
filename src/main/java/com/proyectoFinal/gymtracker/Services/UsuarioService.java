@@ -152,7 +152,6 @@ public class UsuarioService {
                 .build();
     }
 
-
     public UsuarioResponse verPerfilAmigo(Long idUsuario, Long amigoId) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));

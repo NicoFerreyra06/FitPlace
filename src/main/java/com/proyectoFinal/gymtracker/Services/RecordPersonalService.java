@@ -1,6 +1,8 @@
 package com.proyectoFinal.gymtracker.Services;
 
 
+import com.proyectoFinal.gymtracker.DTO.Response.RecordPersonalResponse;
+import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Ejercicio;
 import com.proyectoFinal.gymtracker.Modelo.RecordPersonal;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
@@ -18,31 +20,41 @@ public class RecordPersonalService {
     private final RecordPersonalRepository recordPersonalRepository;
 
 
-    public RecordPersonal toResponse(RecordPersonal recordPersonal){
-        return RecordPersonal.builder()
-                .id(recordPersonal.getId())
-                .usuario(recordPersonal.getUsuario())
-                .pesoMaximo(recordPersonal.getPesoMaximo())
-                .fechaLogro(recordPersonal.getFechaLogro())
+    private RecordPersonalResponse toResponse(RecordPersonal record) {
+        return RecordPersonalResponse.builder()
+                .id(record.getId())
+                .ejercicioId(record.getEjercicio().getId())
+                .nombreUsuario(record.getUsuario().getUsername())
+                .nombreEjercicio(record.getEjercicio().getNombre())
+                .pesoMaximo(record.getPesoMaximo())
+                .fechaLogro(record.getFechaLogro())
                 .build();
+
     }
 
 
     // Muestra el record personal en 1 ejercicio de 1 usuario.
-    public RecordPersonal getRecordPersonalByEjercicioId(Long usuarioId, Long ejercicioId) {
-        return recordPersonalRepository.findByUsuarioIdAndEjercicioId(usuarioId, ejercicioId);
+    public RecordPersonalResponse getRecordPersonalByEjercicioId(Long usuarioId, Long ejercicioId) {
+        RecordPersonal record = recordPersonalRepository.findByUsuarioIdAndEjercicioId(usuarioId, ejercicioId);
+
+        if (record == null) {
+            throw new ResourceNotFoundException("No tenés record en ese ejercicio");
+        }
+        return toResponse(record);
     }
 
     // Muestra los record personales en todos los ejercicios de 1 usuario.
-    public List<RecordPersonal> getRecordsPersonalesByUsuarioId(Long usuarioId) {
-        return recordPersonalRepository.findRecordPersonalByUsuarioId(usuarioId);
+    public List<RecordPersonalResponse> getRecordsPersonalesByUsuarioId(Long usuarioId) {
+        return recordPersonalRepository.findRecordPersonalByUsuarioId(usuarioId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     // Muestra el ranking de records personales de todos los usuarios.
-    public List<RecordPersonal> getRankingRecordsPersonalesByEjercicioId(Long ejercicioId) {
-        List<RecordPersonal> ranking = recordPersonalRepository.findByEjercicioIdOrderByPesoMaximoDesc(ejercicioId);
-
-        return ranking.stream()
+    public List<RecordPersonalResponse> getRankingRecordsPersonalesByEjercicioId(Long ejercicioId) {
+        return recordPersonalRepository.findByEjercicioIdOrderByPesoMaximoDesc(ejercicioId)
+                .stream()
                 .map(this::toResponse)
                 .toList();
     }
