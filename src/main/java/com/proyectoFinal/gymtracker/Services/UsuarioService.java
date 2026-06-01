@@ -152,4 +152,19 @@ public class UsuarioService {
                 .build();
     }
 
+
+    public UsuarioResponse verPerfilAmigo(Long idUsuario, Long amigoId) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+
+        Usuario amigo = usuarioRepository.findById(amigoId)
+                .orElseThrow(() -> new UserNotFoundException("Amigo no encontrado"));
+
+        //no son amigos
+        if (!usuario.getAmigos().contains(amigo)) {
+            throw new BusinessLogicException("No tenés acceso al perfil de este usuario");
+        }
+
+        return toResponse(amigo);
+    }
 }

@@ -46,7 +46,6 @@ public class Usuario implements UserDetails {
     private String codigoAmigo; // id para compartir
 
     @ManyToMany
-
     @JoinTable(
             name = "amigos",
             joinColumns = @JoinColumn(name = "usuario_id"),
@@ -93,7 +92,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email; // Spring usa este campo para buscar al usuario
+        return username;
     }
 
     @Override

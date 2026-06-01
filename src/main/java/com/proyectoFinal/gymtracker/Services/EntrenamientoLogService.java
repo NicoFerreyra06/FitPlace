@@ -169,4 +169,6 @@ public class EntrenamientoLogService {
                 .pesoLevantado(marcaEjercicio.getPesoLevantado())
                 .repeticionesLogradas(marcaEjercicio.getRepeticionesLogradas()).build();
     }
+
+
 }

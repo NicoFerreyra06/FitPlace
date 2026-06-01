@@ -58,4 +58,11 @@ public class UsuarioController {
     public ResponseEntity<List<AmigoResponse>> getAmigos(@PathVariable Long idUsuario) {
         return ResponseEntity.ok(usuarioService.getAmigos(idUsuario));
     }
+
+    @GetMapping("/{idUsuario}/amigos/{amigoId}/perfil")
+    public ResponseEntity<UsuarioResponse> getPerfil(@PathVariable Long idUsuario, @PathVariable Long amigoId) {
+        return ResponseEntity.ok(usuarioService.verPerfilAmigo(idUsuario, amigoId));
+    }
+
+
 }
