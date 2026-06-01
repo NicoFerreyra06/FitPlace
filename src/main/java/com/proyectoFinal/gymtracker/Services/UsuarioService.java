@@ -2,6 +2,7 @@ package com.proyectoFinal.gymtracker.Services;
 
 import com.proyectoFinal.gymtracker.DTO.Request.LoginRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.UsuarioRequest;
+import com.proyectoFinal.gymtracker.DTO.Response.AmigoResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
 import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -119,6 +121,35 @@ public class UsuarioService {
         else return "obesidad";
     }
 
+    @Transactional
+    public UsuarioResponse agregarAmigo(Long idUsuario, String codigoAmigo) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+        Usuario amigo = usuarioRepository.findByCodigoAmigo(codigoAmigo)
+                .orElseThrow(() -> new ResourceNotFoundException("No existe usuario con ese código"));
 
+        if (usuario.getId().equals(amigo.getId()))
+            throw new BusinessLogicException("No podés agregarte a vos mismo");
+        if (usuario.getAmigos().contains(amigo))
+            throw new BusinessLogicException("Ya son amigos");
+
+        usuario.getAmigos().add(amigo);
+        return toResponse(usuarioRepository.save(usuario));
+    }
+
+    public List<AmigoResponse> getAmigos(Long idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+        return usuario.getAmigos().stream().map(this::toAmigoResponse).toList();
+    }
+
+    private AmigoResponse toAmigoResponse(Usuario usuario) {
+        return AmigoResponse.builder()
+                .id(usuario.getId())
+                .username(usuario.getUsername())
+                .rol(usuario.getRol())
+                .rachaActualDias(usuario.getRachaActualDias())
+                .build();
+    }
 
 }
