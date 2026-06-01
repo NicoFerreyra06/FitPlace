@@ -77,6 +77,8 @@ public class EntrenamientoLogService {
         LocalDate fechaEntrenamiento = entrenamientoExistente.getFecha();
         LocalDate unaSemana = LocalDate.now().minusDays(7);
 
+
+
         if (fechaEntrenamiento.isBefore(unaSemana)) {
             throw new BusinessLogicException("Solo podés editar entrenamientos de hace una semana maximo");
         }
