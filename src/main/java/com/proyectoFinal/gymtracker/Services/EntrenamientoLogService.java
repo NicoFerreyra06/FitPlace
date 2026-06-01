@@ -11,6 +11,8 @@ import com.proyectoFinal.gymtracker.Modelo.*;
 import com.proyectoFinal.gymtracker.Repositories.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -122,18 +124,13 @@ public class EntrenamientoLogService {
         return mapEntrenamientoLogResponse(entrenamientoLog);
     }
 
-    public List<EntrenamientoLogResponse> getEntrenamientoLogByUsuarioId(Long idUsuario) {
+    public Page<EntrenamientoLogResponse> getEntrenamientoLogByUsuarioId(Long idUsuario, Pageable pageable) {
         Usuario usuario =  usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
-        List<EntrenamientoLog> entrenamientosUsuario = entrenamientoLogRepository.findByUsuarioId(usuario.getId());
+        Page<EntrenamientoLog> entrenamientosUsuario = entrenamientoLogRepository.findByUsuarioId(usuario.getId(), pageable);
 
-        if (entrenamientosUsuario.isEmpty()) {
-            return List.of();
-        }
-
-        return entrenamientosUsuario.stream()
-                .map(this::mapEntrenamientoLogResponse).toList();
+        return entrenamientosUsuario.map(this::mapEntrenamientoLogResponse);
     }
 
     public Map<String, List<HistorialEjercicioResponse>> getHistorialEjercicio(Long idUsuario, Long idEjercicio) {

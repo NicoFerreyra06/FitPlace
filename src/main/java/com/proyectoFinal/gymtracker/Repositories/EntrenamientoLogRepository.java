@@ -2,6 +2,8 @@ package com.proyectoFinal.gymtracker.Repositories;
 
 import com.proyectoFinal.gymtracker.DTO.Response.HistorialEjercicioResponse;
 import com.proyectoFinal.gymtracker.Modelo.EntrenamientoLog;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,7 +13,7 @@ import java.util.List;
 
 @Repository
 public interface EntrenamientoLogRepository extends JpaRepository<EntrenamientoLog,Long> {
-    List<EntrenamientoLog> findByUsuarioId(Long idUsuario);
+    Page<EntrenamientoLog> findByUsuarioId(Long idUsuario,  Pageable pageable);
 
     @Query("SELECT new com.proyectoFinal.gymtracker.DTO.Response.HistorialEjercicioResponse(el.fecha, MAX(mj.pesoLevantado)) " +
             "FROM EntrenamientoLog el " +

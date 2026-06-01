@@ -3,6 +3,9 @@ package com.proyectoFinal.gymtracker.Controllers;
 import com.proyectoFinal.gymtracker.Modelo.Musculo;
 import com.proyectoFinal.gymtracker.Services.MusculoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,8 +41,8 @@ public class MusculoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Musculo>> getMusculos(){
-        return ResponseEntity.status(HttpStatus.OK).body(musculoService.getMusculos());
+    public ResponseEntity<Page<Musculo>> getMusculos(@PageableDefault(size = 10) Pageable pageable){
+        return ResponseEntity.status(HttpStatus.OK).body(musculoService.getMusculos(pageable));
     }
 
     @PutMapping

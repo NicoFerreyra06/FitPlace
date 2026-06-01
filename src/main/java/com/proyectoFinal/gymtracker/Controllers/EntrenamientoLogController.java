@@ -6,6 +6,9 @@ import com.proyectoFinal.gymtracker.DTO.Response.HistorialEjercicioResponse;
 import com.proyectoFinal.gymtracker.Services.EntrenamientoLogService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,9 +43,10 @@ public class EntrenamientoLogController {
     }
 
     @GetMapping("/usuario/{idUsuario}")
-    public ResponseEntity<List<EntrenamientoLogResponse>> getEntrenamientoLogByUsuario(@PathVariable Long idUsuario){
+    public ResponseEntity<Page<EntrenamientoLogResponse>> getEntrenamientoLogByUsuario(@PageableDefault(size = 10) Pageable pageable,
+                                                                                       @PathVariable Long idUsuario){
         return ResponseEntity.status(HttpStatus.OK)
-                .body(entrenamientoLogService.getEntrenamientoLogByUsuarioId(idUsuario));
+                .body(entrenamientoLogService.getEntrenamientoLogByUsuarioId(idUsuario, pageable));
     }
 
     @GetMapping("/usuario/{idUsuario}/ejercicio/{idEjercicio}")

@@ -6,6 +6,9 @@ import com.proyectoFinal.gymtracker.DTO.Response.EjercicioResponse;
 import com.proyectoFinal.gymtracker.Services.EjercicioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,8 +49,8 @@ public class EjercicioController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EjercicioResponse>> getAllEjercicio(){
-        return ResponseEntity.status(HttpStatus.OK).body(ejercicioService.getAll());
+    public ResponseEntity<Page<EjercicioResponse>> getAllEjercicio(@PageableDefault (size = 10) Pageable pageable) {
+        return ResponseEntity.status(HttpStatus.OK).body(ejercicioService.getAll(pageable));
     }
 
     //buscar por x musculo, sea el principal o con que exista en el ejercicio suficiente
