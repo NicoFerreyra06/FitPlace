@@ -74,10 +74,11 @@ public class EntrenamientoLogService {
         EntrenamientoLog entrenamientoExistente = entrenamientoLogRepository.findById(idEntrenamiento)
                 .orElseThrow(() -> new ResourceNotFoundException("Entrenamiento no encontrado"));
 
-        //solo puedo editar el entrenamiento de hoy (por si hoy puse mal una marca)
-        //asi no cambio los registros historicos
-        if (!entrenamientoExistente.getFecha().equals(LocalDate.now())) {
-            throw new BusinessLogicException("Solo podés editar el entrenamiento de hoy.");
+        LocalDate fechaEntrenamiento = entrenamientoExistente.getFecha();
+        LocalDate unaSemana = LocalDate.now().minusDays(7);
+
+        if (fechaEntrenamiento.isBefore(unaSemana)) {
+            throw new BusinessLogicException("Solo podés editar entrenamientos de hace una semana maximo");
         }
 
         Rutina rutina = rutinaRepository.findById(entrenamientoLogRequest.getIdRutina())

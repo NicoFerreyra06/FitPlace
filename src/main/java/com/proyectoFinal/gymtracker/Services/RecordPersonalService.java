@@ -1,15 +1,10 @@
 package com.proyectoFinal.gymtracker.Services;
 
-import com.proyectoFinal.gymtracker.DTO.Request.RecordPersonalRequest;
-import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
-import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
-import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
+
 import com.proyectoFinal.gymtracker.Modelo.Ejercicio;
 import com.proyectoFinal.gymtracker.Modelo.RecordPersonal;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
-import com.proyectoFinal.gymtracker.Repositories.EjercicioRepository;
 import com.proyectoFinal.gymtracker.Repositories.RecordPersonalRepository;
-import com.proyectoFinal.gymtracker.Repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +16,7 @@ import java.util.List;
 public class RecordPersonalService {
 
     private final RecordPersonalRepository recordPersonalRepository;
-    private final UsuarioRepository usuarioRepository;
-    private final EjercicioRepository ejercicioRepository;
+
 
     public RecordPersonal toResponse(RecordPersonal recordPersonal){
         return RecordPersonal.builder()
@@ -33,34 +27,6 @@ public class RecordPersonalService {
                 .build();
     }
 
-    public RecordPersonal updateRecordPersonal(RecordPersonalRequest recordPersonalRequest) {
-        Usuario usuario = usuarioRepository.findById(recordPersonalRequest.getIdUsuario())
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
-
-        Ejercicio ejercicio = ejercicioRepository.findById(recordPersonalRequest.getIdEjercicio())
-                .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
-
-        RecordPersonal recordExistente = recordPersonalRepository
-                .findByUsuarioIdAndEjercicioId(usuario.getId(), ejercicio.getId());
-
-        if (recordExistente != null) {
-            if (recordPersonalRequest.getPesoMaximo() > recordExistente.getPesoMaximo()){
-                recordExistente.setPesoMaximo(recordPersonalRequest.getPesoMaximo());
-                recordExistente.setFechaLogro(LocalDate.now());
-            } else {
-                throw new BusinessLogicException("El peso ingresado no supera el record actual.");
-            }
-        }
-
-        RecordPersonal recordPersonal = RecordPersonal.builder()
-                .usuario(usuario)
-                .ejercicio(ejercicio)
-                .pesoMaximo(recordPersonalRequest.getPesoMaximo())
-                .fechaLogro(LocalDate.now())
-                .build();
-
-        return recordPersonalRepository.save(recordPersonal);
-    }
 
     // Muestra el record personal en 1 ejercicio de 1 usuario.
     public RecordPersonal getRecordPersonalByEjercicioId(Long usuarioId, Long ejercicioId) {
