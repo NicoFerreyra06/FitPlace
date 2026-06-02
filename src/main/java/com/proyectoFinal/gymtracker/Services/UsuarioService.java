@@ -99,7 +99,6 @@ public class UsuarioService {
         usuario.setAltura(request.getAltura());
 
         return toResponse(usuarioRepository.save(usuario));
-
     }
 
     @Transactional
@@ -114,11 +113,13 @@ public class UsuarioService {
     }
 
     private String calcularCategoriaImc(Double imc) {
-        if (imc == null || imc == 0) return null;
-        if (imc > 1.0  && imc < 18.5) return "bajo peso";
+        if (imc == null || imc <= 0) return null;
+        if (imc < 18.5) return "Bajo peso";
         if (imc >= 18.5 && imc < 25.0) return "normal";
-        if (imc >= 25.0 && imc < 30.0) return "sobrepeso";
-        else return "obesidad";
+        if (imc >= 25.0 && imc < 30.0) return "Exceso de peso";
+        if (imc >= 30.0 && imc < 35.0 ) return "Obesidad grado 1";
+        if (imc >= 35.0 && imc < 40.0) return "Obesidad grado 2";
+        return "Obesidad grado 3";
     }
 
     @Transactional
