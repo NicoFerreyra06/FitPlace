@@ -8,6 +8,8 @@ import com.proyectoFinal.gymtracker.Modelo.RecordPersonal;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Repositories.RecordPersonalRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -52,11 +54,9 @@ public class RecordPersonalService {
     }
 
     // Muestra el ranking de records personales de todos los usuarios.
-    public List<RecordPersonalResponse> getRankingRecordsPersonalesByEjercicioId(Long ejercicioId) {
-        return recordPersonalRepository.findByEjercicioIdOrderByPesoMaximoDesc(ejercicioId)
-                .stream()
-                .map(this::toResponse)
-                .toList();
+    public Page<RecordPersonalResponse> getRankingRecordsPersonalesByEjercicioId(Pageable pageable, Long ejercicioId) {
+        return recordPersonalRepository.findByEjercicioIdOrderByPesoMaximoDesc(pageable,ejercicioId)
+                .map(this::toResponse);
     }
 
     //este sin endpoint, lo llama el service de EntrenamientoLog
