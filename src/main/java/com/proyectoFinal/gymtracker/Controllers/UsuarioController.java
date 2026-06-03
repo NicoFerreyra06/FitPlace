@@ -2,6 +2,7 @@ package com.proyectoFinal.gymtracker.Controllers;
 
 import com.proyectoFinal.gymtracker.DTO.Request.LoginRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.UsuarioRequest;
+import com.proyectoFinal.gymtracker.DTO.Response.AmigoResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
 import com.proyectoFinal.gymtracker.Services.UsuarioService;
 import jakarta.validation.Valid;
@@ -9,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,6 +46,22 @@ public class UsuarioController {
     @PutMapping("/{idUsuario}/rutina-activa/{idRutina}")
     public ResponseEntity<UsuarioResponse> activarRutina(@PathVariable Long idUsuario, @PathVariable Long idRutina) {
         return ResponseEntity.ok(usuarioService.activarRutina(idUsuario, idRutina));
+    }
+
+    @PostMapping("/{idUsuario}/amigos/{codigoAmigo}")
+    public ResponseEntity<UsuarioResponse> agregarAmigo(@PathVariable Long idUsuario,
+                                                        @PathVariable String codigoAmigo) {
+        return ResponseEntity.ok(usuarioService.agregarAmigo(idUsuario, codigoAmigo));
+    }
+
+    @GetMapping("/{idUsuario}/amigos")
+    public ResponseEntity<List<AmigoResponse>> getAmigos(@PathVariable Long idUsuario) {
+        return ResponseEntity.ok(usuarioService.getAmigos(idUsuario));
+    }
+
+    @GetMapping("/{idUsuario}/amigos/{amigoId}/perfil")
+    public ResponseEntity<UsuarioResponse> getPerfil(@PathVariable Long idUsuario, @PathVariable Long amigoId) {
+        return ResponseEntity.ok(usuarioService.verPerfilAmigo(idUsuario, amigoId));
     }
 
 

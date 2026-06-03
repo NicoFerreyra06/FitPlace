@@ -46,7 +46,6 @@ public class Usuario implements UserDetails {
     private String codigoAmigo; // id para compartir
 
     @ManyToMany
-
     @JoinTable(
             name = "amigos",
             joinColumns = @JoinColumn(name = "usuario_id"),
@@ -90,11 +89,6 @@ public class Usuario implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + rol.name()));
         }
-
-    @Override
-    public String getUsername() {
-        return email; // Spring usa este campo para buscar al usuario
-    }
 
     @Override
     public boolean isAccountNonExpired() { return true; }

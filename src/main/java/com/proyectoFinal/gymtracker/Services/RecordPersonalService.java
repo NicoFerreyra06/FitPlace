@@ -1,16 +1,15 @@
 package com.proyectoFinal.gymtracker.Services;
 
-import com.proyectoFinal.gymtracker.DTO.Request.RecordPersonalRequest;
-import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
+
+import com.proyectoFinal.gymtracker.DTO.Response.RecordPersonalResponse;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
-import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Ejercicio;
 import com.proyectoFinal.gymtracker.Modelo.RecordPersonal;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
-import com.proyectoFinal.gymtracker.Repositories.EjercicioRepository;
 import com.proyectoFinal.gymtracker.Repositories.RecordPersonalRepository;
-import com.proyectoFinal.gymtracker.Repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,64 +20,43 @@ import java.util.List;
 public class RecordPersonalService {
 
     private final RecordPersonalRepository recordPersonalRepository;
-    private final UsuarioRepository usuarioRepository;
-    private final EjercicioRepository ejercicioRepository;
 
-    public RecordPersonal toResponse(RecordPersonal recordPersonal){
-        return RecordPersonal.builder()
-                .id(recordPersonal.getId())
-                .usuario(recordPersonal.getUsuario())
-                .pesoMaximo(recordPersonal.getPesoMaximo())
-                .fechaLogro(recordPersonal.getFechaLogro())
-                .build();
-    }
 
-    public RecordPersonal updateRecordPersonal(RecordPersonalRequest recordPersonalRequest) {
-        Usuario usuario = usuarioRepository.findById(recordPersonalRequest.getIdUsuario())
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
-
-        Ejercicio ejercicio = ejercicioRepository.findById(recordPersonalRequest.getIdEjercicio())
-                .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
-
-        RecordPersonal recordExistente = recordPersonalRepository
-                .findByUsuarioIdAndEjercicioId(usuario.getId(), ejercicio.getId());
-
-        if (recordExistente != null) {
-            if (recordPersonalRequest.getPesoMaximo() > recordExistente.getPesoMaximo()){
-                recordExistente.setPesoMaximo(recordPersonalRequest.getPesoMaximo());
-                recordExistente.setFechaLogro(LocalDate.now());
-            } else {
-                throw new BusinessLogicException("El peso ingresado no supera el record actual.");
-            }
-        }
-
-        RecordPersonal recordPersonal = RecordPersonal.builder()
-                .usuario(usuario)
-                .ejercicio(ejercicio)
-                .pesoMaximo(recordPersonalRequest.getPesoMaximo())
-                .fechaLogro(LocalDate.now())
+    private RecordPersonalResponse toResponse(RecordPersonal record) {
+        return RecordPersonalResponse.builder()
+                .id(record.getId())
+                .ejercicioId(record.getEjercicio().getId())
+                .nombreUsuario(record.getUsuario().getUsername())
+                .nombreEjercicio(record.getEjercicio().getNombre())
+                .pesoMaximo(record.getPesoMaximo())
+                .fechaLogro(record.getFechaLogro())
                 .build();
 
-        return recordPersonalRepository.save(recordPersonal);
     }
+
 
     // Muestra el record personal en 1 ejercicio de 1 usuario.
-    public RecordPersonal getRecordPersonalByEjercicioId(Long usuarioId, Long ejercicioId) {
-        return recordPersonalRepository.findByUsuarioIdAndEjercicioId(usuarioId, ejercicioId);
+    public RecordPersonalResponse getRecordPersonalByEjercicioId(Long usuarioId, Long ejercicioId) {
+        RecordPersonal record = recordPersonalRepository.findByUsuarioIdAndEjercicioId(usuarioId, ejercicioId);
+
+        if (record == null) {
+            throw new ResourceNotFoundException("No tenés record en ese ejercicio");
+        }
+        return toResponse(record);
     }
 
     // Muestra los record personales en todos los ejercicios de 1 usuario.
-    public List<RecordPersonal> getRecordsPersonalesByUsuarioId(Long usuarioId) {
-        return recordPersonalRepository.findRecordPersonalByUsuarioId(usuarioId);
+    public List<RecordPersonalResponse> getRecordsPersonalesByUsuarioId(Long usuarioId) {
+        return recordPersonalRepository.findRecordPersonalByUsuarioId(usuarioId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     // Muestra el ranking de records personales de todos los usuarios.
-    public List<RecordPersonal> getRankingRecordsPersonalesByEjercicioId(Long ejercicioId) {
-        List<RecordPersonal> ranking = recordPersonalRepository.findByEjercicioIdOrderByPesoMaximoDesc(ejercicioId);
-
-        return ranking.stream()
-                .map(this::toResponse)
-                .toList();
+    public Page<RecordPersonalResponse> getRankingRecordsPersonalesByEjercicioId(Pageable pageable, Long ejercicioId) {
+        return recordPersonalRepository.findByEjercicioIdOrderByPesoMaximoDesc(pageable,ejercicioId)
+                .map(this::toResponse);
     }
 
     //este sin endpoint, lo llama el service de EntrenamientoLog

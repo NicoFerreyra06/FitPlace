@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @Builder
 public class RecordPersonalResponse {
     private Long id;
+    private Long ejercicioId;
     private String nombreUsuario;
     private String nombreEjercicio;
     private Double pesoMaximo;

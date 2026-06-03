@@ -1,6 +1,8 @@
 package com.proyectoFinal.gymtracker.Repositories;
 
 import com.proyectoFinal.gymtracker.Modelo.RecordPersonal;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,5 +14,5 @@ public interface RecordPersonalRepository extends JpaRepository<RecordPersonal, 
 
     List<RecordPersonal> findRecordPersonalByUsuarioId(Long usuarioId);
 
-    List<RecordPersonal> findByEjercicioIdOrderByPesoMaximoDesc(Long ejercicioId);
+    Page<RecordPersonal> findByEjercicioIdOrderByPesoMaximoDesc(Pageable pageable, Long ejercicioId);
 }
