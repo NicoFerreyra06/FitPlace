@@ -5,6 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -17,4 +21,7 @@ public class GimnasioResponse {
     private Double precioCuota;
     private Long idAdmin;
     private String nombreAdmin;
+    private List<DayOfWeek> diasDeApertura;
+    private LocalTime horarioApertura;
+    private LocalTime horarioCierre;
 }

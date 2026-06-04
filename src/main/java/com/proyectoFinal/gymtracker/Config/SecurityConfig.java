@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         .requestMatchers("/usuarios/registro", "/usuarios/login").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
                        .requestMatchers(HttpMethod.GET, "/ejercicios/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/musculos/**").permitAll()
@@ -53,7 +54,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/musculos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT,    "/musculos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/musculos/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/gimnasios").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/gimnasios").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/gimnasios/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/gimnasios/me").hasRole("ADMIN_GIMNASIO")
                         .requestMatchers("/rutinas/**").authenticated()
                         .requestMatchers("/entrenamientos/**").authenticated()
 

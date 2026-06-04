@@ -9,7 +9,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Data
-public class GimnasioRequest {
+public class GimnasioUpdateRequest {
 
     @NotBlank(message = "El nombre del gimnasio es obligatorio.")
     @Size(min = 3, max = 60, message = "El nombre debe estar entre 3 y 60 caracteres")
@@ -33,15 +33,11 @@ public class GimnasioRequest {
     @DecimalMin(value = "0.1", message = "El precio de la cuota debe ser mayor a 0.1")
     private Double precioCuota;
 
-    @NotNull(message = "El ID del administrador del gimnasio es obligatorio.")
-    private Long adminId;
-
-    @AssertTrue(message = "El horario de cierre debe ser posterior al horario de apertura")
+    @AssertTrue(message = "El horario de apertura debe ser posterior al horario de cierre")
     private boolean esValidoHorario(){
         if (horarioApertura == null || horarioCierre == null){
             return true;
         }
         return horarioCierre.isAfter(horarioApertura);
     }
-
 }

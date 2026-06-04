@@ -1,8 +1,11 @@
 package com.proyectoFinal.gymtracker.Services;
 
 import com.proyectoFinal.gymtracker.DTO.Request.GimnasioRequest;
+import com.proyectoFinal.gymtracker.DTO.Request.GimnasioUpdateRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.GimnasioResponse;
+import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
+import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Gimnasio;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Repositories.GimnasioRepository;
@@ -23,16 +26,23 @@ public class GimnasioService {
     private final GimnasioRepository gimnasioRepository;
     private final UsuarioRepository usuarioRepository;
 
+    @Transactional
     public GimnasioResponse createGimnasio(GimnasioRequest request){
 
-        Usuario admin = (Usuario) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
+        Usuario adminGimnasio = usuarioRepository.findById(request.getAdminId())
+                .orElseThrow(()-> new UserNotFoundException("Usuario no encontrado"));
+
+        adminGimnasio.setRol(Rol.ADMIN_GIMNASIO);
+        usuarioRepository.save(adminGimnasio);
 
          Gimnasio gimnasio = Gimnasio.builder()
                  .nombre(request.getNombre())
                  .direccion(request.getDireccion())
                  .precioCuota(request.getPrecioCuota())
-                 .admin(admin)
+                 .admin(adminGimnasio)
+                 .horarioApertura(request.getHorarioApertura())
+                 .horarioCierre(request.getHorarioCierre())
+                 .diasAbierto(request.getDiasAbierto())
                  .build();
 
          return gimnasioToResponse(gimnasioRepository.save(gimnasio));
@@ -67,6 +77,27 @@ public class GimnasioService {
 
         gimnasio.getMiembros().add(usuario);
 
+        return gimnasioToResponse(gimnasio);
+    }
+
+    @Transactional
+    public GimnasioResponse actualizarGimnasio(GimnasioUpdateRequest request){
+
+        Usuario admin =  (Usuario) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+
+        Gimnasio gimnasio = gimnasioRepository.findByAdminId(admin.getId())
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new BusinessLogicException("El usuario no tiene gimnasios"));
+
+        gimnasio.setNombre(request.getNombre());
+        gimnasio.setDireccion(request.getDireccion());
+        gimnasio.setPrecioCuota(request.getPrecioCuota());
+        gimnasio.setHorarioApertura(request.getHorarioApertura());
+        gimnasio.setHorarioCierre(request.getHorarioCierre());
+        gimnasio.setDiasAbierto(request.getDiasAbierto());
+
         return gimnasioToResponse(gimnasioRepository.save(gimnasio));
     }
 
@@ -78,6 +109,9 @@ public class GimnasioService {
                 .precioCuota(gimnasio.getPrecioCuota())
                 .idAdmin(gimnasio.getAdmin().getId())
                 .nombreAdmin(gimnasio.getAdmin().getUsername())
+                .horarioApertura(gimnasio.getHorarioApertura())
+                .horarioCierre(gimnasio.getHorarioCierre())
+                .diasDeApertura(gimnasio.getDiasAbierto())
                 .build();
     }
 }
