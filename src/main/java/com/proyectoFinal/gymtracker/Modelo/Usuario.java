@@ -45,6 +45,11 @@ public class Usuario implements UserDetails {
     @Column(unique = true, nullable = false, length = 36)
     private String codigoAmigo; // id para compartir
 
+    @ManyToOne
+    @JoinColumn(name = "gimnasio_id")
+    @JsonIgnore
+    private Gimnasio gimnasio;
+
     @ManyToMany
     @JoinTable(
             name = "amigos",
