@@ -24,6 +24,7 @@ public class RecordPersonalController {
 
     private final RecordPersonalService recordPersonalService;
 
+
     @GetMapping("/ejercicio/{ejercicioId}")
     public ResponseEntity<RecordPersonalResponse> getRecordPersonalByEjercicioId(
             @PathVariable Long ejercicioId,

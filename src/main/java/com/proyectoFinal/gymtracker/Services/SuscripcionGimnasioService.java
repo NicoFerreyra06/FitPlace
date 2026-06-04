@@ -31,7 +31,7 @@ public class SuscripcionGimnasioService {
         Gimnasio gimnasio = gimnasioRepository.findById(idGimnasio)
                 .orElseThrow(() -> new RuntimeException("Gimnasio no encontrado"));
 
-        double costo = gimnasio.getCostoMensual();
+        double costo = gimnasio.getPrecioCuota();
         double comision = costo * PORCENTAJE_COMISION;
 
         SuscripcionGimnasio suscripcionGimnasio = SuscripcionGimnasio.builder()

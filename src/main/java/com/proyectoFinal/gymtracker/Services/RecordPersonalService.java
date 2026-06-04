@@ -31,7 +31,6 @@ public class RecordPersonalService {
                 .pesoMaximo(record.getPesoMaximo())
                 .fechaLogro(record.getFechaLogro())
                 .build();
-
     }
 
 
@@ -83,4 +82,5 @@ public class RecordPersonalService {
             recordPersonalRepository.save(recordExistente);
         }
     }
+
 }

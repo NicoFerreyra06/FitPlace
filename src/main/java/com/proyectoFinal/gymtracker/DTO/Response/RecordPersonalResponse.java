@@ -18,4 +18,5 @@ public class RecordPersonalResponse {
     private String nombreEjercicio;
     private Double pesoMaximo;
     private LocalDate fechaLogro;
+
 }
