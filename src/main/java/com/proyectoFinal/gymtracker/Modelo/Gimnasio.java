@@ -1,16 +1,19 @@
 package com.proyectoFinal.gymtracker.Modelo;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -20,19 +23,30 @@ public class Gimnasio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String nombre;
 
-    private String cadena;
-
+    @Column(nullable = false)
     private String direccion;
 
-    //falta listado de horarios
+    private Double precioCuota;
 
-    @Column(name = "costo_mensual")
-    private double costoMensual;
+    @ManyToOne
+    @JoinColumn(nullable = false, name = "admin_id")
+    private Usuario admin;
 
     @OneToMany(mappedBy = "gimnasio")
-    private List<SuscripcionGimnasio> suscripciones;
+    private List<Usuario> miembros;
 
+    @Column(nullable = false)
+    private LocalTime horarioApertura;
+    @Column(nullable = false)
+    private LocalTime horarioCierre;
+
+    @NotEmpty
+    @ElementCollection(targetClass = DayOfWeek.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "gimnasio_dias", joinColumns = @JoinColumn(name = "gimnasio_id"))
+    @Enumerated(EnumType.STRING)
+    private List<DayOfWeek> diasAbierto;
 
 }

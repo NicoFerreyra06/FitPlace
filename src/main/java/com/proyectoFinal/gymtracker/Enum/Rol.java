@@ -4,5 +4,6 @@ public enum Rol {
     USUARIO,
     PREMIUM,
     ENTRENADOR,
-    ADMIN
+    ADMIN,
+    ADMIN_GIMNASIO
 }
