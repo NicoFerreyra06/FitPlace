@@ -20,9 +20,11 @@ public class SuscripcionGimnasio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
     @JoinColumn(name = "id_gimnasio")
     private Gimnasio gimnasio;
 
+    @ManyToOne
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 

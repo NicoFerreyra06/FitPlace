@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.DayOfWeek;
@@ -29,6 +28,7 @@ public class Gimnasio {
     @Column(nullable = false)
     private String direccion;
 
+    @Column(nullable = false)
     private Double precioCuota;
 
     @ManyToOne
