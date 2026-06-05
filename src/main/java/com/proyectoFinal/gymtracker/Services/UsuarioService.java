@@ -186,6 +186,14 @@ public class UsuarioService {
         return toResponse(usuarioRepository.save(usuario));
     }
 
+    public UsuarioResponse eliminarEntrenador(Long usuarioId){
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+
+        usuario.setEntrenador(null);
+        return toResponse(usuarioRepository.save(usuario));
+    }
+
     public List<UsuarioResponse> getAlumnos(Long entrenadorId){
         return usuarioRepository.findByEntrenadorId(entrenadorId)
                 .stream().map(this::toResponse).toList();

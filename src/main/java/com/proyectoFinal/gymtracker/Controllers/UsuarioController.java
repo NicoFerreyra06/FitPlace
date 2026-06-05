@@ -72,6 +72,11 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.asignarEntrenador(idEntrenador, usuario.getId()));
     }
 
+    @DeleteMapping("/me/entrenador")
+    public ResponseEntity<UsuarioResponse> eliminarEntrenador(@AuthenticationPrincipal Usuario usuario ) {
+        return ResponseEntity.ok(usuarioService.eliminarEntrenador(usuario.getId()));
+    }
+
     @GetMapping("/me/alumnos")
     public ResponseEntity<List<UsuarioResponse>> getAlumnos(@AuthenticationPrincipal Usuario usuario) {
         return ResponseEntity.ok(usuarioService.getAlumnos(usuario.getId()));
