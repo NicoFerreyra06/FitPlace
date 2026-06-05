@@ -4,11 +4,13 @@ import com.proyectoFinal.gymtracker.DTO.Request.LoginRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.UsuarioRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.AmigoResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
+import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Services.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -62,6 +64,17 @@ public class UsuarioController {
     @GetMapping("/{idUsuario}/amigos/{amigoId}/perfil")
     public ResponseEntity<UsuarioResponse> getPerfil(@PathVariable Long idUsuario, @PathVariable Long amigoId) {
         return ResponseEntity.ok(usuarioService.verPerfilAmigo(idUsuario, amigoId));
+    }
+
+    @PutMapping("/me/entrenador/{idEntrenador}")
+    public ResponseEntity<UsuarioResponse> asignarEntrenador(@PathVariable Long idEntrenador,
+                                                             @AuthenticationPrincipal Usuario usuario ) {
+        return ResponseEntity.ok(usuarioService.asignarEntrenador(idEntrenador, usuario.getId()));
+    }
+
+    @GetMapping("/me/alumnos")
+    public ResponseEntity<List<UsuarioResponse>> getAlumnos(@AuthenticationPrincipal Usuario usuario) {
+        return ResponseEntity.ok(usuarioService.getAlumnos(usuario.getId()));
     }
 
 

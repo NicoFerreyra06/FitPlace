@@ -43,8 +43,8 @@ public class SecurityConfig {
 
                         .requestMatchers("/usuarios/registro", "/usuarios/login").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-
-                       .requestMatchers(HttpMethod.GET, "/ejercicios/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/usuarios/me/alumnos").hasRole("ENTRENADOR")
+                        .requestMatchers(HttpMethod.GET, "/ejercicios/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/musculos/**").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/ejercicios/**").hasRole("ADMIN")
@@ -67,7 +67,5 @@ public class SecurityConfig {
                 .httpBasic(org.springframework.security.config.Customizer.withDefaults())
                 .build();
     }
-
-
 
 }

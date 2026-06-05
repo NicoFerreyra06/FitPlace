@@ -15,6 +15,7 @@ import com.proyectoFinal.gymtracker.Enum.Rol;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -166,5 +167,27 @@ public class UsuarioService {
         }
 
         return toResponse(amigo);
+    }
+
+    @Transactional
+    public UsuarioResponse asignarEntrenador(Long entrenadorId, Long usuarioId){
+        Usuario entrenador = usuarioRepository.findById(entrenadorId)
+                .orElseThrow(() -> new UserNotFoundException("Entrenador no encontrado"));
+
+        if (!entrenador.getRol().equals(Rol.ENTRENADOR))
+            throw new BusinessLogicException("El usuario seleccionado no es un entrenador");
+
+        if (entrenadorId.equals(usuarioId)) throw new BusinessLogicException("No se puede asignar a si mismo como entrenador");
+
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+
+        usuario.setEntrenador(entrenador);
+        return toResponse(usuarioRepository.save(usuario));
+    }
+
+    public List<UsuarioResponse> getAlumnos(Long entrenadorId){
+        return usuarioRepository.findByEntrenadorId(entrenadorId)
+                .stream().map(this::toResponse).toList();
     }
 }
