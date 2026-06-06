@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -23,5 +24,15 @@ public interface EntrenamientoLogRepository extends JpaRepository<EntrenamientoL
     List<HistorialEjercicioResponse> historialEjercicio(
             @Param("usuarioId") long usuarioId,
             @Param("idEjercicio") long idEjercicio
+    );
+
+    @Query("SELECT e FROM EntrenamientoLog e WHERE e.usuario.id = :idUsuario " +
+            "AND (:desde IS NULL OR e.fecha >= :desde) " +
+            "AND (:hasta IS NULL OR e.fecha <= :hasta)")
+    Page<EntrenamientoLog> findByUsuarioIdAndFechas(
+            @Param("idUsuario") Long idUsuario,
+            @Param("desde") LocalDate desde,
+            @Param("hasta") LocalDate hasta,
+            Pageable pageable
     );
 }

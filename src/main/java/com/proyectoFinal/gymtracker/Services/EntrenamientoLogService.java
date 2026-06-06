@@ -127,11 +127,11 @@ public class EntrenamientoLogService {
         return mapEntrenamientoLogResponse(entrenamientoLog);
     }
 
-    public Page<EntrenamientoLogResponse> getEntrenamientoLogByUsuarioId(Long idUsuario, Pageable pageable) {
+    public Page<EntrenamientoLogResponse> getEntrenamientos(Long idUsuario, Pageable pageable, LocalDate desde, LocalDate hasta) {
         Usuario usuario =  usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
-        Page<EntrenamientoLog> entrenamientosUsuario = entrenamientoLogRepository.findByUsuarioId(usuario.getId(), pageable);
+        Page<EntrenamientoLog> entrenamientosUsuario = entrenamientoLogRepository.findByUsuarioIdAndFechas(usuario.getId(), desde, hasta, pageable);
 
         return entrenamientosUsuario.map(this::mapEntrenamientoLogResponse);
     }
