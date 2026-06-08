@@ -15,7 +15,6 @@ import com.proyectoFinal.gymtracker.Enum.Rol;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -197,5 +196,12 @@ public class UsuarioService {
     public List<UsuarioResponse> getAlumnos(Long entrenadorId){
         return usuarioRepository.findByEntrenadorId(entrenadorId)
                 .stream().map(this::toResponse).toList();
+    }
+
+    public UsuarioResponse verEntrenadorActual(Long idUsuario){
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+
+        return toResponse(usuario.getEntrenador());
     }
 }

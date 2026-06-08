@@ -82,5 +82,9 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.getAlumnos(usuario.getId()));
     }
 
+    @GetMapping("/me/entrenador")
+    public ResponseEntity<UsuarioResponse> getEntrenadorActual(@AuthenticationPrincipal Usuario usuario) {
+        return ResponseEntity.ok(usuarioService.verEntrenadorActual(usuario.getId()));
+    }
 
 }
