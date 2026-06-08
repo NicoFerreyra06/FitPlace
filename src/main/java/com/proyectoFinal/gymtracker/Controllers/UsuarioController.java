@@ -8,6 +8,9 @@ import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Services.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -91,6 +94,11 @@ public class UsuarioController {
     @GetMapping("/me/entrenador")
     public ResponseEntity<UsuarioResponse> getEntrenadorActual(@AuthenticationPrincipal Usuario usuario) {
         return ResponseEntity.ok(usuarioService.verEntrenadorActual(usuario.getId()));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<UsuarioResponse>> getUsuarios(@PageableDefault (size = 10) Pageable pageable) {
+        return ResponseEntity.ok(usuarioService.getUsuarios(pageable));
     }
 
 }

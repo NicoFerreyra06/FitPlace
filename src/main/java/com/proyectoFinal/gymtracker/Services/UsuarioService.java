@@ -15,6 +15,8 @@ import com.proyectoFinal.gymtracker.Enum.Rol;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -212,5 +214,9 @@ public class UsuarioService {
                 .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
         return toResponse(usuario.getEntrenador());
+    }
+
+    public Page<UsuarioResponse> getUsuarios(Pageable pageable){
+        return usuarioRepository.findAll(pageable).map(this::toResponse);
     }
 }

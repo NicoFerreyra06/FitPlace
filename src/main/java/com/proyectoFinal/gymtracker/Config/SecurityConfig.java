@@ -43,23 +43,20 @@ public class SecurityConfig {
 
                         .requestMatchers("/usuarios/registro", "/usuarios/login").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/usuarios/me/alumnos").hasRole("ENTRENADOR")
                         .requestMatchers(HttpMethod.GET, "/ejercicios/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/musculos/**").permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/ejercicios/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/ejercicios/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/ejercicios/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/usuarios/me/alumnos").hasRole("ENTRENADOR")
+                        .requestMatchers(HttpMethod.GET, "/usuarios/").hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.POST, "/musculos/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT,    "/musculos/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/musculos/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/gimnasios").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/gimnasios/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/ejercicios/**", "/musculos/**", "/gimnasios").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/ejercicios/**", "/musculos/**", "/gimnasios/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/ejercicios/**", "/musculos/**").hasRole("ADMIN")
+
                         .requestMatchers(HttpMethod.PUT, "/gimnasios/me").hasRole("ADMIN_GIMNASIO")
-                        .requestMatchers("/rutinas/**").authenticated()
-                        .requestMatchers("/entrenamientos/**").authenticated()
 
+
+                        .requestMatchers("/rutinas/**", "/entrenamientos/**").authenticated()
                         .requestMatchers("/usuarios/**").authenticated()
 
                         .anyRequest().authenticated()
