@@ -17,6 +17,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -216,6 +217,7 @@ public class UsuarioService {
         return toResponse(usuario.getEntrenador());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public Page<UsuarioResponse> getUsuarios(Pageable pageable){
         return usuarioRepository.findAll(pageable).map(this::toResponse);
     }
