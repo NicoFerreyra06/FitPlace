@@ -56,6 +56,12 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.agregarAmigo(idUsuario, codigoAmigo));
     }
 
+    @DeleteMapping("/amigos/{amigoId}")
+    public ResponseEntity<UsuarioResponse> eliminarAmigo(@PathVariable Long amigoId,
+                                                         @AuthenticationPrincipal Usuario usuario) {
+        return ResponseEntity.ok(usuarioService.eliminarAmigo(amigoId, usuario.getId()));
+    }
+
     @GetMapping("/{idUsuario}/amigos")
     public ResponseEntity<List<AmigoResponse>> getAmigos(@PathVariable Long idUsuario) {
         return ResponseEntity.ok(usuarioService.getAmigos(idUsuario));

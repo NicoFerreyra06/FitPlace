@@ -45,6 +45,16 @@ public class UsuarioService {
                 .rachaMaximaDias(usuario.getRachaMaximaDias()).build();
     }
 
+    private String calcularCategoriaImc(Double imc) {
+        if (imc == null || imc <= 0) return null;
+        if (imc < 18.5) return "Bajo peso";
+        if (imc >= 18.5 && imc < 25.0) return "normal";
+        if (imc >= 25.0 && imc < 30.0) return "Exceso de peso";
+        if (imc >= 30.0 && imc < 35.0 ) return "Obesidad grado 1";
+        if (imc >= 35.0 && imc < 40.0) return "Obesidad grado 2";
+        return "Obesidad grado 3";
+    }
+
     public UsuarioResponse registrar(UsuarioRequest usuarioRequest) {
 
         if (usuarioRequest.getEmail() == null || usuarioRequest.getEmail().isEmpty()) {
@@ -112,16 +122,6 @@ public class UsuarioService {
         return toResponse(usuarioRepository.save(u));
     }
 
-    private String calcularCategoriaImc(Double imc) {
-        if (imc == null || imc <= 0) return null;
-        if (imc < 18.5) return "Bajo peso";
-        if (imc >= 18.5 && imc < 25.0) return "normal";
-        if (imc >= 25.0 && imc < 30.0) return "Exceso de peso";
-        if (imc >= 30.0 && imc < 35.0 ) return "Obesidad grado 1";
-        if (imc >= 35.0 && imc < 40.0) return "Obesidad grado 2";
-        return "Obesidad grado 3";
-    }
-
     @Transactional
     public UsuarioResponse agregarAmigo(Long idUsuario, String codigoAmigo) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
@@ -135,6 +135,15 @@ public class UsuarioService {
             throw new BusinessLogicException("Ya son amigos");
 
         usuario.getAmigos().add(amigo);
+        return toResponse(usuarioRepository.save(usuario));
+    }
+
+    @Transactional
+    public UsuarioResponse eliminarAmigo(Long amigoId, Long usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+
+        usuario.getAmigos().removeIf(amigo -> amigo.getId().equals(amigoId));
         return toResponse(usuarioRepository.save(usuario));
     }
 
