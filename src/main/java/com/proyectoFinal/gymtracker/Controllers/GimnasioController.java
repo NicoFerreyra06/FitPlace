@@ -3,7 +3,6 @@ package com.proyectoFinal.gymtracker.Controllers;
 import com.proyectoFinal.gymtracker.DTO.Request.GimnasioRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.GimnasioUpdateRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.GimnasioResponse;
-import com.proyectoFinal.gymtracker.Modelo.Gimnasio;
 import com.proyectoFinal.gymtracker.Services.GimnasioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +30,11 @@ public class GimnasioController {
     @GetMapping("/me")
     public ResponseEntity<List<GimnasioResponse>> getPropioGimnasios(){
         return ResponseEntity.ok(gimnasioService.getPropioGimnasios());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<GimnasioResponse> getGimnasio(@PathVariable Long id){
+        return ResponseEntity.ok(gimnasioService.getGimnasioById(id));
     }
 
     @GetMapping

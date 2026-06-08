@@ -5,6 +5,7 @@ import com.proyectoFinal.gymtracker.DTO.Request.GimnasioUpdateRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.GimnasioResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
+import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Gimnasio;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
@@ -99,6 +100,13 @@ public class GimnasioService {
         gimnasio.setDiasAbierto(request.getDiasAbierto());
 
         return gimnasioToResponse(gimnasioRepository.save(gimnasio));
+    }
+
+    public GimnasioResponse getGimnasioById(Long idGimnasio){
+        Gimnasio gimnasio = gimnasioRepository.findById(idGimnasio)
+                .orElseThrow(() -> new ResourceNotFoundException("Gimnasio no encontrado"));
+
+        return gimnasioToResponse(gimnasio);
     }
 
     private GimnasioResponse gimnasioToResponse(Gimnasio gimnasio){
