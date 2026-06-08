@@ -157,6 +157,16 @@ public class RutinaService {
         }
     }
 
+    public List<RutinaResponse> getRutinasByIdUsuario(Long idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+
+        return rutinaRepository.findAll().stream()
+                .filter(rutina -> rutina.getCreador().equals(usuario))
+                .map(this::mapRutinaResponse)
+                .toList();
+    }
+
     // === Metodos auxiliares ===
 
     private RutinaResponse mapRutinaResponse(Rutina rutina){
