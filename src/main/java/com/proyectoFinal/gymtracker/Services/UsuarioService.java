@@ -15,7 +15,9 @@ import com.proyectoFinal.gymtracker.Enum.Rol;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +46,16 @@ public class UsuarioService {
                 .categoriaImc(calcularCategoriaImc(usuario.getImc()))
                 .rachaActualDias(usuario.getRachaActualDias())
                 .rachaMaximaDias(usuario.getRachaMaximaDias()).build();
+    }
+
+    private String calcularCategoriaImc(Double imc) {
+        if (imc == null || imc <= 0) return null;
+        if (imc < 18.5) return "Bajo peso";
+        if (imc >= 18.5 && imc < 25.0) return "normal";
+        if (imc >= 25.0 && imc < 30.0) return "Exceso de peso";
+        if (imc >= 30.0 && imc < 35.0 ) return "Obesidad grado 1";
+        if (imc >= 35.0 && imc < 40.0) return "Obesidad grado 2";
+        return "Obesidad grado 3";
     }
 
     public UsuarioResponse registrar(UsuarioRequest usuarioRequest) {
@@ -113,16 +125,6 @@ public class UsuarioService {
         return toResponse(usuarioRepository.save(u));
     }
 
-    private String calcularCategoriaImc(Double imc) {
-        if (imc == null || imc <= 0) return null;
-        if (imc < 18.5) return "Bajo peso";
-        if (imc >= 18.5 && imc < 25.0) return "normal";
-        if (imc >= 25.0 && imc < 30.0) return "Exceso de peso";
-        if (imc >= 30.0 && imc < 35.0 ) return "Obesidad grado 1";
-        if (imc >= 35.0 && imc < 40.0) return "Obesidad grado 2";
-        return "Obesidad grado 3";
-    }
-
     @Transactional
     public UsuarioResponse agregarAmigo(Long idUsuario, String codigoAmigo) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
@@ -136,6 +138,15 @@ public class UsuarioService {
             throw new BusinessLogicException("Ya son amigos");
 
         usuario.getAmigos().add(amigo);
+        return toResponse(usuarioRepository.save(usuario));
+    }
+
+    @Transactional
+    public UsuarioResponse eliminarAmigo(Long amigoId, Long usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+
+        usuario.getAmigos().removeIf(amigo -> amigo.getId().equals(amigoId));
         return toResponse(usuarioRepository.save(usuario));
     }
 
@@ -197,5 +208,17 @@ public class UsuarioService {
     public List<UsuarioResponse> getAlumnos(Long entrenadorId){
         return usuarioRepository.findByEntrenadorId(entrenadorId)
                 .stream().map(this::toResponse).toList();
+    }
+
+    public UsuarioResponse verEntrenadorActual(Long idUsuario){
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+
+        return toResponse(usuario.getEntrenador());
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public Page<UsuarioResponse> getUsuarios(Pageable pageable){
+        return usuarioRepository.findAll(pageable).map(this::toResponse);
     }
 }

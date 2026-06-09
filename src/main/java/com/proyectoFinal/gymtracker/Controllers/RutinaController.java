@@ -55,4 +55,9 @@ public class RutinaController {
         return ResponseEntity.ok(rutinaService.getDiaRutinaActual(idUsuario));
     }
 
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<List<RutinaResponse>> getRutinaByUsuario(@PathVariable Long idUsuario){
+        return ResponseEntity.ok(rutinaService.getRutinasByIdUsuario(idUsuario));
+    }
+
 }
