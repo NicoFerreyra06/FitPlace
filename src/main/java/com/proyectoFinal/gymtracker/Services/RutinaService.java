@@ -157,12 +157,38 @@ public class RutinaService {
         }
     }
 
-    public List<RutinaResponse> getRutinasByIdUsuario(Long idUsuario) {
+    public List<RutinaResponse> getRutinasMe(Long idUsuario) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
-        return rutinaRepository.findAll().stream()
-                .filter(rutina -> rutina.getCreador().equals(usuario))
+        return rutinaRepository.findByCreador(usuario)
+                .stream().map(this::mapRutinaResponse).toList();
+    }
+
+    public List<RutinaResponse> getRutinaAlumno (Long idAlumno, Long idEntrenador){
+
+        Usuario entrenador = usuarioRepository.findById(idEntrenador)
+                .orElseThrow(() -> new UserNotFoundException("Entrenador no encontrado"));
+
+        Usuario alumno = usuarioRepository.findById(idAlumno)
+                .orElseThrow(() -> new UserNotFoundException("Alumno no encontrado"));
+
+        if (!entrenador.getRol().equals(Rol.ENTRENADOR)) {
+            throw new BusinessLogicException("Usted no es entrenador");
+        }
+
+        if (alumno.getEntrenador() == null || !alumno.getEntrenador().getId().equals(entrenador.getId())) {
+            throw new BusinessLogicException("Este alumno no está a su cargo");
+        }
+
+        List<Rutina> rutinasDelAlumno = rutinaRepository.findByCreador(alumno);
+
+        Rutina rutinaActiva = alumno.getRutinaActiva();
+        if (rutinaActiva != null && !rutinasDelAlumno.contains(rutinaActiva)) {
+            rutinasDelAlumno.add(rutinaActiva);
+        }
+
+        return rutinasDelAlumno.stream()
                 .map(this::mapRutinaResponse)
                 .toList();
     }
