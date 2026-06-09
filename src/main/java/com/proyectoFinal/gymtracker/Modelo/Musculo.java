@@ -1,5 +1,6 @@
 package com.proyectoFinal.gymtracker.Modelo;
 
+import com.proyectoFinal.gymtracker.Enum.GrupoMuscular;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,4 +20,8 @@ public class Musculo {
 
     @Column(nullable = false, unique = true)
     private String nombre;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "grupo_muscular", nullable = false)
+    private GrupoMuscular grupoMuscular;
 }

@@ -1,5 +1,8 @@
 package com.proyectoFinal.gymtracker.Controllers;
 
+import com.proyectoFinal.gymtracker.DTO.Request.MusculoRequest;
+import com.proyectoFinal.gymtracker.DTO.Response.MusculoResponse;
+import com.proyectoFinal.gymtracker.Enum.GrupoMuscular;
 import com.proyectoFinal.gymtracker.Modelo.Musculo;
 import com.proyectoFinal.gymtracker.Services.MusculoService;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +23,12 @@ public class MusculoController {
     private final MusculoService musculoService;
 
     @PostMapping
-    public ResponseEntity<Musculo> addMusculo(@RequestBody Musculo musculo){
+    public ResponseEntity<MusculoResponse> addMusculo(@RequestBody MusculoRequest musculo){
         return ResponseEntity.status(HttpStatus.CREATED).body(musculoService.addMusculo(musculo));
     }
 
     @PostMapping("/lote")
-    public ResponseEntity<List<Musculo>> addMusculos(@RequestBody List<Musculo> musculos){
+    public ResponseEntity<List<MusculoResponse>> addMusculos(@RequestBody List<MusculoRequest> musculos){
         return ResponseEntity.status(HttpStatus.CREATED).body(musculoService.addMusculos(musculos));
     }
 
@@ -36,17 +39,23 @@ public class MusculoController {
     }
 
     @GetMapping("/{idMusculo}")
-    public ResponseEntity<Musculo> getMusculo(@PathVariable Long idMusculo){
+    public ResponseEntity<MusculoResponse> getMusculo(@PathVariable Long idMusculo){
         return ResponseEntity.ok(musculoService.getMusculoById(idMusculo));
     }
 
     @GetMapping
-    public ResponseEntity<Page<Musculo>> getMusculos(@PageableDefault(size = 10) Pageable pageable){
+    public ResponseEntity<Page<MusculoResponse>> getMusculos(@PageableDefault(size = 10) Pageable pageable){
         return ResponseEntity.status(HttpStatus.OK).body(musculoService.getMusculos(pageable));
     }
 
-    @PutMapping
-    public ResponseEntity<Musculo> updateNombreMusculo(@RequestBody Musculo musculo){
-        return ResponseEntity.status(HttpStatus.OK).body(musculoService.updateMusculo(musculo));
+    @PutMapping("/{idMusculo}")
+    public ResponseEntity<MusculoResponse> updateNombreMusculo(@RequestBody MusculoRequest musculo,
+                                                               @PathVariable Long idMusculo){
+        return ResponseEntity.status(HttpStatus.OK).body(musculoService.updateMusculo(musculo, idMusculo));
+    }
+
+    @GetMapping("/grupoMuscular")
+    public ResponseEntity<List<MusculoResponse>> getByGrupoMuscular(@RequestParam GrupoMuscular grupoMuscular){
+        return ResponseEntity.status(HttpStatus.OK).body(musculoService.getByGrupoMuscular(grupoMuscular));
     }
 }
