@@ -51,4 +51,12 @@ public class GimnasioController {
     public ResponseEntity<GimnasioResponse> editarGimnasio(@Valid @RequestBody GimnasioUpdateRequest request) {
         return ResponseEntity.ok(gimnasioService.actualizarGimnasio(request));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteGimnasio(@PathVariable Long id){
+
+        gimnasioService.eliminarGimnasio(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 }

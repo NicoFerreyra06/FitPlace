@@ -109,6 +109,12 @@ public class GimnasioService {
         return gimnasioToResponse(gimnasio);
     }
 
+    public void  eliminarGimnasio(Long idGimnasio){
+        Gimnasio gimnasio = gimnasioRepository.findById(idGimnasio)
+                .orElseThrow(() -> new ResourceNotFoundException("Gimnasio no encontrado"));
+        gimnasioRepository.delete(gimnasio);
+    }
+
     private GimnasioResponse gimnasioToResponse(Gimnasio gimnasio){
         return GimnasioResponse.builder()
                 .id(gimnasio.getId())
