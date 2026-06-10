@@ -1,8 +1,10 @@
 package com.proyectoFinal.gymtracker.Services;
 
+import com.proyectoFinal.gymtracker.Config.JwtService;
 import com.proyectoFinal.gymtracker.DTO.Request.LoginRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.UsuarioRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.AmigoResponse;
+import com.proyectoFinal.gymtracker.DTO.Response.LoginResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
 import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
@@ -18,6 +20,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,31 +38,9 @@ public class UsuarioService {
     private final PasswordEncoder passwordEncoder;
     private final UsuarioRepository usuarioRepository;
     private final RutinaRepository rutinaRepository;
-
-    private UsuarioResponse toResponse(Usuario usuario) {
-        return UsuarioResponse.builder()
-                .id(usuario.getId())
-                .username(usuario.getUsername())
-                .email(usuario.getEmail())
-                .rol(usuario.getRol())
-                .codigoAmigo(usuario.getCodigoAmigo())
-                .peso(usuario.getPeso())
-                .altura(usuario.getAltura())
-                .imc(usuario.getImc())
-                .categoriaImc(calcularCategoriaImc(usuario.getImc()))
-                .rachaActualDias(usuario.getRachaActualDias())
-                .rachaMaximaDias(usuario.getRachaMaximaDias()).build();
-    }
-
-    private String calcularCategoriaImc(Double imc) {
-        if (imc == null || imc <= 0) return null;
-        if (imc < 18.5) return "Bajo peso";
-        if (imc >= 18.5 && imc < 25.0) return "normal";
-        if (imc >= 25.0 && imc < 30.0) return "Exceso de peso";
-        if (imc >= 30.0 && imc < 35.0 ) return "Obesidad grado 1";
-        if (imc >= 35.0 && imc < 40.0) return "Obesidad grado 2";
-        return "Obesidad grado 3";
-    }
+    private final AuthenticationManager authenticationManager;
+    private final UserDetailsService userDetailsService;
+    private final JwtService jwtService;
 
     public UsuarioResponse registrar(UsuarioRequest usuarioRequest) {
 
@@ -87,15 +71,17 @@ public class UsuarioService {
         return toResponse(saved);
     }
 
-    public UsuarioResponse login(LoginRequest loginRequest) {
+    public LoginResponse login(LoginRequest request) {
 
-        Usuario usuario = usuarioRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+        // El AuthenticationManager busca el mail y comprueba que la password encriptada coincida
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+        );
 
-        if (!passwordEncoder.matches(loginRequest.getPassword(), usuario.getPassword())) {
-            throw new BusinessLogicException("Contrasena incorrecta");
-        }
-        return toResponse(usuario);
+        // Si la contraseña era correcta, fabricamos la "pulsera" (el token)
+        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
+        String token = jwtService.generarToken(userDetails);
+        return new LoginResponse(token);
     }
 
     public UsuarioResponse getById(Long idUsuario) {
@@ -156,14 +142,6 @@ public class UsuarioService {
         return usuario.getAmigos().stream().map(this::toAmigoResponse).toList();
     }
 
-    private AmigoResponse toAmigoResponse(Usuario usuario) {
-        return AmigoResponse.builder()
-                .id(usuario.getId())
-                .username(usuario.getUsername())
-                .rol(usuario.getRol())
-                .rachaActualDias(usuario.getRachaActualDias())
-                .build();
-    }
 
     public UsuarioResponse verPerfilAmigo(Long idUsuario, Long amigoId) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
@@ -220,5 +198,39 @@ public class UsuarioService {
     @PreAuthorize("hasRole('ADMIN')")
     public Page<UsuarioResponse> getUsuarios(Pageable pageable){
         return usuarioRepository.findAll(pageable).map(this::toResponse);
+    }
+
+    private UsuarioResponse toResponse(Usuario usuario) {
+        return UsuarioResponse.builder()
+                .id(usuario.getId())
+                .username(usuario.getUsername())
+                .email(usuario.getEmail())
+                .rol(usuario.getRol())
+                .codigoAmigo(usuario.getCodigoAmigo())
+                .peso(usuario.getPeso())
+                .altura(usuario.getAltura())
+                .imc(usuario.getImc())
+                .categoriaImc(calcularCategoriaImc(usuario.getImc()))
+                .rachaActualDias(usuario.getRachaActualDias())
+                .rachaMaximaDias(usuario.getRachaMaximaDias()).build();
+    }
+
+    private String calcularCategoriaImc(Double imc) {
+        if (imc == null || imc <= 0) return null;
+        if (imc < 18.5) return "Bajo peso";
+        if (imc >= 18.5 && imc < 25.0) return "normal";
+        if (imc >= 25.0 && imc < 30.0) return "Exceso de peso";
+        if (imc >= 30.0 && imc < 35.0 ) return "Obesidad grado 1";
+        if (imc >= 35.0 && imc < 40.0) return "Obesidad grado 2";
+        return "Obesidad grado 3";
+    }
+
+    private AmigoResponse toAmigoResponse(Usuario usuario) {
+        return AmigoResponse.builder()
+                .id(usuario.getId())
+                .username(usuario.getUsername())
+                .rol(usuario.getRol())
+                .rachaActualDias(usuario.getRachaActualDias())
+                .build();
     }
 }
