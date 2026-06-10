@@ -3,6 +3,7 @@ package com.proyectoFinal.gymtracker.Controllers;
 import com.proyectoFinal.gymtracker.DTO.Request.EntrenamientoLogRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.EntrenamientoLogResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.HistorialEjercicioResponse;
+import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Services.EntrenamientoLogService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -26,16 +28,18 @@ public class EntrenamientoLogController {
     private final EntrenamientoLogService entrenamientoLogService;
 
     @PostMapping
-    public ResponseEntity<EntrenamientoLogResponse> addEntrenamientoLog (@Valid @RequestBody EntrenamientoLogRequest entrenamientoLogRequest){
+    public ResponseEntity<EntrenamientoLogResponse> addEntrenamientoLog (@Valid @RequestBody EntrenamientoLogRequest entrenamientoLogRequest,
+                                                                         @AuthenticationPrincipal Usuario usuarioLogueado){
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(entrenamientoLogService.addEntrenamientoLog(entrenamientoLogRequest));
+                .body(entrenamientoLogService.addEntrenamientoLog(entrenamientoLogRequest, usuarioLogueado));
     }
 
     @PutMapping("/{idEntrenamiento}")
     public ResponseEntity<EntrenamientoLogResponse> updateEntrenamiento(@Valid @RequestBody EntrenamientoLogRequest entrenamientoLogRequest,
-                                                                        @PathVariable Long idEntrenamiento){
+                                                                        @PathVariable Long idEntrenamiento,
+                                                                        @AuthenticationPrincipal Usuario usuarioLogueado){
         return ResponseEntity.status(HttpStatus.OK)
-                .body(entrenamientoLogService.updateEntrenamiento(entrenamientoLogRequest, idEntrenamiento));
+                .body(entrenamientoLogService.updateEntrenamiento(entrenamientoLogRequest, idEntrenamiento, usuarioLogueado));
     }
 
     @GetMapping("/{idEntrenamiento}")
@@ -63,8 +67,9 @@ public class EntrenamientoLogController {
     }
 
     @DeleteMapping("/{idEntrenamiento}")
-    public ResponseEntity<Void> deleteEntrenamientoLog(@PathVariable Long idEntrenamiento){
-        entrenamientoLogService.deleteEntrenamientoLog(idEntrenamiento);
+    public ResponseEntity<Void> deleteEntrenamientoLog(@PathVariable Long idEntrenamiento,
+                                                       @AuthenticationPrincipal Usuario usuario){
+        entrenamientoLogService.deleteEntrenamientoLog(idEntrenamiento, usuario);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

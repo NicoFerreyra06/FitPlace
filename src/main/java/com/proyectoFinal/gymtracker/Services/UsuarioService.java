@@ -84,15 +84,19 @@ public class UsuarioService {
         return new LoginResponse(token);
     }
 
-    public UsuarioResponse getById(Long idUsuario) {
-        Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+    public UsuarioResponse verPerfilPropio(Usuario usuario) {
+
         return toResponse(usuario);
     }
 
-    public UsuarioResponse editarPerfil(Long idUsuario, UsuarioRequest request) {
-        Usuario usuario = usuarioRepository.findById(idUsuario)
+    public UsuarioResponse verPerfilOtroUsuario(Long idUsuario){
+        Usuario usuario =  usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+
+        return toResponse(usuario);
+    }
+
+    public UsuarioResponse editarPerfil(Usuario usuario, UsuarioRequest request) {
 
         usuario.setPeso(request.getPeso());
         usuario.setAltura(request.getAltura());
@@ -101,20 +105,18 @@ public class UsuarioService {
     }
 
     @Transactional
-    public UsuarioResponse activarRutina(Long idUsuario, Long idRutina) {
-        Usuario u = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
-        Rutina r = rutinaRepository.findById(idRutina)
+    public UsuarioResponse activarRutina(Usuario usuario, Long idRutina) {
+
+        Rutina rutina = rutinaRepository.findById(idRutina)
                 .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
-        u.setRutinaActiva(r);
-        u.setRutinaActivaDesde(LocalDate.now());
-        return toResponse(usuarioRepository.save(u));
+        usuario.setRutinaActiva(rutina);
+        usuario.setRutinaActivaDesde(LocalDate.now());
+        return toResponse(usuarioRepository.save(usuario));
     }
 
     @Transactional
-    public UsuarioResponse agregarAmigo(Long idUsuario, String codigoAmigo) {
-        Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+    public UsuarioResponse agregarAmigo(Usuario usuario, String codigoAmigo) {
+
         Usuario amigo = usuarioRepository.findByCodigoAmigo(codigoAmigo)
                 .orElseThrow(() -> new ResourceNotFoundException("No existe usuario con ese código"));
 
@@ -128,24 +130,17 @@ public class UsuarioService {
     }
 
     @Transactional
-    public UsuarioResponse eliminarAmigo(Long amigoId, Long usuarioId) {
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
-
+    public UsuarioResponse eliminarAmigo(Long amigoId, Usuario usuario) {
         usuario.getAmigos().removeIf(amigo -> amigo.getId().equals(amigoId));
         return toResponse(usuarioRepository.save(usuario));
     }
 
-    public List<AmigoResponse> getAmigos(Long idUsuario) {
-        Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+    public List<AmigoResponse> getAmigos(Usuario usuario) {
         return usuario.getAmigos().stream().map(this::toAmigoResponse).toList();
     }
 
 
-    public UsuarioResponse verPerfilAmigo(Long idUsuario, Long amigoId) {
-        Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+    public UsuarioResponse verPerfilAmigo(Usuario usuario, Long amigoId) {
 
         Usuario amigo = usuarioRepository.findById(amigoId)
                 .orElseThrow(() -> new UserNotFoundException("Amigo no encontrado"));
@@ -159,17 +154,14 @@ public class UsuarioService {
     }
 
     @Transactional
-    public UsuarioResponse asignarEntrenador(Long entrenadorId, Long usuarioId){
+    public UsuarioResponse asignarEntrenador(Long entrenadorId, Usuario usuario){
         Usuario entrenador = usuarioRepository.findById(entrenadorId)
                 .orElseThrow(() -> new UserNotFoundException("Entrenador no encontrado"));
 
         if (!entrenador.getRol().equals(Rol.ENTRENADOR))
             throw new BusinessLogicException("El usuario seleccionado no es un entrenador");
 
-        if (entrenadorId.equals(usuarioId)) throw new BusinessLogicException("No se puede asignar a si mismo como entrenador");
-
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+        if (entrenadorId.equals(usuario.getId())) throw new BusinessLogicException("No se puede asignar a si mismo como entrenador");
 
         usuario.setEntrenador(entrenador);
         return toResponse(usuarioRepository.save(usuario));

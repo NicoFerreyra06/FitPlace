@@ -36,50 +36,56 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuarioService.login(loginRequest));
     }
 
-    //agregado asi se ve el perfil propio
+    //Ver perfil
+    @GetMapping("/me")
+    public ResponseEntity<UsuarioResponse> verPerfilPropio(@AuthenticationPrincipal Usuario usuario) {
+        return ResponseEntity.ok(usuarioService.verPerfilPropio(usuario));
+    }
+
     @GetMapping("/{idUsuario}")
-    public ResponseEntity<UsuarioResponse> getUsuario(@PathVariable Long idUsuario) {
-        return ResponseEntity.ok(usuarioService.getById(idUsuario));
+    public ResponseEntity<UsuarioResponse> verPerfilOtroUsuario(@PathVariable Long idUsuario) {
+        return ResponseEntity.ok(usuarioService.verPerfilOtroUsuario(idUsuario));
     }
 
-    @PutMapping("/{idUsuario}")
-    public ResponseEntity<UsuarioResponse> editarPerfil(@PathVariable Long idUsuario,
+    @PutMapping("/me")
+    public ResponseEntity<UsuarioResponse> editarPerfil(@AuthenticationPrincipal Usuario usuario,
                                                         @Valid @RequestBody UsuarioRequest request) {
-        return ResponseEntity.ok(usuarioService.editarPerfil(idUsuario, request));
-    } //se va a recibir todo el usuario solo para tocar altura y peso
-      //si les parece bien dejarlo asi, sino hay que crear otra clase request solo con 2 campos
-
-    @PutMapping("/{idUsuario}/rutina-activa/{idRutina}")
-    public ResponseEntity<UsuarioResponse> activarRutina(@PathVariable Long idUsuario, @PathVariable Long idRutina) {
-        return ResponseEntity.ok(usuarioService.activarRutina(idUsuario, idRutina));
+        return ResponseEntity.ok(usuarioService.editarPerfil(usuario, request));
     }
 
-    @PostMapping("/{idUsuario}/amigos/{codigoAmigo}")
-    public ResponseEntity<UsuarioResponse> agregarAmigo(@PathVariable Long idUsuario,
+    @PutMapping("/me/rutina-activa/{idRutina}")
+    public ResponseEntity<UsuarioResponse> activarRutina(@AuthenticationPrincipal Usuario usuario,
+                                                         @PathVariable Long idRutina) {
+        return ResponseEntity.ok(usuarioService.activarRutina(usuario, idRutina));
+    }
+
+    @PostMapping("/me/amigos/{codigoAmigo}")
+    public ResponseEntity<UsuarioResponse> agregarAmigo(@AuthenticationPrincipal Usuario usuario,
                                                         @PathVariable String codigoAmigo) {
-        return ResponseEntity.ok(usuarioService.agregarAmigo(idUsuario, codigoAmigo));
+        return ResponseEntity.ok(usuarioService.agregarAmigo(usuario, codigoAmigo));
     }
 
-    @DeleteMapping("/amigos/{amigoId}")
+    @DeleteMapping("/me/amigos/{amigoId}")
     public ResponseEntity<UsuarioResponse> eliminarAmigo(@PathVariable Long amigoId,
                                                          @AuthenticationPrincipal Usuario usuario) {
-        return ResponseEntity.ok(usuarioService.eliminarAmigo(amigoId, usuario.getId()));
+        return ResponseEntity.ok(usuarioService.eliminarAmigo(amigoId, usuario));
     }
 
-    @GetMapping("/{idUsuario}/amigos")
-    public ResponseEntity<List<AmigoResponse>> getAmigos(@PathVariable Long idUsuario) {
-        return ResponseEntity.ok(usuarioService.getAmigos(idUsuario));
+    @GetMapping("/me/amigos")
+    public ResponseEntity<List<AmigoResponse>> getAmigos(@AuthenticationPrincipal Usuario usuario) {
+        return ResponseEntity.ok(usuarioService.getAmigos(usuario));
     }
 
-    @GetMapping("/{idUsuario}/amigos/{amigoId}/perfil")
-    public ResponseEntity<UsuarioResponse> getPerfil(@PathVariable Long idUsuario, @PathVariable Long amigoId) {
-        return ResponseEntity.ok(usuarioService.verPerfilAmigo(idUsuario, amigoId));
+    @GetMapping("/me/amigos/{amigoId}/perfil")
+    public ResponseEntity<UsuarioResponse> getPerfilAmigo(@AuthenticationPrincipal Usuario usuario,
+                                                     @PathVariable Long amigoId) {
+        return ResponseEntity.ok(usuarioService.verPerfilAmigo(usuario, amigoId));
     }
 
     @PutMapping("/me/entrenador/{idEntrenador}")
     public ResponseEntity<UsuarioResponse> asignarEntrenador(@PathVariable Long idEntrenador,
                                                              @AuthenticationPrincipal Usuario usuario ) {
-        return ResponseEntity.ok(usuarioService.asignarEntrenador(idEntrenador, usuario.getId()));
+        return ResponseEntity.ok(usuarioService.asignarEntrenador(idEntrenador, usuario));
     }
 
     @DeleteMapping("/me/entrenador")

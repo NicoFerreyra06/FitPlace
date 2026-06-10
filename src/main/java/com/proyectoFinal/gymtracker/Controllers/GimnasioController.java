@@ -3,6 +3,7 @@ package com.proyectoFinal.gymtracker.Controllers;
 import com.proyectoFinal.gymtracker.DTO.Request.GimnasioRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.GimnasioUpdateRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.GimnasioResponse;
+import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Services.GimnasioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,8 +30,8 @@ public class GimnasioController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<List<GimnasioResponse>> getPropioGimnasios(){
-        return ResponseEntity.ok(gimnasioService.getPropioGimnasios());
+    public ResponseEntity<List<GimnasioResponse>> getPropioGimnasios(@AuthenticationPrincipal Usuario usuario){
+        return ResponseEntity.ok(gimnasioService.getPropioGimnasios(usuario));
     }
 
     @GetMapping("/{id}")
@@ -43,13 +45,15 @@ public class GimnasioController {
     }
 
     @PutMapping("/asignar/{idGimnasio}")
-    public ResponseEntity<GimnasioResponse> asignarGimnasio(@PathVariable Long idGimnasio) {
-        return ResponseEntity.ok(gimnasioService.asignarGimnasio(idGimnasio));
+    public ResponseEntity<GimnasioResponse> asignarGimnasio(@PathVariable Long idGimnasio,
+                                                            @AuthenticationPrincipal Usuario usuario) {
+        return ResponseEntity.ok(gimnasioService.asignarGimnasio(idGimnasio, usuario));
     }
 
     @PutMapping("/me")
-    public ResponseEntity<GimnasioResponse> editarGimnasio(@Valid @RequestBody GimnasioUpdateRequest request) {
-        return ResponseEntity.ok(gimnasioService.actualizarGimnasio(request));
+    public ResponseEntity<GimnasioResponse> editarGimnasio(@Valid @RequestBody GimnasioUpdateRequest request,
+                                                           @AuthenticationPrincipal Usuario usuario) {
+        return ResponseEntity.ok(gimnasioService.actualizarGimnasio(request, usuario));
     }
 
     @DeleteMapping("/{id}")

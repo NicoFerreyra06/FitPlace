@@ -13,9 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 public class EntrenamientoLogRequest {
 
-    @NotNull(message = "Debe indicar el id del usuario")
-    private Long idUsuario;
-
     @NotNull(message = "Debe indicar la rutina que siguio")
     private Long idRutina;
 

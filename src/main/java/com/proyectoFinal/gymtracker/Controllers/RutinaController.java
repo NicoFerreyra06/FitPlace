@@ -25,15 +25,17 @@ public class RutinaController {
     private final RutinaService rutinaService;
 
     @PostMapping
-    public ResponseEntity<RutinaResponse> createRutina(@Valid @RequestBody RutinaRequest rutinaRequest){
+    public ResponseEntity<RutinaResponse> createRutina(@Valid @RequestBody RutinaRequest rutinaRequest,
+                                                       @AuthenticationPrincipal Usuario usuario) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(rutinaService.createRutina(rutinaRequest));
+                .body(rutinaService.createRutina(rutinaRequest, usuario));
     }
 
     @PutMapping("/{idRutina}")
-    public ResponseEntity<RutinaResponse> updateRutina(@Valid @RequestBody RutinaRequest rutinaRequest,
+    public ResponseEntity<RutinaResponse> updateRutina(@AuthenticationPrincipal Usuario usuario,
+                                                       @Valid @RequestBody RutinaRequest rutinaRequest,
                                                        @PathVariable Long idRutina){
-        return ResponseEntity.status(HttpStatus.OK).body(rutinaService.updateRutina(rutinaRequest,idRutina));
+        return ResponseEntity.status(HttpStatus.OK).body(rutinaService.updateRutina(usuario, rutinaRequest, idRutina));
     }
 
     @GetMapping("/{idRutina}")
@@ -47,14 +49,15 @@ public class RutinaController {
     }
 
     @DeleteMapping("/{idRutina}")
-    public ResponseEntity<Void> deleteRutinaById(@PathVariable Long idRutina){
-        rutinaService.deleteRutina(idRutina);
+    public ResponseEntity<Void> deleteRutinaById(@AuthenticationPrincipal Usuario usuario,
+                                                 @PathVariable Long idRutina){
+        rutinaService.deleteRutina(usuario, idRutina);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @GetMapping("/{idUsuario}/hoy")
-    public ResponseEntity<DiaRutinaResponse> getDiaActual(@PathVariable Long idUsuario) {
-        return ResponseEntity.ok(rutinaService.getDiaRutinaActual(idUsuario));
+    @GetMapping("/me/hoy")
+    public ResponseEntity<DiaRutinaResponse> getDiaActual(@AuthenticationPrincipal Usuario usuario) {
+        return ResponseEntity.ok(rutinaService.getDiaRutinaActual(usuario));
     }
 
     @GetMapping("/me")

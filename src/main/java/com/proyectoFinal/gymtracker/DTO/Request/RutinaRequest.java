@@ -14,7 +14,6 @@ public class RutinaRequest {
     private String nombre;
     @PositiveOrZero
     private Double precio;
-    @NotNull(message = "El id del creador es obligatorio")
-    private Long creadorId;
+
     private List<DiaRutinaRequest> dias;
 }

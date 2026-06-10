@@ -31,15 +31,14 @@ public class EntrenamientoLogService {
     private final RecordPersonalService  recordPersonalService;
 
     @Transactional
-    public EntrenamientoLogResponse addEntrenamientoLog (EntrenamientoLogRequest entrenamientoLogRequest) {
-        Usuario user = usuarioRepository.findById(entrenamientoLogRequest.getIdUsuario())
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+    public EntrenamientoLogResponse addEntrenamientoLog (EntrenamientoLogRequest entrenamientoLogRequest,
+                                                         Usuario usuarioLogueado) {
 
         Rutina rutina = rutinaRepository.findById(entrenamientoLogRequest.getIdRutina())
                 .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
 
         EntrenamientoLog entrenamientoLog = EntrenamientoLog.builder()
-                .usuario(user).fecha(LocalDate.now()).rutinaEjecutada(rutina).build();
+                .usuario(usuarioLogueado).fecha(LocalDate.now()).rutinaEjecutada(rutina).build();
 
         List<MarcaEjercicio> marcaEjercicioList = entrenamientoLogRequest.getMarcasEjercicio()
                 .stream().map(marca -> {
@@ -49,7 +48,7 @@ public class EntrenamientoLogService {
 
                     //para actualizar el record automaticamente
                     recordPersonalService.actualizarRecordSiCorresponde(
-                            user,
+                            usuarioLogueado,
                             ejercicioRutina.getEjercicio(),
                             marca.getPesoLevantado()
                     );
@@ -71,15 +70,18 @@ public class EntrenamientoLogService {
 
     @Transactional
     public EntrenamientoLogResponse updateEntrenamiento(EntrenamientoLogRequest entrenamientoLogRequest,
-                                                        Long idEntrenamiento) {
+                                                        Long idEntrenamiento,
+                                                        Usuario usuarioLogueado) {
 
         EntrenamientoLog entrenamientoExistente = entrenamientoLogRepository.findById(idEntrenamiento)
                 .orElseThrow(() -> new ResourceNotFoundException("Entrenamiento no encontrado"));
 
+        if (!entrenamientoExistente.getUsuario().getId().equals(usuarioLogueado.getId())) {
+            throw new BusinessLogicException("No tenés permiso para editar un entrenamiento que no es tuyo");
+        }
+
         LocalDate fechaEntrenamiento = entrenamientoExistente.getFecha();
         LocalDate unaSemana = LocalDate.now().minusDays(7);
-
-
 
         if (fechaEntrenamiento.isBefore(unaSemana)) {
             throw new BusinessLogicException("Solo podés editar entrenamientos de hace una semana maximo");
@@ -88,12 +90,8 @@ public class EntrenamientoLogService {
         Rutina rutina = rutinaRepository.findById(entrenamientoLogRequest.getIdRutina())
                         .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
 
-        Usuario user = usuarioRepository.findById(entrenamientoLogRequest.getIdUsuario())
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
-        entrenamientoExistente.setUsuario(user);
         entrenamientoExistente.setRutinaEjecutada(rutina);
-
         entrenamientoExistente.getMarcas().clear();
 
         List<MarcaEjercicio> nuevasMarcas = entrenamientoLogRequest.getMarcasEjercicio()
@@ -102,7 +100,7 @@ public class EntrenamientoLogService {
                             .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
 
                     recordPersonalService.actualizarRecordSiCorresponde(
-                            user,
+                            usuarioLogueado,
                             ejercicioRutina.getEjercicio(),
                             marcaEjercicioRequest.getPesoLevantado()
                     );
@@ -142,8 +140,14 @@ public class EntrenamientoLogService {
         return Map.of(ejercicio.getNombre(), entrenamientoLogRepository.historialEjercicio(idUsuario, idEjercicio));
     }
 
-    public void deleteEntrenamientoLog (Long idEntrenamientoLog) {
-        entrenamientoLogRepository.deleteById(idEntrenamientoLog);
+    public void deleteEntrenamientoLog (Long idEntrenamientoLog, Usuario usuario) {
+
+        EntrenamientoLog entrenamientoLog = entrenamientoLogRepository.findById(idEntrenamientoLog)
+                .orElseThrow(() -> new ResourceNotFoundException("Entrenamiento no encontrado"));
+
+        if (!entrenamientoLog.getUsuario().getId().equals(usuario.getId())) throw new UserNotFoundException("Usted no es duenio de este entrenamiento");
+
+        entrenamientoLogRepository.delete(entrenamientoLog);
     }
 
     // === Metodos auxiliares ===

@@ -49,9 +49,7 @@ public class GimnasioService {
          return gimnasioToResponse(gimnasioRepository.save(gimnasio));
     }
 
-    public List<GimnasioResponse> getPropioGimnasios(){
-        Usuario admin = (Usuario) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
+    public List<GimnasioResponse> getPropioGimnasios(Usuario admin){
 
         List<Gimnasio> gimnasios = gimnasioRepository.findByAdminId(admin.getId());
 
@@ -63,15 +61,9 @@ public class GimnasioService {
     }
 
     @Transactional
-    public GimnasioResponse asignarGimnasio(Long idGimnasio){
+    public GimnasioResponse asignarGimnasio(Long idGimnasio, Usuario usuario){
         Gimnasio gimnasio =  gimnasioRepository.findById(idGimnasio)
                 .orElseThrow(() -> new BusinessLogicException("Gimnasio no encontrado"));
-
-        Usuario principal = (Usuario) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
-
-        Usuario usuario = usuarioRepository.findById(principal.getId())
-                        .orElseThrow(() -> new BusinessLogicException("Usuario no encontrado"));
 
         usuario.setGimnasio(gimnasio);
         usuarioRepository.save(usuario);
@@ -82,10 +74,7 @@ public class GimnasioService {
     }
 
     @Transactional
-    public GimnasioResponse actualizarGimnasio(GimnasioUpdateRequest request){
-
-        Usuario admin =  (Usuario) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
+    public GimnasioResponse actualizarGimnasio(GimnasioUpdateRequest request, Usuario admin){
 
         Gimnasio gimnasio = gimnasioRepository.findByAdminId(admin.getId())
                 .stream()

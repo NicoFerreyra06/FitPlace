@@ -35,9 +35,7 @@ public class RutinaService {
     private final DiaRutinaRepository diaRutinaRepository;
 
     @Transactional
-    public RutinaResponse createRutina(RutinaRequest rutinaRequest) {
-        Usuario creador = usuarioRepository.findById(rutinaRequest.getCreadorId())
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+    public RutinaResponse createRutina(RutinaRequest rutinaRequest, Usuario creador) {
 
         validarPrecioYrol(rutinaRequest, creador);
 
@@ -78,14 +76,14 @@ public class RutinaService {
     }
 
     @Transactional
-    public RutinaResponse updateRutina(RutinaRequest rutinaRequest, Long idRutina){
-        Usuario usuario = usuarioRepository.findById(rutinaRequest.getCreadorId())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
+    public RutinaResponse updateRutina(Usuario usuario, RutinaRequest rutinaRequest, Long idRutina){
         Rutina rutinaExistente = rutinaRepository.findById(idRutina)
                 .orElseThrow(()-> new RuntimeException("Rutina no encontrada"));
 
-        rutinaExistente.setCreador(usuario);
+        if(!rutinaExistente.getCreador().getId().equals(usuario.getId())) {
+            throw new BusinessLogicException("No tienes permiso para editar esta rutina");
+        }
+
         rutinaExistente.setNombre(rutinaRequest.getNombre());
 
         validarPrecioYrol(rutinaRequest,usuario);
@@ -133,24 +131,27 @@ public class RutinaService {
     }
 
     //para ver la rutina de hoy
-    public DiaRutinaResponse getDiaRutinaActual(Long idUsuario) {
-        Usuario u = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
-        if (u.getRutinaActiva() == null) throw new BusinessLogicException("No tiene rutina activa");
+    public DiaRutinaResponse getDiaRutinaActual(Usuario usuario) {
+
+        if (usuario.getRutinaActiva() == null) throw new BusinessLogicException("No tiene rutina activa");
         DayOfWeek hoy = LocalDate.now().getDayOfWeek();
         DiaRutina dia = diaRutinaRepository
-                .findByRutinaIdAndDiaDeLaSemana(u.getRutinaActiva().getId(), hoy)
+                .findByRutinaIdAndDiaDeLaSemana(usuario.getRutinaActiva().getId(), hoy)
                 .orElseThrow(() -> new BusinessLogicException("La rutina no tiene día configurado para hoy"));
         return mapToDiaRutinaResponse(dia);
     }
         
-    public void deleteRutina(Long idRutina) {
-        if (!rutinaRepository.existsById(idRutina)) {
-            throw new ResourceNotFoundException("La rutina no existe");
+    public void deleteRutina(Usuario usuario, Long idRutina) {
+
+        Rutina rutina = rutinaRepository.findById(idRutina)
+                .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
+
+        if (!rutina.getCreador().getId().equals(usuario.getId())) {
+            throw new BusinessLogicException("No sos el creador de la rutina para eliminarla");
         }
 
         try {
-            rutinaRepository.deleteById(idRutina);
+            rutinaRepository.delete(rutina);
 
         } catch (DataIntegrityViolationException e) {
             throw new BusinessLogicException("No se puede eliminar la rutina porque actualmente está asignada a un usuario o existe en un historial de entrenamiento.");
