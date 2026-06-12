@@ -2,9 +2,17 @@ package com.proyectoFinal.gymtracker.Enum;
 
 public enum GrupoMuscular {
     PECHO,
-    ESPALDA,
+    DORSAL,
+    TRAPECIO,
     CORE,
-    BRAZOS,
-    HOMBRO,
-    PIERNAS
+    BICEPS,
+    TRICEPS,
+    HOMBRO_ANTERIOR,
+    HOMBRO_LATERAL,
+    HOMBRO_POSTERIOR,
+    CUADRICEPS,
+    ISQUIOTIBIALES,
+    ADUCTORES,
+    GEMELOS
+
 }
