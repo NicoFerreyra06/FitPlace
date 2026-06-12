@@ -9,6 +9,8 @@ import java.util.List;
 
 @Repository
 public interface RutinaRepository extends JpaRepository<Rutina,Long> {
+
     List<Rutina> findByCreador(Usuario creador);
+    long countByCreador(Usuario creador);
 
 }
