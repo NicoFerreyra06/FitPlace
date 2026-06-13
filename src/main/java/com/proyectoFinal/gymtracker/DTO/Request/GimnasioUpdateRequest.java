@@ -25,9 +25,6 @@ public class GimnasioUpdateRequest {
     private LocalTime horarioCierre;
 
     @NotEmpty
-    @ElementCollection(targetClass = DayOfWeek.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "gimnasio_dias", joinColumns = @JoinColumn(name = "gimnasio_id"))
-    @Enumerated(EnumType.STRING)
     private List<DayOfWeek> diasAbierto;
 
     @DecimalMin(value = "0.1", message = "El precio de la cuota debe ser mayor a 0.1")

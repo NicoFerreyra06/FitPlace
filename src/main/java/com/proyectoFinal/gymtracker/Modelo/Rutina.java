@@ -1,15 +1,14 @@
 package com.proyectoFinal.gymtracker.Modelo;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -32,6 +31,7 @@ public class Rutina {
     // Solo si creador.rol == ENTRENADOR se debería permitir un precio mayor a 0
     private Double precio; 
 
+    @Builder.Default
     @OneToMany(mappedBy = "rutina", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DiaRutina> dias;
+    private List<DiaRutina> dias = new ArrayList<>();
 }

@@ -48,7 +48,7 @@ public class GlobalHandlerException {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpectedException(Exception ex) {
-        return new ResponseEntity<>(new ErrorResponse(("Error interno"),  LocalDateTime.now().toString()),
+        return new ResponseEntity<>(new ErrorResponse((ex.getMessage()),  LocalDateTime.now().toString()),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

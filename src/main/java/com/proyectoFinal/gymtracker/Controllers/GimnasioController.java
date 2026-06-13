@@ -44,12 +44,6 @@ public class GimnasioController {
         return ResponseEntity.ok(gimnasioService.getAllGimnasios(pageable));
     }
 
-    @PutMapping("/asignar/{idGimnasio}")
-    public ResponseEntity<GimnasioResponse> asignarGimnasio(@PathVariable Long idGimnasio,
-                                                            @AuthenticationPrincipal Usuario usuario) {
-        return ResponseEntity.ok(gimnasioService.asignarGimnasio(idGimnasio, usuario));
-    }
-
     @PutMapping("/me")
     public ResponseEntity<GimnasioResponse> editarGimnasio(@Valid @RequestBody GimnasioUpdateRequest request,
                                                            @AuthenticationPrincipal Usuario usuario) {

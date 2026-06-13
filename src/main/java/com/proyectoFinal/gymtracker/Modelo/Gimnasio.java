@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -35,18 +36,20 @@ public class Gimnasio {
     @JoinColumn(nullable = false, name = "admin_id")
     private Usuario admin;
 
+    @Builder.Default
     @OneToMany(mappedBy = "gimnasio")
-    private List<Usuario> miembros;
+    private List<Usuario> miembros = new ArrayList<>();
 
     @Column(nullable = false)
     private LocalTime horarioApertura;
     @Column(nullable = false)
     private LocalTime horarioCierre;
 
+    @Builder.Default
     @NotEmpty
     @ElementCollection(targetClass = DayOfWeek.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "gimnasio_dias", joinColumns = @JoinColumn(name = "gimnasio_id"))
     @Enumerated(EnumType.STRING)
-    private List<DayOfWeek> diasAbierto;
+    private List<DayOfWeek> diasAbierto = new ArrayList<>();
 
 }

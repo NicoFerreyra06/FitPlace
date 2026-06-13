@@ -1,16 +1,15 @@
 package com.proyectoFinal.gymtracker.Modelo;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -31,6 +30,7 @@ public class EntrenamientoLog {
     @JoinColumn(name = "rutina_ejecutada_id")
     private Rutina rutinaEjecutada;
 
+    @Builder.Default
     @OneToMany(mappedBy = "entrenamientoLog", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MarcaEjercicio> marcas;
+    private List<MarcaEjercicio> marcas = new ArrayList<>();
 }

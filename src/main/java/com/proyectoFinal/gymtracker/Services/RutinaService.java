@@ -78,7 +78,7 @@ public class RutinaService {
     @Transactional
     public RutinaResponse updateRutina(Usuario usuario, RutinaRequest rutinaRequest, Long idRutina){
         Rutina rutinaExistente = rutinaRepository.findById(idRutina)
-                .orElseThrow(()-> new RuntimeException("Rutina no encontrada"));
+                .orElseThrow(()-> new BusinessLogicException("Rutina no encontrada"));
 
         if(!rutinaExistente.getCreador().getId().equals(usuario.getId())) {
             throw new BusinessLogicException("No tienes permiso para editar esta rutina");

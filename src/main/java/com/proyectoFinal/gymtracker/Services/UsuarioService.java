@@ -115,7 +115,9 @@ public class UsuarioService {
     }
 
     @Transactional
-    public UsuarioResponse agregarAmigo(Usuario usuario, String codigoAmigo) {
+    public UsuarioResponse agregarAmigo(Usuario usuarioLog, String codigoAmigo) {
+        Usuario usuario = usuarioRepository.findById(usuarioLog.getId())
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
         Usuario amigo = usuarioRepository.findByCodigoAmigo(codigoAmigo)
                 .orElseThrow(() -> new ResourceNotFoundException("No existe usuario con ese código"));
@@ -130,17 +132,25 @@ public class UsuarioService {
     }
 
     @Transactional
-    public UsuarioResponse eliminarAmigo(Long amigoId, Usuario usuario) {
+    public UsuarioResponse eliminarAmigo(Long amigoId, Usuario usuarioLog) {
+
+        Usuario usuario = usuarioRepository.findById(usuarioLog.getId())
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+
         usuario.getAmigos().removeIf(amigo -> amigo.getId().equals(amigoId));
         return toResponse(usuarioRepository.save(usuario));
     }
 
-    public List<AmigoResponse> getAmigos(Usuario usuario) {
+    public List<AmigoResponse> getAmigos(Usuario usuarioLog) {
+        Usuario usuario = usuarioRepository.findById(usuarioLog.getId())
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+
         return usuario.getAmigos().stream().map(this::toAmigoResponse).toList();
     }
 
-
-    public UsuarioResponse verPerfilAmigo(Usuario usuario, Long amigoId) {
+    public UsuarioResponse verPerfilAmigo(Usuario usuarioLog, Long amigoId) {
+        Usuario usuario = usuarioRepository.findById(usuarioLog.getId())
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
         Usuario amigo = usuarioRepository.findById(amigoId)
                 .orElseThrow(() -> new UserNotFoundException("Amigo no encontrado"));
@@ -184,6 +194,8 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
+        if(usuario.getEntrenador() == null) throw new BusinessLogicException("No tiene entrenador");
+
         return toResponse(usuario.getEntrenador());
     }
 
@@ -210,7 +222,7 @@ public class UsuarioService {
     private String calcularCategoriaImc(Double imc) {
         if (imc == null || imc <= 0) return null;
         if (imc < 18.5) return "Bajo peso";
-        if (imc >= 18.5 && imc < 25.0) return "normal";
+        if (imc >= 18.5 && imc < 25.0) return "Peso Normal";
         if (imc >= 25.0 && imc < 30.0) return "Exceso de peso";
         if (imc >= 30.0 && imc < 35.0 ) return "Obesidad grado 1";
         if (imc >= 35.0 && imc < 40.0) return "Obesidad grado 2";

@@ -10,7 +10,8 @@ public class UsuarioRequest {
     @Email
     @NotBlank(message = "Debe indicar su email")
     private String email;
-    @NotBlank @Size(min = 3, max = 30, message = "La contraseña debe tener entre 3 y 30 caracteres")
+    @NotBlank
+    @Size(min = 3, max = 30, message = "La contraseña debe tener entre 3 y 30 caracteres")
     private String password;
 
     @NotNull(message = "El peso es obligatorio")

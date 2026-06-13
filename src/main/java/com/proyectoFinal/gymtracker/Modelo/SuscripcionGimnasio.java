@@ -1,16 +1,16 @@
 package com.proyectoFinal.gymtracker.Modelo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.proyectoFinal.gymtracker.Enum.EstadoSuscripcion;
+import com.proyectoFinal.gymtracker.Enum.MetodoPago;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -26,6 +26,7 @@ public class SuscripcionGimnasio {
 
     @ManyToOne
     @JoinColumn(name = "id_usuario")
+    @JsonIgnore
     private Usuario usuario;
 
     @Column(name = "fecha_inicio")
@@ -35,6 +36,10 @@ public class SuscripcionGimnasio {
     private LocalDate fechaFin;
 
     private double costo;
+
+    @Column(name = "metodo_pago")
+    @Enumerated(EnumType.STRING)
+    private MetodoPago metodoPago;
 
     @Column(name = "estado_suscripcion")
     @Enumerated(EnumType.STRING)

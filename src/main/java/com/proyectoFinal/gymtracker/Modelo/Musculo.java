@@ -2,13 +2,11 @@ package com.proyectoFinal.gymtracker.Modelo;
 
 import com.proyectoFinal.gymtracker.Enum.GrupoMuscular;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class Usuario implements UserDetails {
 
     @Id
@@ -50,6 +52,7 @@ public class Usuario implements UserDetails {
     @JsonIgnore
     private Gimnasio gimnasio;
 
+    @Builder.Default
     @ManyToMany
     @JoinTable(
             name = "amigos",
@@ -57,7 +60,7 @@ public class Usuario implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "amigo_id")
     )
     @JsonIgnore
-    private List<Usuario> amigos;
+    private List<Usuario> amigos = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rutina_activa_id")
@@ -73,9 +76,10 @@ public class Usuario implements UserDetails {
     private Usuario entrenador;
 
     // Un entrenador puede tener muchos clientes
+    @Builder.Default
     @JsonIgnore
     @OneToMany(mappedBy = "entrenador", fetch = FetchType.LAZY)
-    private List<Usuario> clientes;
+    private List<Usuario> clientes = new ArrayList<>();
 
     // La racha se podría calcular dinámicamente con EntrenamientoLog,
     // pero guardamos un caché de la racha actual para mostrarla rápido.

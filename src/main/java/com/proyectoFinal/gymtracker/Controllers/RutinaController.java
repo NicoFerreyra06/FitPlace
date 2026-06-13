@@ -65,7 +65,7 @@ public class RutinaController {
         return ResponseEntity.ok(rutinaService.getRutinasMe(usuario.getId()));
     }
 
-    @GetMapping("/{idAlumno}")
+    @GetMapping("/alumno/{idAlumno}")
     public ResponseEntity<List<RutinaResponse>> getRutinaAlumno(@PathVariable Long idAlumno,
                                                                 @AuthenticationPrincipal Usuario usuario){
         return ResponseEntity.ok(rutinaService.getRutinaAlumno(idAlumno,usuario.getId()));
