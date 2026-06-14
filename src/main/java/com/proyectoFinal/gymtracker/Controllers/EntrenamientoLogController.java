@@ -52,10 +52,12 @@ public class EntrenamientoLogController {
     public ResponseEntity<Page<EntrenamientoLogResponse>> getEntrenamientos(@PageableDefault(size = 10) Pageable pageable,
                                                                             @PathVariable Long idUsuario,
                                                                             @RequestParam (required = false) LocalDate desde,
-                                                                            @RequestParam (required = false) LocalDate hasta){
+                                                                            @RequestParam (required = false) LocalDate hasta,
+                                                                            @AuthenticationPrincipal Usuario usuarioLogueado) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(entrenamientoLogService.getEntrenamientos(idUsuario, pageable, desde, hasta));
+                .body(entrenamientoLogService.getEntrenamientos(idUsuario, pageable, desde, hasta, usuarioLogueado));
     }
+
 
     @GetMapping("/usuario/{idUsuario}/ejercicio/{idEjercicio}")
     public ResponseEntity<Map<String, List<HistorialEjercicioResponse>>> getHistorialEjercicio(

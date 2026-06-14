@@ -4,6 +4,7 @@ import com.proyectoFinal.gymtracker.DTO.Request.EntrenamientoLogRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.EntrenamientoLogResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.HistorialEjercicioResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.MarcaEjercicioResponse;
+import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
@@ -29,6 +30,7 @@ public class EntrenamientoLogService {
     private final EjercicioRutinaRepository ejercicioRutinaRepository;
     private final EjercicioRepository ejercicioRepository;
     private final RecordPersonalService  recordPersonalService;
+    private static final int LIMITE_HISTORIAL_DIAS = 30;
 
     @Transactional
     public EntrenamientoLogResponse addEntrenamientoLog (EntrenamientoLogRequest entrenamientoLogRequest,
@@ -135,10 +137,17 @@ public class EntrenamientoLogService {
         return mapEntrenamientoLogResponse(entrenamientoLog);
     }
 
-    public Page<EntrenamientoLogResponse> getEntrenamientos(Long idUsuario, Pageable pageable, LocalDate desde, LocalDate hasta) {
+    public Page<EntrenamientoLogResponse> getEntrenamientos(Long idUsuario, Pageable pageable, LocalDate desde, LocalDate hasta, Usuario usuarioLogueado) {
         Usuario usuario =  usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
+        if (usuarioLogueado.getRol().equals(Rol.USUARIO)) {
+            LocalDate limiteBasico = LocalDate.now().minusDays(LIMITE_HISTORIAL_DIAS);
+
+            if (desde == null || desde.isBefore(limiteBasico)) {
+                desde = limiteBasico;
+            }
+        }
         Page<EntrenamientoLog> entrenamientosUsuario = entrenamientoLogRepository.findByUsuarioIdAndFechas(usuario.getId(), desde, hasta, pageable);
 
         return entrenamientosUsuario.map(this::mapEntrenamientoLogResponse);
