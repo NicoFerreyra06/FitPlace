@@ -1,6 +1,7 @@
 package com.proyectoFinal.gymtracker.Controllers;
 
 import com.proyectoFinal.gymtracker.DTO.Request.LoginRequest;
+import com.proyectoFinal.gymtracker.DTO.Request.PerfilUpdateRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.UsuarioRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.AmigoResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.LoginResponse;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,7 +51,7 @@ public class UsuarioController {
 
     @PutMapping("/me")
     public ResponseEntity<UsuarioResponse> editarPerfil(@AuthenticationPrincipal Usuario usuario,
-                                                        @Valid @RequestBody UsuarioRequest request) {
+                                                        @Valid @RequestBody PerfilUpdateRequest request) {
         return ResponseEntity.ok(usuarioService.editarPerfil(usuario, request));
     }
 
@@ -106,6 +108,12 @@ public class UsuarioController {
     @GetMapping
     public ResponseEntity<Page<UsuarioResponse>> getUsuarios(@PageableDefault (size = 10) Pageable pageable) {
         return ResponseEntity.ok(usuarioService.getUsuarios(pageable));
+    }
+
+    @PutMapping("/{idUsuario}/rol")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UsuarioResponse> cambiarRol(@PathVariable Long idUsuario, @RequestParam com.proyectoFinal.gymtracker.Enum.Rol nuevoRol) {
+        return ResponseEntity.ok(usuarioService.cambiarRol(idUsuario, nuevoRol));
     }
 
 }
