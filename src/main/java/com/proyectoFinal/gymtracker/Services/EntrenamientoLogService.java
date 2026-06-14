@@ -4,6 +4,7 @@ import com.proyectoFinal.gymtracker.DTO.Request.EntrenamientoLogRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.EntrenamientoLogResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.HistorialEjercicioResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.MarcaEjercicioResponse;
+import com.proyectoFinal.gymtracker.DTO.Response.VolumenSemanalResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
@@ -167,6 +168,24 @@ public class EntrenamientoLogService {
         if (!entrenamientoLog.getUsuario().getId().equals(usuario.getId())) throw new UserNotFoundException("Usted no es duenio de este entrenamiento");
 
         entrenamientoLogRepository.delete(entrenamientoLog);
+    }
+
+    public List<HistorialEjercicioResponse> getProgrecionEjercicioPremium(Long idUsuario, Long idEjercicio, Usuario usuarioLogueado) {
+        if (usuarioLogueado.getRol().equals(Rol.USUARIO)) {
+            throw new BusinessLogicException("Esta función es exclusiva de usuarios Premium.");
+        }
+        ejercicioRepository.findById(idEjercicio)
+                .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
+        return entrenamientoLogRepository.historialEjercicio(idUsuario, idEjercicio);
+    }
+
+    public List<VolumenSemanalResponse> getVolumenSemanal(Long idUsuario, Usuario usuarioLogueado) {
+        if (usuarioLogueado.getRol().equals(Rol.USUARIO)) {
+            throw new BusinessLogicException("Esta función es exclusiva de usuarios Premium.");
+        }
+        usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+        return entrenamientoLogRepository.volumenSemanal(idUsuario);
     }
 
     // === Metodos auxiliares ===

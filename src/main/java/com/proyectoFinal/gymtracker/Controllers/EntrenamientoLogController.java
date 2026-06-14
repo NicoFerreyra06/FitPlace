@@ -3,6 +3,7 @@ package com.proyectoFinal.gymtracker.Controllers;
 import com.proyectoFinal.gymtracker.DTO.Request.EntrenamientoLogRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.EntrenamientoLogResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.HistorialEjercicioResponse;
+import com.proyectoFinal.gymtracker.DTO.Response.VolumenSemanalResponse;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Services.EntrenamientoLogService;
 import jakarta.validation.Valid;
@@ -58,7 +59,22 @@ public class EntrenamientoLogController {
                 .body(entrenamientoLogService.getEntrenamientos(idUsuario, pageable, desde, hasta, usuarioLogueado));
     }
 
+    @GetMapping("/usuario/{idUsuario}/ejercicio/{idEjercicio}/progresion")
+    public ResponseEntity<List<HistorialEjercicioResponse>> getProgresionEjercicio(
+            @PathVariable Long idUsuario,
+            @PathVariable Long idEjercicio,
+            @AuthenticationPrincipal Usuario usuarioLogueado) {
+        return ResponseEntity.ok(
+                entrenamientoLogService.getProgrecionEjercicioPremium(idUsuario, idEjercicio, usuarioLogueado));
+    }
 
+    @GetMapping("/usuario/{idUsuario}/volumen-semanal")
+    public ResponseEntity<List<VolumenSemanalResponse>> getVolumenSemanal(
+            @PathVariable Long idUsuario,
+            @AuthenticationPrincipal Usuario usuarioLogueado) {
+        return ResponseEntity.ok(
+                entrenamientoLogService.getVolumenSemanal(idUsuario, usuarioLogueado));
+    }
     @GetMapping("/usuario/{idUsuario}/ejercicio/{idEjercicio}")
     public ResponseEntity<Map<String, List<HistorialEjercicioResponse>>> getHistorialEjercicio(
             @PathVariable Long idUsuario,

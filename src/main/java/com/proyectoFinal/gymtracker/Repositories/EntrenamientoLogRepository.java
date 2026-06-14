@@ -1,6 +1,7 @@
 package com.proyectoFinal.gymtracker.Repositories;
 
 import com.proyectoFinal.gymtracker.DTO.Response.HistorialEjercicioResponse;
+import com.proyectoFinal.gymtracker.DTO.Response.VolumenSemanalResponse;
 import com.proyectoFinal.gymtracker.Modelo.EntrenamientoLog;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,4 +36,13 @@ public interface EntrenamientoLogRepository extends JpaRepository<EntrenamientoL
             @Param("hasta") LocalDate hasta,
             Pageable pageable
     );
+    @Query("SELECT new com.proyectoFinal.gymtracker.DTO.Response.VolumenSemanalResponse(" +
+            "FUNCTION('DATE', e.fecha - FUNCTION('DAYOFWEEK', e.fecha) + 2), " +
+            "SUM(m.pesoLevantado * m.repeticionesLogradas), " +
+            "COUNT(m)) " +
+            "FROM EntrenamientoLog e JOIN e.marcas m " +
+            "WHERE e.usuario.id = :idUsuario " +
+            "GROUP BY FUNCTION('DAYOFWEEK', e.fecha), e.fecha " +
+            "ORDER BY e.fecha ASC")
+    List<VolumenSemanalResponse> volumenSemanal(@Param("idUsuario") Long idUsuario);
 }
