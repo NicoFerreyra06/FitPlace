@@ -138,7 +138,7 @@ public class SuscripcionService {
 
         if (!suscripcionesVencidas.isEmpty()) {
             for (SuscripcionGimnasio suscripcion : suscripcionesVencidas) {
-                suscripcion.setEstadoSuscripcion(EstadoSuscripcion.PENDIENTE);
+                suscripcion.setEstadoSuscripcion(EstadoSuscripcion.VENCIDA);
 
                 Usuario usuario = suscripcion.getUsuario();
                 usuario.setGimnasio(null);
