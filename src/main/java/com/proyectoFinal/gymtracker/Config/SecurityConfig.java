@@ -40,10 +40,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/usuarios").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.POST, "/ejercicios/**", "/musculos/**", "/gimnasios").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/gimnasios/me").hasRole("ADMIN_GIMNASIO")
+
                         .requestMatchers(HttpMethod.PUT, "/ejercicios/**", "/musculos/**", "/gimnasios/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/ejercicios/**", "/musculos/**").hasRole("ADMIN")
-
-                        .requestMatchers(HttpMethod.PUT, "/gimnasios/me").hasRole("ADMIN_GIMNASIO")
 
                         .requestMatchers("/rutinas/**", "/entrenamientos/**").authenticated()
                         .requestMatchers("/usuarios/**").authenticated()
