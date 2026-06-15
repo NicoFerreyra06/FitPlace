@@ -3,6 +3,7 @@ package com.proyectoFinal.gymtracker.Services;
 import com.proyectoFinal.gymtracker.DTO.Request.GimnasioRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.GimnasioUpdateRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.GimnasioResponse;
+import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
@@ -19,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +28,7 @@ public class GimnasioService {
 
     private final GimnasioRepository gimnasioRepository;
     private final UsuarioRepository usuarioRepository;
+    private final UsuarioService usuarioService;
 
     @Transactional
     public GimnasioResponse createGimnasio(GimnasioRequest request){
@@ -98,6 +101,26 @@ public class GimnasioService {
         }
 
         gimnasioRepository.delete(gimnasio);
+    }
+
+    @Transactional
+    public List<UsuarioResponse> traerUsuarios(Usuario adminAutenticado, Long idGimnasio) {
+
+        // 1. Buscamos el gimnasio pacientemente
+        Gimnasio gimnasio = gimnasioRepository.findById(idGimnasio)
+                .orElseThrow(() -> new ResourceNotFoundException("Gimnasio no encontrado"));
+
+        // 2. Validamos pertenencia (Si no es ADMIN supremo del sistema, debe ser el dueño del gym)
+        if (!adminAutenticado.getRol().name().equals("ADMIN")) {
+            if (gimnasio.getAdmin() == null || !gimnasio.getAdmin().getId().equals(adminAutenticado.getId())) {
+                throw new BusinessLogicException("Usted no es el administrador de este gimnasio");
+            }
+        }
+
+        // 3. Mapeamos la lista de entidades a DTOs de respuesta utilizando el mapeador que ya creaste
+        return gimnasio.getMiembros().stream()
+                .map(usuarioService::toResponse)
+                .collect(Collectors.toList());
     }
 
     private GimnasioResponse gimnasioToResponse(Gimnasio gimnasio){

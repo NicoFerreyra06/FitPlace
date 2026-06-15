@@ -64,11 +64,8 @@ public class SuscripcionService {
                 .orElseThrow(() -> new BusinessLogicException("Suscripción no encontrada"));
 
         if (adminAutenticado.getRol() != Rol.ADMIN) {
-            Gimnasio gymAdmin = adminAutenticado.getGimnasio();
-            if (gymAdmin == null) {
-                throw new BusinessLogicException("El administrador no tiene un gimnasio asignado");
-            }
-            if (!gymAdmin.getId().equals(suscripcion.getGimnasio().getId())) {
+            // Comparamos directamente si el admin del gimnasio es el usuario autenticado
+            if (!suscripcion.getGimnasio().getAdmin().getId().equals(adminAutenticado.getId())) {
                 throw new BusinessLogicException("No tienes permisos para administrar las suscripciones de este gimnasio");
             }
         }

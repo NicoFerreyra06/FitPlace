@@ -111,12 +111,6 @@ public class UsuarioService {
         Rutina rutina = rutinaRepository.findById(idRutina)
                 .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
 
-        if (!rutina.getCreador().getId().equals(usuario.getId())) {
-            if (usuario.getEntrenador() == null || !rutina.getCreador().getId().equals(usuario.getEntrenador().getId())) {
-                throw new BusinessLogicException("No tienes permiso para activar esta rutina");
-            }
-        }
-
         usuario.setRutinaActiva(rutina);
         usuario.setRutinaActivaDesde(LocalDate.now());
         return toResponse(usuarioRepository.save(usuario));
@@ -231,7 +225,25 @@ public class UsuarioService {
         return toResponse(usuarioRepository.save(usuario));
     }
 
-    private UsuarioResponse toResponse(Usuario usuario) {
+    @Transactional
+    public UsuarioResponse asignarRutinaAAlumno(Usuario entrenador, Long idAlumno, Long idRutina) {
+        Usuario alumno = usuarioRepository.findById(idAlumno)
+                .orElseThrow(() -> new ResourceNotFoundException("Alumno no encontrado"));
+
+        // Valida que el alumno realmente pertenezca a este entrenador
+        if (alumno.getEntrenador() == null || !alumno.getEntrenador().getId().equals(entrenador.getId())) {
+            throw new BusinessLogicException("No tienes permiso para asignarle rutinas a este alumno");
+        }
+
+        Rutina rutina = rutinaRepository.findById(idRutina)
+                .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
+
+        alumno.setRutinaActiva(rutina);
+        alumno.setRutinaActivaDesde(LocalDate.now());
+        return toResponse(usuarioRepository.save(alumno));
+    }
+
+    protected UsuarioResponse toResponse(Usuario usuario) {
         return UsuarioResponse.builder()
                 .id(usuario.getId())
                 .username(usuario.getUsername())

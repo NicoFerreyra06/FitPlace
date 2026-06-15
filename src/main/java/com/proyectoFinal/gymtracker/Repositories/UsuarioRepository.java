@@ -1,5 +1,6 @@
 package com.proyectoFinal.gymtracker.Repositories;
 
+import com.proyectoFinal.gymtracker.Modelo.Gimnasio;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -17,4 +18,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario,Long> {
     Optional<Usuario> findByCodigoAmigo(String codigoAmigo);
 
     List<Usuario> findByEntrenadorId(Long entrenadorId);
+
+    List<Usuario> findByGimnasioId(Long gimnasioId);
 }

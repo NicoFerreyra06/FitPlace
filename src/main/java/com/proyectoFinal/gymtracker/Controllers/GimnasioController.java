@@ -3,6 +3,8 @@ package com.proyectoFinal.gymtracker.Controllers;
 import com.proyectoFinal.gymtracker.DTO.Request.GimnasioRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.GimnasioUpdateRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.GimnasioResponse;
+import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
+import com.proyectoFinal.gymtracker.Modelo.Gimnasio;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Services.GimnasioService;
 import jakarta.validation.Valid;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,4 +60,10 @@ public class GimnasioController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @GetMapping("/me/suscripciones/{gimnasioid}")
+    @PreAuthorize("hasRole('ADMIN_GIMNASIO')")
+    public ResponseEntity<List<UsuarioResponse>> traerUsuarios (@AuthenticationPrincipal Usuario usuario,
+                                                                @PathVariable Long gimnasioid){
+        return ResponseEntity.ok(gimnasioService.traerUsuarios(usuario, gimnasioid));
+    }
 }

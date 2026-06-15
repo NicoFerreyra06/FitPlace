@@ -116,4 +116,12 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.cambiarRol(idUsuario, nuevoRol));
     }
 
+    @PreAuthorize("hasRole('ENTRENADOR')")
+    @PutMapping("/{idAlumno}/rutina-activa/{idRutina}")
+    public ResponseEntity<UsuarioResponse> asignarRutinaAAlumno(
+            @AuthenticationPrincipal Usuario entrenador,
+            @PathVariable Long idAlumno,
+            @PathVariable Long idRutina) {
+        return ResponseEntity.ok(usuarioService.asignarRutinaAAlumno(entrenador, idAlumno, idRutina));
+    }
 }
