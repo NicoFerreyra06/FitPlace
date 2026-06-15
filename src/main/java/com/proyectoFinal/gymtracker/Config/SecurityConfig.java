@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,6 +21,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -38,14 +40,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/usuarios").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.POST, "/ejercicios/**", "/musculos/**", "/gimnasios").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/gimnasios/me").hasRole("ADMIN_GIMNASIO")
+
                         .requestMatchers(HttpMethod.PUT, "/ejercicios/**", "/musculos/**", "/gimnasios/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/ejercicios/**", "/musculos/**").hasRole("ADMIN")
-
-                        .requestMatchers(HttpMethod.PUT, "/gimnasios/me").hasRole("ADMIN_GIMNASIO")
-                        .requestMatchers(HttpMethod.DELETE, "/gimnasios/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/gimnasios/me").hasAnyRole("ADMIN_GIMNASIO", "ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/gimnasios", "/gimnasios/**").authenticated()
-
 
                         .requestMatchers("/rutinas/**", "/entrenamientos/**").authenticated()
                         .requestMatchers("/usuarios/**").authenticated()

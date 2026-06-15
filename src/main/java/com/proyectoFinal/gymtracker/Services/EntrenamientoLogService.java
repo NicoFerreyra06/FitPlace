@@ -46,11 +46,16 @@ public class EntrenamientoLogService {
                             .findById(marca.getEjercicioRutinaId())
                             .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrada"));
 
+                    if (!ejercicioRutina.getDia().getRutina().getId().equals(rutina.getId())) {
+                        throw new BusinessLogicException("El ejercicio no pertenece a la rutina ejecutada");
+                    }
+
                     //para actualizar el record automaticamente
                     recordPersonalService.actualizarRecordSiCorresponde(
                             usuarioLogueado,
                             ejercicioRutina.getEjercicio(),
-                            marca.getPesoLevantado()
+                            marca.getPesoLevantado(),
+                            entrenamientoLog.getFecha()
                     );
 
                     return MarcaEjercicio.builder()
@@ -99,10 +104,15 @@ public class EntrenamientoLogService {
                     EjercicioRutina ejercicioRutina = ejercicioRutinaRepository.findById(marcaEjercicioRequest.getEjercicioRutinaId())
                             .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
 
+                    if (!ejercicioRutina.getDia().getRutina().getId().equals(rutina.getId())) {
+                        throw new BusinessLogicException("El ejercicio no pertenece a la rutina ejecutada");
+                    }
+
                     recordPersonalService.actualizarRecordSiCorresponde(
                             usuarioLogueado,
                             ejercicioRutina.getEjercicio(),
-                            marcaEjercicioRequest.getPesoLevantado()
+                            marcaEjercicioRequest.getPesoLevantado(),
+                            entrenamientoExistente.getFecha()
                     );
 
                     return MarcaEjercicio.builder()

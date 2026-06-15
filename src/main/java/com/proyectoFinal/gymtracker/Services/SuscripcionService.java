@@ -64,8 +64,11 @@ public class SuscripcionService {
                 .orElseThrow(() -> new BusinessLogicException("Suscripción no encontrada"));
 
         if (adminAutenticado.getRol() != Rol.ADMIN) {
-            if (adminAutenticado.getGimnasio() == null ||
-                    !adminAutenticado.getGimnasio().getId().equals(suscripcion.getGimnasio().getId())) {
+            Gimnasio gymAdmin = adminAutenticado.getGimnasio();
+            if (gymAdmin == null) {
+                throw new BusinessLogicException("El administrador no tiene un gimnasio asignado");
+            }
+            if (!gymAdmin.getId().equals(suscripcion.getGimnasio().getId())) {
                 throw new BusinessLogicException("No tienes permisos para administrar las suscripciones de este gimnasio");
             }
         }
@@ -91,10 +94,9 @@ public class SuscripcionService {
     }
 
     public SuscripcionGimnasio getSuscripcionGimnasio(Usuario usuario) {
-
-        return suscripcionGimnasioRepository.findByUsuarioAndEstadoSuscripcion(usuario,
-                EstadoSuscripcion.ACTIVA)
-                .orElseThrow(() -> new BusinessLogicException("Suscripción activa no encontrada"));
+        return suscripcionGimnasioRepository.findFirstByUsuarioAndEstadoSuscripcionIn(usuario,
+                        List.of(EstadoSuscripcion.ACTIVA, EstadoSuscripcion.PENDIENTE))
+                .orElseThrow(() -> new BusinessLogicException("Suscripción activa o pendiente no encontrada"));
     }
 
     @Transactional

@@ -24,4 +24,6 @@ public interface SuscripcionGimnasioRepository extends JpaRepository<Suscripcion
     Optional<SuscripcionGimnasio> findByIdAndUsuario(Long id, Usuario usuario);
 
     List<SuscripcionGimnasio> findByEstadoSuscripcionAndFechaFinBefore(EstadoSuscripcion estadoSuscripcion, LocalDate hoy);
+
+    Optional<SuscripcionGimnasio> findFirstByUsuarioAndEstadoSuscripcionIn(Usuario usuario, List<EstadoSuscripcion> estados);
 }

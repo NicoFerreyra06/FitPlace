@@ -33,8 +33,10 @@ public class GimnasioService {
         Usuario adminGimnasio = usuarioRepository.findById(request.getAdminId())
                 .orElseThrow(()-> new UserNotFoundException("Usuario no encontrado"));
 
-        adminGimnasio.setRol(Rol.ADMIN_GIMNASIO);
-        usuarioRepository.save(adminGimnasio);
+        if (adminGimnasio.getRol() == Rol.USUARIO) {
+            adminGimnasio.setRol(Rol.ADMIN_GIMNASIO);
+            usuarioRepository.save(adminGimnasio);
+        }
 
          Gimnasio gimnasio = Gimnasio.builder()
                  .nombre(request.getNombre())
@@ -88,6 +90,13 @@ public class GimnasioService {
     public void  eliminarGimnasio(Long idGimnasio){
         Gimnasio gimnasio = gimnasioRepository.findById(idGimnasio)
                 .orElseThrow(() -> new ResourceNotFoundException("Gimnasio no encontrado"));
+        
+        Usuario admin = gimnasio.getAdmin();
+        if (admin != null && admin.getRol() == Rol.ADMIN_GIMNASIO) {
+            admin.setRol(Rol.USUARIO);
+            usuarioRepository.save(admin);
+        }
+
         gimnasioRepository.delete(gimnasio);
     }
 

@@ -2,6 +2,7 @@ package com.proyectoFinal.gymtracker.Services;
 
 import com.proyectoFinal.gymtracker.Config.JwtService;
 import com.proyectoFinal.gymtracker.DTO.Request.LoginRequest;
+import com.proyectoFinal.gymtracker.DTO.Request.PerfilUpdateRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.UsuarioRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.AmigoResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.LoginResponse;
@@ -96,7 +97,7 @@ public class UsuarioService {
         return toResponse(usuario);
     }
 
-    public UsuarioResponse editarPerfil(Usuario usuario, UsuarioRequest request) {
+    public UsuarioResponse editarPerfil(Usuario usuario, PerfilUpdateRequest request) {
 
         usuario.setPeso(request.getPeso());
         usuario.setAltura(request.getAltura());
@@ -109,6 +110,13 @@ public class UsuarioService {
 
         Rutina rutina = rutinaRepository.findById(idRutina)
                 .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
+
+        if (!rutina.getCreador().getId().equals(usuario.getId())) {
+            if (usuario.getEntrenador() == null || !rutina.getCreador().getId().equals(usuario.getEntrenador().getId())) {
+                throw new BusinessLogicException("No tienes permiso para activar esta rutina");
+            }
+        }
+
         usuario.setRutinaActiva(rutina);
         usuario.setRutinaActivaDesde(LocalDate.now());
         return toResponse(usuarioRepository.save(usuario));
@@ -128,6 +136,9 @@ public class UsuarioService {
             throw new BusinessLogicException("Ya son amigos");
 
         usuario.getAmigos().add(amigo);
+        amigo.getAmigos().add(usuario);
+        usuarioRepository.save(amigo);
+        
         return toResponse(usuarioRepository.save(usuario));
     }
 
@@ -138,6 +149,13 @@ public class UsuarioService {
                 .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
         usuario.getAmigos().removeIf(amigo -> amigo.getId().equals(amigoId));
+        
+        Usuario amigoToRemove = usuarioRepository.findById(amigoId).orElse(null);
+        if (amigoToRemove != null) {
+            amigoToRemove.getAmigos().removeIf(u -> u.getId().equals(usuario.getId()));
+            usuarioRepository.save(amigoToRemove);
+        }
+        
         return toResponse(usuarioRepository.save(usuario));
     }
 
@@ -202,6 +220,15 @@ public class UsuarioService {
     @PreAuthorize("hasRole('ADMIN')")
     public Page<UsuarioResponse> getUsuarios(Pageable pageable){
         return usuarioRepository.findAll(pageable).map(this::toResponse);
+    }
+
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
+    public UsuarioResponse cambiarRol(Long idUsuario, Rol nuevoRol) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+        usuario.setRol(nuevoRol);
+        return toResponse(usuarioRepository.save(usuario));
     }
 
     private UsuarioResponse toResponse(Usuario usuario) {
