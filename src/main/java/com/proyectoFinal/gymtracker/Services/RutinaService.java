@@ -36,7 +36,7 @@ public class RutinaService {
 
     @Transactional
     public RutinaResponse createRutina(RutinaRequest rutinaRequest, Usuario creador) {
-
+        validarLimiteRutinas(creador);
         validarPrecioYrol(rutinaRequest, creador);
 
         Rutina rutina = Rutina.builder()
@@ -244,6 +244,19 @@ public class RutinaService {
 
         if (tienePrecio && !esEntrenador) {
             throw new BusinessLogicException("Solo los usuarios con rol ENTRENADOR pueden asignar un precio a las rutinas.");
+        }
+    }
+    private void validarLimiteRutinas(Usuario creador) {
+        boolean esUsuarioBasico = creador.getRol().equals(Rol.USUARIO);
+        if (!esUsuarioBasico) return;
+
+        int LIMITE_GRATUITO = 3;
+        long cantidadActual = rutinaRepository.countByCreador(creador);
+
+        if (cantidadActual >= LIMITE_GRATUITO) {
+            throw new BusinessLogicException(
+                    "Los usuarios gratuitos solo pueden crear hasta " + LIMITE_GRATUITO + " rutinas. Upgradea a Premium para crear rutinas ilimitadas."
+            );
         }
     }
 
