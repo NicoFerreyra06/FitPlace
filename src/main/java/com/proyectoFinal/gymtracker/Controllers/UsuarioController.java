@@ -8,6 +8,7 @@ import com.proyectoFinal.gymtracker.DTO.Response.LoginResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Services.UsuarioService;
+import com.proyectoFinal.gymtracker.Enum.Rol;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -117,7 +118,7 @@ public class UsuarioController {
 
     @PutMapping("/{idUsuario}/rol")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UsuarioResponse> cambiarRol(@PathVariable Long idUsuario, @RequestParam com.proyectoFinal.gymtracker.Enum.Rol nuevoRol) {
+    public ResponseEntity<UsuarioResponse> cambiarRol(@PathVariable Long idUsuario, @RequestParam Rol nuevoRol) {
         return ResponseEntity.ok(usuarioService.cambiarRol(idUsuario, nuevoRol));
     }
 

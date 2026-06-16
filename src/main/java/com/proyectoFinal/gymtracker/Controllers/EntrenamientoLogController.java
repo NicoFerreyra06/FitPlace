@@ -59,22 +59,6 @@ public class EntrenamientoLogController {
                 .body(entrenamientoLogService.getEntrenamientos(idUsuario, pageable, desde, hasta, usuarioLogueado));
     }
 
-    @GetMapping("/usuario/{idUsuario}/ejercicio/{idEjercicio}/progresion")
-    public ResponseEntity<List<HistorialEjercicioResponse>> getProgresionEjercicio(
-            @PathVariable Long idUsuario,
-            @PathVariable Long idEjercicio,
-            @AuthenticationPrincipal Usuario usuarioLogueado) {
-        return ResponseEntity.ok(
-                entrenamientoLogService.getProgrecionEjercicioPremium(idUsuario, idEjercicio, usuarioLogueado));
-    }
-
-    @GetMapping("/usuario/{idUsuario}/volumen-semanal")
-    public ResponseEntity<List<VolumenSemanalResponse>> getVolumenSemanal(
-            @PathVariable Long idUsuario,
-            @AuthenticationPrincipal Usuario usuarioLogueado) {
-        return ResponseEntity.ok(
-                entrenamientoLogService.getVolumenSemanal(idUsuario, usuarioLogueado));
-    }
     @GetMapping("/usuario/{idUsuario}/ejercicio/{idEjercicio}")
     public ResponseEntity<Map<String, List<HistorialEjercicioResponse>>> getHistorialEjercicio(
             @PathVariable Long idUsuario,

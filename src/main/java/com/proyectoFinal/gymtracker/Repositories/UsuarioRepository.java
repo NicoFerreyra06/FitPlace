@@ -2,6 +2,7 @@ package com.proyectoFinal.gymtracker.Repositories;
 
 import com.proyectoFinal.gymtracker.Modelo.Gimnasio;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
+import com.proyectoFinal.gymtracker.Enum.Rol;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -21,5 +22,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario,Long> {
 
     List<Usuario> findByGimnasioId(Long gimnasioId);
 
-    List<Usuario> findByRol(com.proyectoFinal.gymtracker.Enum.Rol rol);
+    List<Usuario> findByRol(Rol rol);
 }

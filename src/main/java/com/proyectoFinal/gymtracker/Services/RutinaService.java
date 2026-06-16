@@ -1,5 +1,7 @@
 package com.proyectoFinal.gymtracker.Services;
 
+import com.proyectoFinal.gymtracker.DTO.Request.DiaRutinaRequest;
+import com.proyectoFinal.gymtracker.DTO.Request.EjercicioRutinaRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.RutinaRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.DiaRutinaResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.EjercicioRutinaResponse;
@@ -22,6 +24,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -89,35 +93,93 @@ public class RutinaService {
         validarPrecioYrol(rutinaRequest,usuario);
 
         rutinaExistente.setPrecio(rutinaRequest.getPrecio());
-        rutinaExistente.getDias().clear();
 
-        List<DiaRutina> nuevosDias = rutinaRequest.getDias().stream()
-                .map(diaRutinaRequest -> {
-                    DiaRutina dia = DiaRutina.builder()
-                            .diaDeLaSemana(diaRutinaRequest.getDiaDeLaSemana())
-                            .rutina(rutinaExistente).build();
+        List<DiaRutina> diasActuales = rutinaExistente.getDias();
+        List<DiaRutinaRequest> diasRequest =
+                rutinaRequest.getDias() != null ? rutinaRequest.getDias() : new ArrayList<>();
 
-                    if (diaRutinaRequest.getEjercicios() != null) {
-                        List<EjercicioRutina> ejercicioRutinas = diaRutinaRequest.getEjercicios()
-                                .stream().map(ejercicioRutinaRequest -> {
-                                    Ejercicio ejercicio = ejercicioRepository.findById(ejercicioRutinaRequest.getEjercicioId())
-                                            .orElseThrow(() -> new RuntimeException("Ejercicio no encontrado"));
+        // Eliminar días que ya no están en la request
+        diasActuales.removeIf(diaActual -> diasRequest.stream()
+                .noneMatch(dReq -> dReq.getDiaDeLaSemana() == diaActual.getDiaDeLaSemana()));
 
-                                    return EjercicioRutina.builder()
-                                            .dia(dia)
-                                            .ejercicio(ejercicio)
-                                            .series(ejercicioRutinaRequest.getSeries())
-                                            .repeticiones(ejercicioRutinaRequest.getRepeticiones()).build();
-                                }).toList();
+        for (DiaRutinaRequest diaReq : diasRequest) {
+            DiaRutina diaActual = diasActuales.stream()
+                    .filter(d -> d.getDiaDeLaSemana() == diaReq.getDiaDeLaSemana())
+                    .findFirst()
+                    .orElse(null);
 
-                        dia.setEjercicios(ejercicioRutinas);
+            if (diaActual == null) {
+                // Es un día nuevo
+                DiaRutina nuevoDia = DiaRutina.builder()
+                        .diaDeLaSemana(diaReq.getDiaDeLaSemana())
+                        .rutina(rutinaExistente)
+                        .ejercicios(new ArrayList<>())
+                        .build();
+
+                if (diaReq.getEjercicios() != null) {
+                    for (EjercicioRutinaRequest ejReq : diaReq.getEjercicios()) {
+                        Ejercicio ej = ejercicioRepository.findById(ejReq.getEjercicioId()).orElseThrow();
+                        nuevoDia.getEjercicios().add(EjercicioRutina.builder()
+                                .dia(nuevoDia)
+                                .ejercicio(ej)
+                                .series(ejReq.getSeries())
+                                .repeticiones(ejReq.getRepeticiones())
+                                .build());
                     }
-                    return dia;
-                }).toList();
-        rutinaExistente.getDias().addAll(nuevosDias);
+                }
+                diasActuales.add(nuevoDia);
+            } else {
+                // El día ya existe, actualizar sus ejercicios
+                List<EjercicioRutina> ejerciciosActuales = diaActual.getEjercicios();
+                if (ejerciciosActuales == null) {
+                    ejerciciosActuales = new ArrayList<>();
+                    diaActual.setEjercicios(ejerciciosActuales);
+                }
 
-        Rutina rutinaSaved = rutinaRepository.save(rutinaExistente);
-        return  mapRutinaResponse(rutinaSaved);
+                List<EjercicioRutinaRequest> ejerciciosReq = diaReq.getEjercicios() != null
+                        ? diaReq.getEjercicios() : new ArrayList<>();
+
+                List<EjercicioRutinaRequest> unmatchedReqs = new ArrayList<>(ejerciciosReq);
+
+                Iterator<EjercicioRutina> iterator = ejerciciosActuales.iterator();
+                while (iterator.hasNext()) {
+                    EjercicioRutina ejercicioActual = iterator.next();
+                    EjercicioRutinaRequest matchingReq = null;
+                    
+                    for (EjercicioRutinaRequest req : unmatchedReqs) {
+                        if (req.getEjercicioId().equals(ejercicioActual.getEjercicio().getId())) {
+                            matchingReq = req;
+                            break;
+                        }
+                    }
+
+                    if (matchingReq != null) {
+                        ejercicioActual.setSeries(matchingReq.getSeries());
+                        ejercicioActual.setRepeticiones(matchingReq.getRepeticiones());
+                        unmatchedReqs.remove(matchingReq);
+                    } else {
+                        iterator.remove();
+                    }
+                }
+
+                for (EjercicioRutinaRequest newReq : unmatchedReqs) {
+                    Ejercicio ej = ejercicioRepository.findById(newReq.getEjercicioId()).orElseThrow();
+                    ejerciciosActuales.add(EjercicioRutina.builder()
+                            .dia(diaActual)
+                            .ejercicio(ej)
+                            .series(newReq.getSeries())
+                            .repeticiones(newReq.getRepeticiones())
+                            .build());
+                }
+            }
+        }
+
+        try {
+            Rutina rutinaSaved = rutinaRepository.save(rutinaExistente);
+            return mapRutinaResponse(rutinaSaved);
+        } catch (DataIntegrityViolationException e) {
+            throw new BusinessLogicException("No se pueden eliminar ejercicios que ya tienen un historial de entrenamiento registrado.");
+        }
     }
 
     public RutinaResponse getRutinaById(Long idRutina) {
@@ -167,11 +229,14 @@ public class RutinaService {
         Usuario usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
-        List<Rutina> misRutinas = new java.util.ArrayList<>(rutinaRepository.findByCreador(usuario));
+        List<Rutina> misRutinas = rutinaRepository.findByCreador(usuario);
         Rutina rutinaActiva = usuario.getRutinaActiva();
         
-        if (rutinaActiva != null && !misRutinas.contains(rutinaActiva)) {
-            misRutinas.add(rutinaActiva);
+        if (rutinaActiva != null) {
+            boolean flag = misRutinas.stream()
+                    .anyMatch(r -> r.getId().equals(rutinaActiva.getId()));
+
+            if (!flag) misRutinas.add(rutinaActiva);
         }
 
         return misRutinas.stream().map(this::mapRutinaResponse).toList();
