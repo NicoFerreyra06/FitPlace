@@ -150,6 +150,11 @@ public class RutinaService {
             throw new BusinessLogicException("No sos el creador de la rutina para eliminarla");
         }
 
+        if (usuario.getRutinaActiva() != null && usuario.getRutinaActiva().getId().equals(idRutina)) {
+            usuario.setRutinaActiva(null);
+            usuarioRepository.save(usuario);
+        }
+
         try {
             rutinaRepository.delete(rutina);
 
@@ -162,8 +167,14 @@ public class RutinaService {
         Usuario usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
-        return rutinaRepository.findByCreador(usuario)
-                .stream().map(this::mapRutinaResponse).toList();
+        List<Rutina> misRutinas = new java.util.ArrayList<>(rutinaRepository.findByCreador(usuario));
+        Rutina rutinaActiva = usuario.getRutinaActiva();
+        
+        if (rutinaActiva != null && !misRutinas.contains(rutinaActiva)) {
+            misRutinas.add(rutinaActiva);
+        }
+
+        return misRutinas.stream().map(this::mapRutinaResponse).toList();
     }
 
     public List<RutinaResponse> getRutinaAlumno (Long idAlumno, Long idEntrenador){

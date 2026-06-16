@@ -47,10 +47,11 @@ public class GimnasioController {
         return ResponseEntity.ok(gimnasioService.getAllGimnasios(pageable));
     }
 
-    @PutMapping("/me")
+    @PutMapping("/me/{idGimnasio}")
     public ResponseEntity<GimnasioResponse> editarGimnasio(@Valid @RequestBody GimnasioUpdateRequest request,
-                                                           @AuthenticationPrincipal Usuario usuario) {
-        return ResponseEntity.ok(gimnasioService.actualizarGimnasio(request, usuario));
+                                                           @AuthenticationPrincipal Usuario usuario,
+                                                           @PathVariable Long idGimnasio) {
+        return ResponseEntity.ok(gimnasioService.actualizarGimnasio(request, usuario, idGimnasio));
     }
 
     @DeleteMapping("/{id}")

@@ -66,12 +66,12 @@ public class GimnasioService {
     }
 
     @Transactional
-    public GimnasioResponse actualizarGimnasio(GimnasioUpdateRequest request, Usuario admin){
+    public GimnasioResponse actualizarGimnasio(GimnasioUpdateRequest request, Usuario admin, Long idGimnasio){
 
-        Gimnasio gimnasio = gimnasioRepository.findByAdminId(admin.getId())
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new BusinessLogicException("El usuario no tiene gimnasios"));
+        Gimnasio gimnasio = gimnasioRepository.findById(idGimnasio)
+                        .orElseThrow(()-> new ResourceNotFoundException("Gimnasio no encontrado"));
+
+        if (!gimnasio.getAdmin().getId().equals(admin.getId())) throw new BusinessLogicException("Usuario no encontrado");
 
         gimnasio.setNombre(request.getNombre());
         gimnasio.setDireccion(request.getDireccion());

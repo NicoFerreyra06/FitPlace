@@ -38,6 +38,7 @@ public class Gimnasio {
 
     @Builder.Default
     @OneToMany(mappedBy = "gimnasio")
+    @JsonIgnore
     private List<Usuario> miembros = new ArrayList<>();
 
     @Column(nullable = false)

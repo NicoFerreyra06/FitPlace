@@ -7,7 +7,6 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 public class EjercicioResponse {
     private Long id;

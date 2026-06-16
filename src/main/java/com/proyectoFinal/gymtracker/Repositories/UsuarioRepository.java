@@ -20,4 +20,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario,Long> {
     List<Usuario> findByEntrenadorId(Long entrenadorId);
 
     List<Usuario> findByGimnasioId(Long gimnasioId);
+
+    List<Usuario> findByRol(com.proyectoFinal.gymtracker.Enum.Rol rol);
 }

@@ -35,4 +35,6 @@ public interface EntrenamientoLogRepository extends JpaRepository<EntrenamientoL
             @Param("hasta") LocalDate hasta,
             Pageable pageable
     );
+
+    EntrenamientoLog findFirstByUsuarioIdOrderByFechaDesc(Long idUsuario);
 }

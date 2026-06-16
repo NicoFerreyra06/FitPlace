@@ -105,6 +105,11 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.verEntrenadorActual(usuario.getId()));
     }
 
+    @GetMapping("/entrenadores")
+    public ResponseEntity<List<UsuarioResponse>> getEntrenadores() {
+        return ResponseEntity.ok(usuarioService.getEntrenadores());
+    }
+
     @GetMapping
     public ResponseEntity<Page<UsuarioResponse>> getUsuarios(@PageableDefault (size = 10) Pageable pageable) {
         return ResponseEntity.ok(usuarioService.getUsuarios(pageable));

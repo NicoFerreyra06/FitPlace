@@ -37,6 +37,8 @@ public class EntrenamientoLogService {
         Rutina rutina = rutinaRepository.findById(entrenamientoLogRequest.getIdRutina())
                 .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
 
+        registrarRacha(usuarioLogueado);
+
         EntrenamientoLog entrenamientoLog = EntrenamientoLog.builder()
                 .usuario(usuarioLogueado).fecha(LocalDate.now()).rutinaEjecutada(rutina).build();
 
@@ -69,8 +71,9 @@ public class EntrenamientoLogService {
 
         EntrenamientoLog saved = entrenamientoLogRepository.save(entrenamientoLog);
 
-        return mapEntrenamientoLogResponse(saved);
+        registrarRacha(usuarioLogueado);
 
+        return mapEntrenamientoLogResponse(saved);
     }
 
     @Transactional
@@ -160,6 +163,34 @@ public class EntrenamientoLogService {
         entrenamientoLogRepository.delete(entrenamientoLog);
     }
 
+    private void registrarRacha (Usuario usuarioLogueado){
+        EntrenamientoLog ultimoEntrenamiento = entrenamientoLogRepository
+                .findFirstByUsuarioIdOrderByFechaDesc(usuarioLogueado.getId());
+
+        LocalDate hoy = LocalDate.now();
+
+        int rachaActual = (usuarioLogueado.getRachaActualDias() != null) ? usuarioLogueado.getRachaActualDias() : 0;
+        int rachaMaxima = (usuarioLogueado.getRachaMaximaDias() != null) ? usuarioLogueado.getRachaMaximaDias() : 0;
+
+        if (ultimoEntrenamiento != null) {
+            LocalDate fechaUltimo = ultimoEntrenamiento.getFecha();
+
+            if (fechaUltimo.equals(hoy.minusDays(1))) {
+                rachaActual++;
+            }
+            else if (fechaUltimo.isBefore(hoy.minusDays(1))) {
+                rachaActual = 1;
+            }
+        } else {
+            rachaActual = 1;
+        }
+        if (rachaActual > rachaMaxima) {
+            rachaMaxima = rachaActual;
+            usuarioLogueado.setRachaMaximaDias(rachaMaxima);
+        }
+        usuarioLogueado.setRachaActualDias(rachaActual);
+        usuarioRepository.save(usuarioLogueado);
+    }
     // === Metodos auxiliares ===
 
     private EntrenamientoLogResponse mapEntrenamientoLogResponse(EntrenamientoLog entrenamientoLog) {
@@ -180,6 +211,4 @@ public class EntrenamientoLogService {
                 .pesoLevantado(marcaEjercicio.getPesoLevantado())
                 .repeticionesLogradas(marcaEjercicio.getRepeticionesLogradas()).build();
     }
-
-
 }

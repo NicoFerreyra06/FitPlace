@@ -64,6 +64,7 @@ public class Usuario implements UserDetails {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rutina_activa_id")
+    @JsonIgnore
     private Rutina rutinaActiva;
 
     private LocalDate rutinaActivaDesde; //necesario para a futuro ver progreso desde que uso tal rutina

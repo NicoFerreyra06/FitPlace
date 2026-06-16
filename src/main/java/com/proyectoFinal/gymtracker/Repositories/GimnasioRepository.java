@@ -10,4 +10,5 @@ import java.util.List;
 public interface GimnasioRepository extends JpaRepository<Gimnasio, Long> {
     List<Gimnasio> findByAdminId(Long id);
 
+    Long id(Long id);
 }

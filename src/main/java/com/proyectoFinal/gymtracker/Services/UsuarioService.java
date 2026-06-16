@@ -216,6 +216,12 @@ public class UsuarioService {
         return usuarioRepository.findAll(pageable).map(this::toResponse);
     }
 
+    public List<UsuarioResponse> getEntrenadores() {
+        return usuarioRepository.findByRol(Rol.ENTRENADOR).stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public UsuarioResponse cambiarRol(Long idUsuario, Rol nuevoRol) {
