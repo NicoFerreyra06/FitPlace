@@ -15,7 +15,7 @@ public class UsuarioRequest {
     private String password;
 
     @NotNull(message = "El peso es obligatorio")
-    @DecimalMin(value = "20.0", message = "El peso debe ser mayor a 20 kg")
+    @DecimalMin(value = "30.0", message = "El peso debe ser mayor a 20 kg")
     @DecimalMax(value = "500.0", message = "El peso ingresado no es válido")
     private Double peso;
 

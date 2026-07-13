@@ -19,7 +19,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class Usuario implements UserDetails {
 
     @Id
@@ -102,7 +101,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.email; // ¡LA CLAVE ESTÁ ACÁ!
+        return this.email;
     }
 
     @Override
