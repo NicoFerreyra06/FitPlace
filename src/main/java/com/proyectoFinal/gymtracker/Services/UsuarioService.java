@@ -125,7 +125,7 @@ public class UsuarioService {
                 .orElseThrow(() -> new ResourceNotFoundException("No existe usuario con ese código"));
 
         if (usuario.getId().equals(amigo.getId()))
-            throw new BusinessLogicException("No podés agregarte a vos mismo");
+            throw new BusinessLogicException("No podés agregarte a vos mismo como amigo");
         if (usuario.getAmigos().contains(amigo))
             throw new BusinessLogicException("Ya son amigos");
 
