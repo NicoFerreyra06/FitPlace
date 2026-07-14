@@ -46,7 +46,7 @@ public class EntrenamientoLogService {
                 .stream().map(marca -> {
                     EjercicioRutina ejercicioRutina = ejercicioRutinaRepository
                             .findById(marca.getEjercicioRutinaId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrada"));
+                            .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
 
                     if (!ejercicioRutina.getDia().getRutina().getId().equals(rutina.getId())) {
                         throw new BusinessLogicException("El ejercicio no pertenece a la rutina ejecutada");
@@ -138,7 +138,7 @@ public class EntrenamientoLogService {
         return mapEntrenamientoLogResponse(entrenamientoLog);
     }
 
-    public Page<EntrenamientoLogResponse> getEntrenamientos(Long idUsuario, Pageable pageable, LocalDate desde, LocalDate hasta, Usuario usuarioLogueado) {
+    public Page<EntrenamientoLogResponse> getEntrenamientos(Pageable pageable, LocalDate desde, LocalDate hasta, Usuario usuarioLogueado) {
 
         Page<EntrenamientoLog> entrenamientosUsuario = entrenamientoLogRepository.findByUsuarioIdAndFechas(usuarioLogueado.getId(), desde, hasta, pageable);
 

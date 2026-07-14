@@ -56,7 +56,7 @@ public class EntrenamientoLogController {
                                                                             @RequestParam (required = false) LocalDate hasta,
                                                                             @AuthenticationPrincipal Usuario usuarioLogueado) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(entrenamientoLogService.getEntrenamientos(idUsuario, pageable, desde, hasta, usuarioLogueado));
+                .body(entrenamientoLogService.getEntrenamientos(pageable, desde, hasta, usuarioLogueado));
     }
 
     @GetMapping("/usuario/{idUsuario}/ejercicio/{idEjercicio}")

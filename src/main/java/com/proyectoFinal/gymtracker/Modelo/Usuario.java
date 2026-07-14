@@ -1,9 +1,9 @@
 package com.proyectoFinal.gymtracker.Modelo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import jakarta.persistence.*;
 import lombok.*;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
