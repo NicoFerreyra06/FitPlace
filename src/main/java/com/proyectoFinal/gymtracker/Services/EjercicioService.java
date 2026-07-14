@@ -74,7 +74,10 @@ public class EjercicioService {
     }
 
     public void deleteEjercicio(Long id) {
-        ejercicioRepository.deleteById(id);
+        Ejercicio ejercicio = ejercicioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
+
+        ejercicioRepository.delete(ejercicio);
     }
 
     public List<EjercicioResponse> getByMusculo(Long musculoId) {
