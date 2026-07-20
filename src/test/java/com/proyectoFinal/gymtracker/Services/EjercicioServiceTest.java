@@ -97,10 +97,11 @@ public class EjercicioServiceTest {
     void shouldThrowExceptionWhenEjercicioNotFound(){
         when(ejercicioRepository.findById(1L)).thenReturn(Optional.empty());
 
-       assertThrows(ResourceNotFoundException.class,
+       var excepcion = assertThrows(ResourceNotFoundException.class,
                () -> ejercicioService.getById(1L));
 
        verify(ejercicioRepository, times(1)).findById(1L);
+       assertEquals("Ejercicio no encontrado", excepcion.getMessage());
     }
 
     @Test
