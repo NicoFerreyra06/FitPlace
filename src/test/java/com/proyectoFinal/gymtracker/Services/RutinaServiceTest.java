@@ -3,6 +3,7 @@ package com.proyectoFinal.gymtracker.Services;
 import com.proyectoFinal.gymtracker.DTO.Request.RutinaRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.RutinaResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
+import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Rutina;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
@@ -105,15 +106,45 @@ public class RutinaServiceTest {
     }
 
     @Test
-    @DisplayName("Deberia fallar porque la rutina no existe")
+    @DisplayName("Deberia fallar al borrar porque la rutina no existe")
     void shouldThrowExceptionRutinaNotFound(){
         Long rutinaId = 99L;
 
         when(rutinaRepository.findById(rutinaId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class,
+        var response = assertThrows(ResourceNotFoundException.class,
                 () -> rutinaService.deleteRutina(usuario, rutinaId));
 
-        verify(rutinaRepository, never()).save(any(Rutina.class));
+        verify(rutinaRepository, never()).delete(any(Rutina.class));
+        assertEquals("Rutina no encontrada", response.getMessage());
+    }
+
+    @Test
+    @DisplayName("Deberia fallar al borrar porque no le pertenece la rutina")
+    void shouldThrowExceptionWhenUserIsNotOwner(){
+        Long rutinaId = 10L;
+
+        Usuario usuario2 = Usuario.builder()
+                .id(2L)
+                .username("test2")
+                .email("test@gmail")
+                .password("123")
+                .rol(Rol.USUARIO)
+                .build();
+
+        Rutina rutinaExistente = Rutina.builder()
+                .id(rutinaId)
+                .nombre("Rutina a Borrar")
+                .creador(usuario)
+                .build();
+
+        when(rutinaRepository.findById(rutinaId)).thenReturn(Optional.of(rutinaExistente));
+
+        var response = assertThrows(BusinessLogicException.class,
+                () -> rutinaService.deleteRutina(usuario2, rutinaId));
+
+        assertNotNull(response);
+        verify(rutinaRepository, never()).delete(any(Rutina.class));
+        assertEquals("No sos el creador de la rutina para eliminarla", response.getMessage());
     }
 }
