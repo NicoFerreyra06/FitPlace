@@ -49,7 +49,7 @@ public class MusculoController {
     }
 
     @PutMapping("/{idMusculo}")
-    public ResponseEntity<MusculoResponse> updateNombreMusculo(@RequestBody MusculoRequest musculo,
+    public ResponseEntity<MusculoResponse> updateMusculo(@RequestBody MusculoRequest musculo,
                                                                @PathVariable Long idMusculo){
         return ResponseEntity.status(HttpStatus.OK).body(musculoService.updateMusculo(musculo, idMusculo));
     }
