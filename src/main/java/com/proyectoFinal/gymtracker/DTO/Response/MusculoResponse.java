@@ -8,7 +8,7 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-public class MusculoResponse {
+public class    MusculoResponse {
     private Long id;
     private String nombre;
     private GrupoMuscular grupoMuscular;

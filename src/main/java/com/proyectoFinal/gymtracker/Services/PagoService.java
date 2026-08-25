@@ -6,6 +6,7 @@ import com.mercadopago.client.preference.PreferenceItemRequest;
 import com.mercadopago.client.preference.PreferenceRequest;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.resources.preference.Preference;
+import com.proyectoFinal.gymtracker.Interfaces.IPagoService;
 import com.proyectoFinal.gymtracker.Modelo.SuscripcionGimnasio;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Service
-public class PagoService {
+public class PagoService implements IPagoService {
 
     @Value("${mercadopago.notification}")
     private String urlNotification;
@@ -22,6 +23,7 @@ public class PagoService {
     @Value("${mercadopago.url.return}")
     private String urlReturn;
 
+    @Override
     public String generarLinkPago(SuscripcionGimnasio suscripcion) {
 
         try {

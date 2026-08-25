@@ -2,7 +2,7 @@ package com.proyectoFinal.gymtracker.Controllers;
 
 import com.proyectoFinal.gymtracker.Modelo.SuscripcionGimnasio;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
-import com.proyectoFinal.gymtracker.Services.PagoService;
+import com.proyectoFinal.gymtracker.Interfaces.IPagoService;
 import com.proyectoFinal.gymtracker.Services.SuscripcionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PagoController {
 
     private final SuscripcionService suscripcionService;
-    private final PagoService pagoService;
+    private final IPagoService IpagoService;
 
     @PostMapping("/{idSuscripcion}")
     public ResponseEntity<String> generarPago(@PathVariable Long idSuscripcion,
@@ -27,7 +27,7 @@ public class PagoController {
         SuscripcionGimnasio suscripcion =
                 suscripcionService.getByIdAndUser(idSuscripcion, usuario);
 
-        String url = pagoService.generarLinkPago(suscripcion);
+        String url = IpagoService.generarLinkPago(suscripcion);
 
         return ResponseEntity.ok(url);
     }
