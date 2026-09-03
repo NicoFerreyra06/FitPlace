@@ -1,5 +1,6 @@
 package com.proyectoFinal.gymtracker.DTO.Request;
 
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,8 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MarcaEjercicioRequest {
-    @NotNull(message = "Debe indicar el peso levantado")
-    @Min(0)
+    @NotNull @DecimalMin(value = "0.0")
     private Double pesoLevantado;
     @NotNull(message = "Debe indicar las repeticiones logradas")
     @Min(1)
