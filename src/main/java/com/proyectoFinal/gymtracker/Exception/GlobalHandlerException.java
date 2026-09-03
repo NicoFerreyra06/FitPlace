@@ -47,8 +47,8 @@ public class GlobalHandlerException {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleUnexpectedException(Exception ex) {
-        return new ResponseEntity<>(new ErrorResponse((ex.getMessage()),  LocalDateTime.now().toString()),
-                HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ErrorResponse> handleUnexpectedException() {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Error interno del servidor", LocalDateTime.now().toString()));
     }
 }
