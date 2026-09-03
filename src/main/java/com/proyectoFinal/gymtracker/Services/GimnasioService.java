@@ -94,7 +94,7 @@ public class GimnasioService {
         Gimnasio gimnasio = gimnasioRepository.findById(idGimnasio)
                 .orElseThrow(() -> new ResourceNotFoundException("Gimnasio no encontrado"));
 
-        boolean isAdmin = gimnasio.getAdmin().getRol() == Rol.ADMIN;
+        boolean isAdmin = actor.getRol() == Rol.ADMIN;
         boolean isOwner = gimnasio.getAdmin() != null &&
                 gimnasio.getAdmin().getId().equals(actor.getId());
 
