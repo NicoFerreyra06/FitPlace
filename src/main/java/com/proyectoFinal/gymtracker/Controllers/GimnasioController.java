@@ -55,9 +55,10 @@ public class GimnasioController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGimnasio(@PathVariable Long id){
+    @PreAuthorize("hasRole('ADMIN_GIMNASIO') or hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteGimnasio(@PathVariable Long id, @AuthenticationPrincipal Usuario usuario){
 
-        gimnasioService.eliminarGimnasio(id);
+        gimnasioService.eliminarGimnasio(id, usuario);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

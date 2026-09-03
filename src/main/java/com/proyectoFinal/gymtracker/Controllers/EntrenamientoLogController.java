@@ -62,10 +62,11 @@ public class EntrenamientoLogController {
     @GetMapping("/usuario/{idUsuario}/ejercicio/{idEjercicio}")
     public ResponseEntity<Map<String, List<HistorialEjercicioResponse>>> getHistorialEjercicio(
             @PathVariable Long idUsuario,
-            @PathVariable Long idEjercicio
+            @PathVariable Long idEjercicio,
+            @AuthenticationPrincipal Usuario usuario
     ){
         return ResponseEntity.status(HttpStatus.OK)
-                .body(entrenamientoLogService.getHistorialEjercicio(idUsuario, idEjercicio));
+                .body(entrenamientoLogService.getHistorialEjercicio(idUsuario, idEjercicio, usuario));
     }
 
     @DeleteMapping("/{idEntrenamiento}")

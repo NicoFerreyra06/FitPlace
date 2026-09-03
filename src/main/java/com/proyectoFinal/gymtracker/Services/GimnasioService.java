@@ -90,9 +90,15 @@ public class GimnasioService {
         return gimnasioToResponse(gimnasio);
     }
 
-    public void  eliminarGimnasio(Long idGimnasio){
+    public void  eliminarGimnasio(Long idGimnasio, Usuario actor){
         Gimnasio gimnasio = gimnasioRepository.findById(idGimnasio)
                 .orElseThrow(() -> new ResourceNotFoundException("Gimnasio no encontrado"));
+
+        boolean isAdmin = gimnasio.getAdmin().getRol() == Rol.ADMIN;
+        boolean isOwner = gimnasio.getAdmin() != null &&
+                gimnasio.getAdmin().getId().equals(actor.getId());
+
+        if (!isAdmin && !isOwner) throw new BusinessLogicException("Sin permisos");
         
         Usuario admin = gimnasio.getAdmin();
         if (admin != null && admin.getRol() == Rol.ADMIN_GIMNASIO) {
@@ -106,11 +112,9 @@ public class GimnasioService {
     @Transactional
     public List<UsuarioResponse> traerUsuarios(Usuario adminAutenticado, Long idGimnasio) {
 
-        // 1. Buscamos el gimnasio pacientemente
         Gimnasio gimnasio = gimnasioRepository.findById(idGimnasio)
                 .orElseThrow(() -> new ResourceNotFoundException("Gimnasio no encontrado"));
 
-        // 2. Validamos pertenencia (Si no es ADMIN supremo del sistema, debe ser el dueño del gym)
         if (!adminAutenticado.getRol().name().equals("ADMIN")) {
             if (gimnasio.getAdmin() == null || !gimnasio.getAdmin().getId().equals(adminAutenticado.getId())) {
                 throw new BusinessLogicException("Usted no es el administrador de este gimnasio");
