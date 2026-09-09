@@ -275,7 +275,6 @@ public class RutinaService {
                 .creadorId(rutina.getCreador() != null ? rutina.getCreador().getId() : null)
                 .nombre(rutina.getNombre())
                 .tokenCompartir(rutina.getTokenCompartir())
-                .precio(rutina.getPrecio() != null && rutina.getPrecio() > 0 ? rutina.getPrecio() : null)
                 .diaRutinas(rutina.getDias() != null ? rutina.getDias().stream()
                         .map(this::mapToDiaRutinaResponse).toList() : List.of())
                 .build();
@@ -297,14 +296,5 @@ public class RutinaService {
                 .nombreEjercicio(ejercicioRutina.getEjercicio().getNombre())
                 .series(ejercicioRutina.getSeries())
                 .repeticiones(ejercicioRutina.getRepeticiones()).build();
-    }
-
-    private void validarPrecioYrol (RutinaRequest rutinaRequest, Usuario creador) {
-
-        boolean tienePrecio = rutinaRequest.getPrecio() != null && rutinaRequest.getPrecio() > 0;
-        boolean esEntrenador = creador.getRol().equals(Rol.ENTRENADOR);
-
-        if (tienePrecio && !esEntrenador) {
-            throw new BusinessLogicException("Solo los usuarios con rol ENTRENADOR pueden asignar un precio a las rutinas.");
     }
 }
