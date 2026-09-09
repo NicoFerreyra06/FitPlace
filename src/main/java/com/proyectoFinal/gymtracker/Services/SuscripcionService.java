@@ -125,11 +125,34 @@ public class SuscripcionService {
                 .orElseThrow(() -> new BusinessLogicException("Suscripcion no encontrada"));
     }
 
+    public List<SuscripcionGimnasioResponse> getSuscripcionesPorGimnasioYEstado(Long idGimnasio, EstadoSuscripcion estado, Usuario adminAutenticado) {
+        Gimnasio gimnasio = gimnasioRepository.findById(idGimnasio)
+                .orElseThrow(() -> new BusinessLogicException("Gimnasio no encontrado"));
+
+        if (adminAutenticado.getRol() != Rol.ADMIN) {
+            if (gimnasio.getAdmin() == null || !gimnasio.getAdmin().getId().equals(adminAutenticado.getId())) {
+                throw new BusinessLogicException("No tienes permisos para ver las suscripciones de este gimnasio");
+            }
+        }
+
+        List<SuscripcionGimnasio> suscripciones;
+        if (estado != null) {
+            suscripciones = suscripcionGimnasioRepository.findByGimnasioIdAndEstadoSuscripcion(idGimnasio, estado);
+        } else {
+            suscripciones = suscripcionGimnasioRepository.findByGimnasioId(idGimnasio);
+        }
+
+        return suscripciones.stream()
+                .map(this::suscripcionGimnasioToResponse)
+                .toList();
+    }
+
     private SuscripcionGimnasioResponse suscripcionGimnasioToResponse(SuscripcionGimnasio suscripcion) {
         return SuscripcionGimnasioResponse.builder()
                 .id(suscripcion.getId())
                 .idGimnasio(suscripcion.getGimnasio().getId()).
                 idUsuario(suscripcion.getUsuario().getId()).
+                nombreUsuario(suscripcion.getUsuario().getUsername()).
                 fechaInicio(suscripcion.getFechaInicio()).
                 fechaFin(suscripcion.getFechaFin()).
                 metodoPago(suscripcion.getMetodoPago()).

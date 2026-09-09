@@ -15,6 +15,7 @@ public class SuscripcionGimnasioResponse {
     private Long id;
     private Long idGimnasio;
     private Long idUsuario;
+    private String nombreUsuario;
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
     private MetodoPago metodoPago;

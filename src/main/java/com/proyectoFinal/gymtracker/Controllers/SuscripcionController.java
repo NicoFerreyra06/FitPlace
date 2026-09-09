@@ -44,4 +44,14 @@ public class SuscripcionController {
                 suscripcionService.cancelarSuscripcion(idSuscripcion, usuario)
         );
     }
+
+    @PreAuthorize("hasRole('ADMIN_GIMNASIO') or hasRole('ADMIN')")
+    @GetMapping("/gimnasio/{idGimnasio}")
+    public ResponseEntity<java.util.List<SuscripcionGimnasioResponse>> getSuscripcionesPorGimnasio(
+            @PathVariable Long idGimnasio,
+            @RequestParam(required = false) com.proyectoFinal.gymtracker.Enum.EstadoSuscripcion estado,
+            @AuthenticationPrincipal Usuario usuario) {
+        
+        return ResponseEntity.ok(suscripcionService.getSuscripcionesPorGimnasioYEstado(idGimnasio, estado, usuario));
+    }
 }
