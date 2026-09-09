@@ -46,6 +46,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{idUsuario}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UsuarioResponse> verPerfilOtroUsuario(@PathVariable Long idUsuario) {
         return ResponseEntity.ok(usuarioService.verPerfilOtroUsuario(idUsuario));
     }

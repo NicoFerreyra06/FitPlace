@@ -38,7 +38,7 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/usuarios/me/alumnos").hasRole("ENTRENADOR")
                         .requestMatchers(HttpMethod.GET, "/entrenamientos/alumno/**").hasRole("ENTRENADOR")
-                        .requestMatchers(HttpMethod.GET, "/usuarios").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/usuarios", "/usuarios/{id:[0-9]+}").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.POST, "/ejercicios/**", "/musculos/**", "/gimnasios").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/gimnasios/me").hasRole("ADMIN_GIMNASIO")
