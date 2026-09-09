@@ -18,7 +18,7 @@ public interface EjercicioRepository extends JpaRepository<Ejercicio,Long> {
 
     //y este para que busque el musculo de todas formas, sea el principal o el secundario
     @Query("SELECT DISTINCT e FROM Ejercicio e " +
-            "JOIN e.musculosPrincipales mp " +
+            "LEFT JOIN e.musculosPrincipales mp " +
             "LEFT JOIN e.musculosSecundarios ms " +
             "WHERE mp.id = :musculoId OR ms.id = :musculoId")
     List<Ejercicio> findByMusculo(@Param("musculoId") Long musculoId);

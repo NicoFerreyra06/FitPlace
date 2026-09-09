@@ -27,7 +27,11 @@ public class Ejercicio {
     @JoinTable(
         name = "ejercicio_musculo_principal",
         joinColumns = @JoinColumn(name = "ejercicio_id"),
-        inverseJoinColumns = @JoinColumn(name = "musculo_id")
+        inverseJoinColumns = @JoinColumn(name = "musculo_id"),
+            indexes = {
+                    @Index(name = "idx_emp_musculo_id", columnList = "musculo_id")
+            }
+
     )
     private List<Musculo> musculosPrincipales;
 
@@ -35,7 +39,10 @@ public class Ejercicio {
     @JoinTable(
         name = "ejercicio_musculo_secundario",
         joinColumns = @JoinColumn(name = "ejercicio_id"),
-        inverseJoinColumns = @JoinColumn(name = "musculo_id")
+        inverseJoinColumns = @JoinColumn(name = "musculo_id"),
+            indexes = {
+                    @Index(name = "idx_ems_musculo_id", columnList = "musculo_id")
+            }
     )
     private List<Musculo> musculosSecundarios;
 }

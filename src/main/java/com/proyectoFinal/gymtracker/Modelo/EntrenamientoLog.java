@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(indexes = @Index(name = "idx_entrenamiento_usuario_fecha", columnList = "usuario_id, fecha"))
 public class EntrenamientoLog {
 
     @Id

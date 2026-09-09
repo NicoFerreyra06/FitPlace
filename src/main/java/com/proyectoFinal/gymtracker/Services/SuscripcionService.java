@@ -1,20 +1,18 @@
 package com.proyectoFinal.gymtracker.Services;
 
+import com.proyectoFinal.gymtracker.DTO.Response.SuscripcionGimnasioResponse;
 import com.proyectoFinal.gymtracker.Enum.EstadoSuscripcion;
 import com.proyectoFinal.gymtracker.Enum.MetodoPago;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
-import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Gimnasio;
 import com.proyectoFinal.gymtracker.Modelo.SuscripcionGimnasio;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Repositories.GimnasioRepository;
 import com.proyectoFinal.gymtracker.Repositories.SuscripcionGimnasioRepository;
-import com.proyectoFinal.gymtracker.Repositories.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -26,9 +24,9 @@ public class SuscripcionService {
 
     private final GimnasioRepository gimnasioRepository;
     private final SuscripcionGimnasioRepository suscripcionGimnasioRepository;
-    private final UsuarioRepository usuarioRepository;
 
-    public SuscripcionGimnasio createSuscripcion(Long idGimnasio, Usuario usuario) {
+    @Transactional
+    public SuscripcionGimnasioResponse createSuscripcion(Long idGimnasio, Usuario usuario) {
         Gimnasio gimnasio = gimnasioRepository.findById(idGimnasio)
                 .orElseThrow(() -> new BusinessLogicException("Gimnasio no encontrado"));
 
@@ -54,11 +52,11 @@ public class SuscripcionService {
                 .estadoSuscripcion(EstadoSuscripcion.PENDIENTE)
                 .comisionApp(gimnasio.getPrecioCuota() * 0.1).build();
 
-        return suscripcionGimnasioRepository.save(suscripcionGimnasio);
+        return suscripcionGimnasioToResponse(suscripcionGimnasioRepository.save(suscripcionGimnasio));
     }
 
     @Transactional
-    public SuscripcionGimnasio activarSuscripcion(Long idSuscripcion, Usuario adminAutenticado) {
+    public SuscripcionGimnasioResponse activarSuscripcion(Long idSuscripcion, Usuario adminAutenticado) {
 
         SuscripcionGimnasio suscripcion = suscripcionGimnasioRepository.findById(idSuscripcion)
                 .orElseThrow(() -> new BusinessLogicException("Suscripción no encontrada"));
@@ -87,17 +85,17 @@ public class SuscripcionService {
 
         cliente.setGimnasio(suscripcion.getGimnasio());
 
-        return suscripcion;
+        return suscripcionGimnasioToResponse(suscripcion);
     }
 
-    public SuscripcionGimnasio getSuscripcionGimnasio(Usuario usuario) {
-        return suscripcionGimnasioRepository.findFirstByUsuarioAndEstadoSuscripcionIn(usuario,
+    public SuscripcionGimnasioResponse getSuscripcionGimnasio(Usuario usuario) {
+        return suscripcionGimnasioToResponse(suscripcionGimnasioRepository.findFirstByUsuarioAndEstadoSuscripcionIn(usuario,
                         List.of(EstadoSuscripcion.ACTIVA, EstadoSuscripcion.PENDIENTE))
-                .orElseThrow(() -> new BusinessLogicException("Suscripción activa o pendiente no encontrada"));
+                .orElseThrow(() -> new BusinessLogicException("Suscripción activa o pendiente no encontrada")));
     }
 
     @Transactional
-    public SuscripcionGimnasio cancelarSuscripcion(Long idSuscripcion, Usuario usuario) {
+    public SuscripcionGimnasioResponse cancelarSuscripcion(Long idSuscripcion, Usuario usuario) {
 
         SuscripcionGimnasio suscripcion = suscripcionGimnasioRepository.findById(idSuscripcion)
                 .orElseThrow(() -> new BusinessLogicException("Suscripción no encontrada"));
@@ -119,12 +117,23 @@ public class SuscripcionService {
         Usuario u = suscripcion.getUsuario();
         u.setGimnasio(null);
 
-        return suscripcion;
+        return suscripcionGimnasioToResponse(suscripcion);
     }
 
     public SuscripcionGimnasio getByIdAndUser (Long idSuscripcion, Usuario usuario) {
         return suscripcionGimnasioRepository.findByIdAndUsuario(idSuscripcion, usuario)
                 .orElseThrow(() -> new BusinessLogicException("Suscripcion no encontrada"));
+    }
+
+    private SuscripcionGimnasioResponse suscripcionGimnasioToResponse(SuscripcionGimnasio suscripcion) {
+        return SuscripcionGimnasioResponse.builder()
+                .id(suscripcion.getId())
+                .idGimnasio(suscripcion.getGimnasio().getId()).
+                idUsuario(suscripcion.getUsuario().getId()).
+                fechaInicio(suscripcion.getFechaInicio()).
+                fechaFin(suscripcion.getFechaFin()).
+                metodoPago(suscripcion.getMetodoPago()).
+                estadoSuscripcion(suscripcion.getEstadoSuscripcion()).build();
     }
 
     @Scheduled(cron = "0 0 0 * * ?")

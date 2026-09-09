@@ -4,10 +4,7 @@ import com.mercadopago.exceptions.MPException;
 import com.proyectoFinal.gymtracker.Services.WebHookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -20,8 +17,10 @@ public class WebHookController {
 
     @PostMapping
     public ResponseEntity<Void> recibirWebhook(
-            @RequestBody Map<String, Object> payload) throws MPException {
+            @RequestBody Map<String, Object> payload,
+            @RequestHeader(value = "x-signature", required = false) String xSignature,
+            @RequestHeader(value = "x-request-id", required = false) String xRequestId) throws MPException {
 
-        return webHookService.recibirWebhook(payload);
+        return webHookService.recibirWebhook(payload, xSignature, xRequestId);
     }
 }
