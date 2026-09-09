@@ -98,6 +98,15 @@ public class UsuarioService {
 
         Rutina rutina = rutinaRepository.findById(idRutina).orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
 
+        if (!rutina.isEsPublica()) {
+            boolean esCreador = rutina.getCreador().getId().equals(usuario.getId());
+            boolean esAlumnoDelCreador = usuario.getEntrenador() != null && usuario.getEntrenador().getId().equals(rutina.getCreador().getId());
+            
+            if (!esCreador && !esAlumnoDelCreador) {
+                throw new BusinessLogicException("No tienes permiso para utilizar esta rutina privada");
+            }
+        }
+
         usuario.setRutinaActiva(rutina);
         usuario.setRutinaActivaDesde(LocalDate.now());
         return toResponse(usuarioRepository.save(usuario));

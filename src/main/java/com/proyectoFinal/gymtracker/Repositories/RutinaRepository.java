@@ -2,6 +2,8 @@ package com.proyectoFinal.gymtracker.Repositories;
 
 import com.proyectoFinal.gymtracker.Modelo.Rutina;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,5 +14,6 @@ public interface RutinaRepository extends JpaRepository<Rutina,Long> {
 
     List<Rutina> findByCreador(Usuario creador);
     long countByCreador(Usuario creador);
+    Page<Rutina> findByEsPublicaTrue(Pageable pageable);
 
 }

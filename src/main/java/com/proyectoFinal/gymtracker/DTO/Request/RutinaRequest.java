@@ -14,8 +14,7 @@ public class RutinaRequest {
 
     @NotBlank(message = "El nombre de la rutina es obligatorio")
     private String nombre;
-    @PositiveOrZero
-    private Double precio;
+    private Boolean esPublica;
 
     private List<DiaRutinaRequest> dias;
 }

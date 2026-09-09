@@ -17,6 +17,6 @@ public class RutinaResponse {
     private Long creadorId;
     private String nombre;
     private String tokenCompartir;
-    private Double precio;
+    private Boolean esPublica;
     private List<DiaRutinaResponse> diaRutinas;
 }

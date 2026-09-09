@@ -28,8 +28,9 @@ public class Rutina {
     @Column(unique = true)
     private String tokenCompartir; // Link para compartir con amigos o clientes
 
-    // Solo si creador.rol == ENTRENADOR se debería permitir un precio mayor a 0
-    private Double precio; 
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean esPublica = false; 
 
     @Builder.Default
     @OneToMany(mappedBy = "rutina", cascade = CascadeType.ALL, orphanRemoval = true)

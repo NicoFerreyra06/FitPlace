@@ -40,14 +40,12 @@ public class RutinaService {
 
     @Transactional
     public RutinaResponse createRutina(RutinaRequest rutinaRequest, Usuario creador) {
-        validarLimiteRutinas(creador);
-        validarPrecioYrol(rutinaRequest, creador);
-
         Rutina rutina = Rutina.builder()
                 .creador(creador)
                 .nombre(rutinaRequest.getNombre())
                 .tokenCompartir(UUID.randomUUID().toString())
-                .precio(rutinaRequest.getPrecio()).build();
+                .esPublica(rutinaRequest.getEsPublica() != null ? rutinaRequest.getEsPublica() : false)
+                .build();
 
         if (rutinaRequest.getDias() != null) {
             List<DiaRutina> diaRutinas = rutinaRequest.getDias().stream()
@@ -89,10 +87,9 @@ public class RutinaService {
         }
 
         rutinaExistente.setNombre(rutinaRequest.getNombre());
-
-        validarPrecioYrol(rutinaRequest,usuario);
-
-        rutinaExistente.setPrecio(rutinaRequest.getPrecio());
+        if (rutinaRequest.getEsPublica() != null) {
+            rutinaExistente.setEsPublica(rutinaRequest.getEsPublica());
+        }
 
         List<DiaRutina> diasActuales = rutinaExistente.getDias();
         List<DiaRutinaRequest> diasRequest =
@@ -189,7 +186,7 @@ public class RutinaService {
     }
 
     public Page<RutinaResponse> getAllRutinas(Pageable pageable) {
-        return rutinaRepository.findAll(pageable).map(this::mapRutinaResponse);
+        return rutinaRepository.findByEsPublicaTrue(pageable).map(this::mapRutinaResponse);
     }
 
     //para ver la rutina de hoy
@@ -309,22 +306,5 @@ public class RutinaService {
 
         if (tienePrecio && !esEntrenador) {
             throw new BusinessLogicException("Solo los usuarios con rol ENTRENADOR pueden asignar un precio a las rutinas.");
-        }
     }
-    private void validarLimiteRutinas(Usuario creador) {
-        boolean esUsuarioBasico = creador.getRol().equals(Rol.USUARIO);
-        if (!esUsuarioBasico) return;
-
-        int LIMITE_GRATUITO = 3;
-        long cantidadActual = rutinaRepository.countByCreador(creador);
-
-        if (cantidadActual >= LIMITE_GRATUITO) {
-            throw new BusinessLogicException(
-                    "Los usuarios gratuitos solo pueden crear hasta " + LIMITE_GRATUITO + " rutinas. Upgradea a Premium para crear rutinas ilimitadas."
-            );
-        }
-    }
-
-
-
 }
