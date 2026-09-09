@@ -38,10 +38,13 @@ public class EntrenamientoLogService {
         Rutina rutina = rutinaRepository.findById(entrenamientoLogRequest.getIdRutina())
                 .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
 
-        registrarRacha(usuarioLogueado);
+        EntrenamientoLog ultimoEntrenamiento = entrenamientoLogRepository
+                .findFirstByUsuarioIdOrderByFechaDesc(usuarioLogueado.getId());
+        LocalDate fechaUltimo = ultimoEntrenamiento != null ? ultimoEntrenamiento.getFecha() : null;
+        LocalDate hoy = LocalDate.now();
 
         EntrenamientoLog entrenamientoLog = EntrenamientoLog.builder()
-                .usuario(usuarioLogueado).fecha(LocalDate.now()).rutinaEjecutada(rutina).build();
+                .usuario(usuarioLogueado).fecha(hoy).rutinaEjecutada(rutina).build();
 
         List<MarcaEjercicio> marcaEjercicioList = entrenamientoLogRequest.getMarcasEjercicio()
                 .stream().map(marca -> {
@@ -72,7 +75,7 @@ public class EntrenamientoLogService {
 
         EntrenamientoLog saved = entrenamientoLogRepository.save(entrenamientoLog);
 
-        registrarRacha(usuarioLogueado);
+        registrarRacha(usuarioLogueado, fechaUltimo, hoy);
 
         return mapEntrenamientoLogResponse(saved);
     }
@@ -139,10 +142,30 @@ public class EntrenamientoLogService {
         return mapEntrenamientoLogResponse(entrenamientoLog);
     }
 
-    public Page<EntrenamientoLogResponse> getEntrenamientos(Pageable pageable, LocalDate desde, LocalDate hasta, Usuario usuarioLogueado) {
+    public Page<EntrenamientoLogResponse> getEntrenamientos(Long idUsuario, Pageable pageable, LocalDate desde, LocalDate hasta, Usuario usuarioLogueado) {
 
-        Page<EntrenamientoLog> entrenamientosUsuario = entrenamientoLogRepository.findByUsuarioIdAndFechas(usuarioLogueado.getId(), desde, hasta, pageable);
+        if (!usuarioLogueado.getId().equals(idUsuario) && usuarioLogueado.getRol() != Rol.ADMIN) {
+            throw new BusinessLogicException("No tienes permisos para ver estos entrenamientos");
+        }
 
+        Page<EntrenamientoLog> entrenamientosUsuario = entrenamientoLogRepository.findByUsuarioIdAndFechas(idUsuario, desde, hasta, pageable);
+
+        return entrenamientosUsuario.map(this::mapEntrenamientoLogResponse);
+    }
+
+    public Page<EntrenamientoLogResponse> getEntrenamientosDeAlumno(Pageable pageable, LocalDate desde, LocalDate hasta, Long idAlumno, Usuario entrenadorLogueado) {
+        Usuario alumno = usuarioRepository.findById(idAlumno)
+                .orElseThrow(() -> new UserNotFoundException("Alumno no encontrado"));
+
+        if (!entrenadorLogueado.getRol().equals(Rol.ENTRENADOR)) {
+            throw new BusinessLogicException("No tienes rol de ENTRENADOR");
+        }
+
+        if (alumno.getEntrenador() == null || !alumno.getEntrenador().getId().equals(entrenadorLogueado.getId())) {
+            throw new BusinessLogicException("Este alumno no está a tu cargo");
+        }
+
+        Page<EntrenamientoLog> entrenamientosUsuario = entrenamientoLogRepository.findByUsuarioIdAndFechas(idAlumno, desde, hasta, pageable);
         return entrenamientosUsuario.map(this::mapEntrenamientoLogResponse);
     }
 
@@ -150,9 +173,21 @@ public class EntrenamientoLogService {
         Ejercicio ejercicio = ejercicioRepository.findById(idEjercicio)
                 .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
 
-        if (!actor.getId().equals(idUsuario) && actor.getRol() != Rol.ADMIN) {
+        boolean esElMismo = actor.getId().equals(idUsuario);
+        boolean esAdmin = actor.getRol() == Rol.ADMIN;
+        boolean esSuEntrenador = false;
+
+        if (!esElMismo && !esAdmin && actor.getRol() == Rol.ENTRENADOR) {
+            Usuario alumno = usuarioRepository.findById(idUsuario).orElse(null);
+            if (alumno != null && alumno.getEntrenador() != null && alumno.getEntrenador().getId().equals(actor.getId())) {
+                esSuEntrenador = true;
+            }
+        }
+
+        if (!esElMismo && !esAdmin && !esSuEntrenador) {
             throw new BusinessLogicException("Sin permisos");
         }
+        
         return Map.of(ejercicio.getNombre(), entrenamientoLogRepository.historialEjercicio(idUsuario, idEjercicio));
     }
 
@@ -166,31 +201,63 @@ public class EntrenamientoLogService {
         entrenamientoLogRepository.delete(entrenamientoLog);
     }
 
-    private void registrarRacha (Usuario usuarioLogueado){
-        EntrenamientoLog ultimoEntrenamiento = entrenamientoLogRepository
-                .findFirstByUsuarioIdOrderByFechaDesc(usuarioLogueado.getId());
-
-        LocalDate hoy = LocalDate.now();
-
+    private void registrarRacha(Usuario usuarioLogueado, LocalDate fechaUltimo, LocalDate fechaHoy) {
         int rachaActual = (usuarioLogueado.getRachaActualDias() != null) ? usuarioLogueado.getRachaActualDias() : 0;
         int rachaMaxima = (usuarioLogueado.getRachaMaximaDias() != null) ? usuarioLogueado.getRachaMaximaDias() : 0;
 
-        if (ultimoEntrenamiento != null) {
-            LocalDate fechaUltimo = ultimoEntrenamiento.getFecha();
-
-            if (fechaUltimo.equals(hoy.minusDays(1))) {
-                rachaActual++;
-            }
-            else if (fechaUltimo.isBefore(hoy.minusDays(1))) {
-                rachaActual = 1;
-            }
-        } else {
-            rachaActual = 1;
+        // Si ya registró entrenamiento hoy, no hacer nada para evitar doble conteo
+        if (fechaUltimo != null && fechaUltimo.equals(fechaHoy)) {
+            return;
         }
+
+        Rutina rutinaActiva = usuarioLogueado.getRutinaActiva();
+        List<java.time.DayOfWeek> diasProgramados = (rutinaActiva != null && rutinaActiva.getDias() != null)
+                ? rutinaActiva.getDias().stream().map(DiaRutina::getDiaDeLaSemana).toList()
+                : List.of();
+
+        boolean rachaRota = false;
+
+        // Verificar si faltó a algún día programado desde su último entrenamiento
+        if (fechaUltimo != null) {
+            LocalDate current = fechaUltimo.plusDays(1);
+            while (current.isBefore(fechaHoy)) {
+                boolean debiaEntrenar = false;
+                if (!diasProgramados.isEmpty()) {
+                    debiaEntrenar = diasProgramados.contains(current.getDayOfWeek());
+                } else {
+                    debiaEntrenar = current.getDayOfWeek() != java.time.DayOfWeek.SUNDAY;
+                }
+
+                if (debiaEntrenar) {
+                    rachaRota = true;
+                    break;
+                }
+                current = current.plusDays(1);
+            }
+        }
+
+        if (rachaRota) {
+            rachaActual = 0;
+        }
+
+        // Evaluar si hoy es un día de cumplimiento
+        boolean sumaRacha = false;
+        if (!diasProgramados.isEmpty()) {
+            sumaRacha = diasProgramados.contains(fechaHoy.getDayOfWeek());
+        } else {
+            sumaRacha = fechaHoy.getDayOfWeek() != java.time.DayOfWeek.SUNDAY;
+        }
+
+        // Incrementa si es día de cumplimiento, o si la racha está en 0 (para al menos arrancar en 1)
+        if (sumaRacha || rachaActual == 0) {
+            rachaActual++;
+        }
+
         if (rachaActual > rachaMaxima) {
             rachaMaxima = rachaActual;
             usuarioLogueado.setRachaMaximaDias(rachaMaxima);
         }
+
         usuarioLogueado.setRachaActualDias(rachaActual);
         usuarioRepository.save(usuarioLogueado);
     }

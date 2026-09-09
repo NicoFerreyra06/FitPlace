@@ -56,7 +56,18 @@ public class EntrenamientoLogController {
                                                                             @RequestParam (required = false) LocalDate hasta,
                                                                             @AuthenticationPrincipal Usuario usuarioLogueado) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(entrenamientoLogService.getEntrenamientos(pageable, desde, hasta, usuarioLogueado));
+                .body(entrenamientoLogService.getEntrenamientos(idUsuario, pageable, desde, hasta, usuarioLogueado));
+    }
+
+    @GetMapping("/alumno/{idAlumno}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('ENTRENADOR')")
+    public ResponseEntity<Page<EntrenamientoLogResponse>> getEntrenamientosDeAlumno(@PageableDefault(size = 10) Pageable pageable,
+                                                                                    @PathVariable Long idAlumno,
+                                                                                    @RequestParam (required = false) LocalDate desde,
+                                                                                    @RequestParam (required = false) LocalDate hasta,
+                                                                                    @AuthenticationPrincipal Usuario usuarioLogueado) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(entrenamientoLogService.getEntrenamientosDeAlumno(pageable, desde, hasta, idAlumno, usuarioLogueado));
     }
 
     @GetMapping("/usuario/{idUsuario}/ejercicio/{idEjercicio}")
