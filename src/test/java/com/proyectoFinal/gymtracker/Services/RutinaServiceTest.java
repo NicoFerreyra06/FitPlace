@@ -60,7 +60,7 @@ public class RutinaServiceTest {
 
         rutinaRequest = RutinaRequest.builder()
                 .nombre("Rutina")
-                .precio(0.0)
+                .esPublica(true)
                 .dias(List.of())
                 .build();
     }
@@ -68,13 +68,12 @@ public class RutinaServiceTest {
     @Test
     @DisplayName("Deberia crear rutina correctamente")
     void shouldCreateRutineSuccessful(){
-        when(rutinaRepository.countByCreador(usuario)).thenReturn(0L);
 
         Rutina rutinaSimulada = Rutina.builder()
                 .id(10L)
                 .creador(usuario)
                 .nombre(rutinaRequest.getNombre())
-                .precio(rutinaRequest.getPrecio())
+                .esPublica(rutinaRequest.getEsPublica())
                 .build();
 
         when(rutinaRepository.save(any(Rutina.class))).thenReturn(rutinaSimulada);

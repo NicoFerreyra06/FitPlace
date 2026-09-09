@@ -84,7 +84,6 @@ public class EntrenamientoLogServiceTest {
                 .creador(usuario)
                 .nombre("Test_rutina")
                 .tokenCompartir(UUID.randomUUID().toString())
-                .precio(0.0)
                 .dias(List.of()).build();
     }
 
