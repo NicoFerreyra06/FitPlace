@@ -2,9 +2,10 @@ package com.proyectoFinal.gymtracker.Modelo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -17,6 +18,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@SQLDelete(sql = "UPDATE gimnasio set activo = false where id=?")
+@SQLRestriction("activo = true")
 public class Gimnasio {
 
     @Id
@@ -45,6 +48,10 @@ public class Gimnasio {
     private LocalTime horarioApertura;
     @Column(nullable = false)
     private LocalTime horarioCierre;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean activo = true;
 
     @Builder.Default
     @NotEmpty
