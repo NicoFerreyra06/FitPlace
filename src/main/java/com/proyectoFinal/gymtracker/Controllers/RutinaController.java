@@ -39,8 +39,9 @@ public class RutinaController {
     }
 
     @GetMapping("/{idRutina}")
-    public ResponseEntity<RutinaResponse> getRutinaById(@PathVariable Long idRutina){
-        return ResponseEntity.status(HttpStatus.OK).body(rutinaService.getRutinaById(idRutina));
+    public ResponseEntity<RutinaResponse> getRutinaById(@PathVariable Long idRutina,
+                                                        @AuthenticationPrincipal Usuario usuario){
+        return ResponseEntity.status(HttpStatus.OK).body(rutinaService.getRutinaById(idRutina, usuario));
     }
 
     @GetMapping
@@ -61,14 +62,16 @@ public class RutinaController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<List<RutinaResponse>> getRutinaMe(@AuthenticationPrincipal Usuario usuario){
-        return ResponseEntity.ok(rutinaService.getRutinasMe(usuario.getId()));
+    public ResponseEntity<Page<RutinaResponse>> getRutinaMe(@AuthenticationPrincipal Usuario usuario,
+                                                            @PageableDefault(size = 10) Pageable pageable){
+        return ResponseEntity.ok(rutinaService.getRutinasMe(usuario.getId(), pageable));
     }
 
     @GetMapping("/alumno/{idAlumno}")
-    public ResponseEntity<List<RutinaResponse>> getRutinaAlumno(@PathVariable Long idAlumno,
-                                                                @AuthenticationPrincipal Usuario usuario){
-        return ResponseEntity.ok(rutinaService.getRutinaAlumno(idAlumno,usuario.getId()));
+    public ResponseEntity<Page<RutinaResponse>> getRutinaAlumno(@PathVariable Long idAlumno,
+                                                                @AuthenticationPrincipal Usuario usuario,
+                                                                @PageableDefault(size = 10) Pageable pageable){
+        return ResponseEntity.ok(rutinaService.getRutinaAlumno(idAlumno, usuario.getId(), pageable));
     }
 
 }

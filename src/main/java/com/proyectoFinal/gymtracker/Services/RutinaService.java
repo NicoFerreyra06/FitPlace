@@ -179,9 +179,21 @@ public class RutinaService {
         }
     }
 
-    public RutinaResponse getRutinaById(Long idRutina) {
+    public RutinaResponse getRutinaById(Long idRutina, Usuario usuario) {
         Rutina rutinaSaved = rutinaRepository.findById(idRutina)
                 .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
+
+        if (!rutinaSaved.isEsPublica()) {
+            boolean esCreador = rutinaSaved.getCreador().getId().equals(usuario.getId());
+            boolean esAdmin = usuario.getRol() == Rol.ADMIN;
+            boolean esAlumnoDelCreador = usuario.getEntrenador() != null
+                    && usuario.getEntrenador().getId().equals(rutinaSaved.getCreador().getId());
+
+            if (!esCreador && !esAdmin && !esAlumnoDelCreador) {
+                throw new BusinessLogicException("No tienes permiso para ver esta rutina");
+            }
+        }
+
         return mapRutinaResponse(rutinaSaved);
     }
 
@@ -205,8 +217,8 @@ public class RutinaService {
         Rutina rutina = rutinaRepository.findById(idRutina)
                 .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
 
-        if (!rutina.getCreador().getId().equals(usuario.getId())) {
-            throw new BusinessLogicException("No sos el creador de la rutina para eliminarla");
+        if (!rutina.getCreador().getId().equals(usuario.getId()) && usuario.getRol() != Rol.ADMIN) {
+            throw new BusinessLogicException("No tenés permiso para eliminar esta rutina");
         }
 
         if (usuario.getRutinaActiva() != null && usuario.getRutinaActiva().getId().equals(idRutina)) {
@@ -222,24 +234,16 @@ public class RutinaService {
         }
     }
 
-    public List<RutinaResponse> getRutinasMe(Long idUsuario) {
+    public Page<RutinaResponse> getRutinasMe(Long idUsuario, Pageable pageable) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
-        List<Rutina> misRutinas = rutinaRepository.findByCreador(usuario);
-        Rutina rutinaActiva = usuario.getRutinaActiva();
-        
-        if (rutinaActiva != null) {
-            boolean flag = misRutinas.stream()
-                    .anyMatch(r -> r.getId().equals(rutinaActiva.getId()));
+        Page<Rutina> misRutinas = rutinaRepository.findByCreadorId(usuario.getId(), pageable);
 
-            if (!flag) misRutinas.add(rutinaActiva);
-        }
-
-        return misRutinas.stream().map(this::mapRutinaResponse).toList();
+        return misRutinas.map(this::mapRutinaResponse);
     }
 
-    public List<RutinaResponse> getRutinaAlumno (Long idAlumno, Long idEntrenador){
+    public Page<RutinaResponse> getRutinaAlumno (Long idAlumno, Long idEntrenador, Pageable pageable) {
 
         Usuario entrenador = usuarioRepository.findById(idEntrenador)
                 .orElseThrow(() -> new UserNotFoundException("Entrenador no encontrado"));
@@ -255,16 +259,9 @@ public class RutinaService {
             throw new BusinessLogicException("Este alumno no está a su cargo");
         }
 
-        List<Rutina> rutinasDelAlumno = rutinaRepository.findByCreador(alumno);
+        Page<Rutina> rutinasDelAlumno = rutinaRepository.findByCreadorId(alumno.getId(), pageable);
 
-        Rutina rutinaActiva = alumno.getRutinaActiva();
-        if (rutinaActiva != null && !rutinasDelAlumno.contains(rutinaActiva)) {
-            rutinasDelAlumno.add(rutinaActiva);
-        }
-
-        return rutinasDelAlumno.stream()
-                .map(this::mapRutinaResponse)
-                .toList();
+        return rutinasDelAlumno.map(this::mapRutinaResponse);
     }
 
     // === Metodos auxiliares ===
