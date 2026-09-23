@@ -44,9 +44,10 @@ public class EntrenamientoLogController {
     }
 
     @GetMapping("/{idEntrenamiento}")
-    public ResponseEntity<EntrenamientoLogResponse> getEntrenamientoLogById(@PathVariable Long idEntrenamiento){
+    public ResponseEntity<EntrenamientoLogResponse> getEntrenamientoLogById(@PathVariable Long idEntrenamiento,
+                                                                             @AuthenticationPrincipal Usuario usuario){
         return ResponseEntity.status(HttpStatus.OK)
-                .body(entrenamientoLogService.getEntrenamientoLogById(idEntrenamiento));
+                .body(entrenamientoLogService.getEntrenamientoLogById(idEntrenamiento, usuario));
     }
 
     @GetMapping("/usuario/{idUsuario}")

@@ -2,6 +2,8 @@ package com.proyectoFinal.gymtracker.Services;
 
 
 import com.proyectoFinal.gymtracker.DTO.Response.RecordPersonalResponse;
+import com.proyectoFinal.gymtracker.Enum.Rol;
+import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Ejercicio;
 import com.proyectoFinal.gymtracker.Modelo.RecordPersonal;
@@ -14,12 +16,16 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import com.proyectoFinal.gymtracker.Modelo.MarcaEjercicio;
+import com.proyectoFinal.gymtracker.Repositories.MarcaEjercicioRepository;
 
 @Service
 @RequiredArgsConstructor
 public class RecordPersonalService {
 
     private final RecordPersonalRepository recordPersonalRepository;
+    private final MarcaEjercicioRepository marcaEjercicioRepository;
 
 
     private RecordPersonalResponse toResponse(RecordPersonal record) {
@@ -45,7 +51,10 @@ public class RecordPersonalService {
     }
 
     // Muestra los record personales en todos los ejercicios de 1 usuario.
-    public List<RecordPersonalResponse> getRecordsPersonalesByUsuarioId(Long usuarioId) {
+    public List<RecordPersonalResponse> getRecordsPersonalesByUsuarioId(Long usuarioId, Usuario authUser) {
+        if (!authUser.getId().equals(usuarioId) && authUser.getRol() != Rol.ADMIN) {
+            throw new BusinessLogicException("No tienes permisos para ver estos records");
+        }
         return recordPersonalRepository.findRecordPersonalByUsuarioId(usuarioId)
                 .stream()
                 .map(this::toResponse)
@@ -59,27 +68,32 @@ public class RecordPersonalService {
     }
 
     //este sin endpoint, lo llama el service de EntrenamientoLog
-    public void actualizarRecordSiCorresponde(Usuario usuario, Ejercicio ejercicio, Double pesoNuevo, LocalDate fechaLogro) {
+    public void recalcularRecord(Usuario usuario, Ejercicio ejercicio) {
         RecordPersonal recordExistente = recordPersonalRepository
                 .findByUsuarioIdAndEjercicioId(usuario.getId(), ejercicio.getId());
 
-        if (recordExistente == null) {
-            RecordPersonal nuevo = RecordPersonal.builder()
-                    .usuario(usuario)
-                    .ejercicio(ejercicio)
-                    .pesoMaximo(pesoNuevo)
-                    .fechaLogro(fechaLogro)
-                    .build();
-            recordPersonalRepository.save(nuevo);
+        Optional<MarcaEjercicio> topMarca = 
+                marcaEjercicioRepository.findFirstByEntrenamientoLog_Usuario_IdAndEjercicioRutina_Ejercicio_IdOrderByPesoLevantadoDesc(usuario.getId(), ejercicio.getId());
 
-        } else if (pesoNuevo > recordExistente.getPesoMaximo()) {
-            recordExistente.setPesoMaximo(pesoNuevo);
-            recordExistente.setFechaLogro(fechaLogro);
-            recordPersonalRepository.save(recordExistente);
-
-        } else if (pesoNuevo.equals(recordExistente.getPesoMaximo())) {
-            recordExistente.setFechaLogro(fechaLogro);
-            recordPersonalRepository.save(recordExistente);
+        if (topMarca.isPresent()) {
+            MarcaEjercicio marca = topMarca.get();
+            if (recordExistente == null) {
+                RecordPersonal nuevo = RecordPersonal.builder()
+                        .usuario(usuario)
+                        .ejercicio(ejercicio)
+                        .pesoMaximo(marca.getPesoLevantado())
+                        .fechaLogro(marca.getEntrenamientoLog().getFecha())
+                        .build();
+                recordPersonalRepository.save(nuevo);
+            } else {
+                recordExistente.setPesoMaximo(marca.getPesoLevantado());
+                recordExistente.setFechaLogro(marca.getEntrenamientoLog().getFecha());
+                recordPersonalRepository.save(recordExistente);
+            }
+        } else {
+            if (recordExistente != null) {
+                recordPersonalRepository.delete(recordExistente);
+            }
         }
     }
 

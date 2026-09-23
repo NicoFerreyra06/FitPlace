@@ -37,9 +37,10 @@ public class RecordPersonalController {
 
     //ver records de cada ejercicio de x usuario
     @GetMapping("/usuario/{id}")
-    public ResponseEntity<List<RecordPersonalResponse>> getRecordsPersonalesByUsuarioId(@PathVariable Long id) {
+    public ResponseEntity<List<RecordPersonalResponse>> getRecordsPersonalesByUsuarioId(@PathVariable Long id,
+                                                                                         @AuthenticationPrincipal Usuario authUser) {
         return ResponseEntity.ok(
-                recordPersonalService.getRecordsPersonalesByUsuarioId(id));
+                recordPersonalService.getRecordsPersonalesByUsuarioId(id, authUser));
     }
 
     //ver ranking de records de todos los usuarios en x ejercicio

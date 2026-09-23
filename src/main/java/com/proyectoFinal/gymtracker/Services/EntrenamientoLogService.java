@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
@@ -56,14 +57,6 @@ public class EntrenamientoLogService {
                         throw new BusinessLogicException("El ejercicio no pertenece a la rutina ejecutada");
                     }
 
-                    //para actualizar el record automaticamente
-                    recordPersonalService.actualizarRecordSiCorresponde(
-                            usuarioLogueado,
-                            ejercicioRutina.getEjercicio(),
-                            marca.getPesoLevantado(),
-                            entrenamientoLog.getFecha()
-                    );
-
                     return MarcaEjercicio.builder()
                             .pesoLevantado(marca.getPesoLevantado())
                             .repeticionesLogradas(marca.getRepeticionesLogradas())
@@ -74,6 +67,11 @@ public class EntrenamientoLogService {
         entrenamientoLog.setMarcas(marcaEjercicioList);
 
         EntrenamientoLog saved = entrenamientoLogRepository.save(entrenamientoLog);
+        entrenamientoLogRepository.flush();
+
+        for (MarcaEjercicio marca : saved.getMarcas()) {
+            recordPersonalService.recalcularRecord(usuarioLogueado, marca.getEjercicioRutina().getEjercicio());
+        }
 
         registrarRacha(usuarioLogueado, fechaUltimo, hoy);
 
@@ -104,6 +102,11 @@ public class EntrenamientoLogService {
 
 
         entrenamientoExistente.setRutinaEjecutada(rutina);
+        
+        List<Ejercicio> ejerciciosViejos = entrenamientoExistente.getMarcas().stream()
+                .map(m -> m.getEjercicioRutina().getEjercicio())
+                .toList();
+                
         entrenamientoExistente.getMarcas().clear();
 
         List<MarcaEjercicio> nuevasMarcas = entrenamientoLogRequest.getMarcasEjercicio()
@@ -115,13 +118,6 @@ public class EntrenamientoLogService {
                         throw new BusinessLogicException("El ejercicio no pertenece a la rutina ejecutada");
                     }
 
-                    recordPersonalService.actualizarRecordSiCorresponde(
-                            usuarioLogueado,
-                            ejercicioRutina.getEjercicio(),
-                            marcaEjercicioRequest.getPesoLevantado(),
-                            entrenamientoExistente.getFecha()
-                    );
-
                     return MarcaEjercicio.builder()
                             .pesoLevantado(marcaEjercicioRequest.getPesoLevantado())
                             .repeticionesLogradas(marcaEjercicioRequest.getRepeticionesLogradas())
@@ -131,13 +127,25 @@ public class EntrenamientoLogService {
 
         entrenamientoExistente.getMarcas().addAll(nuevasMarcas);
         EntrenamientoLog entrenamientoSaved = entrenamientoLogRepository.save(entrenamientoExistente);
+        entrenamientoLogRepository.flush();
+
+        List<Ejercicio> ejerciciosA_Recalcular = new ArrayList<>(ejerciciosViejos);
+        ejerciciosA_Recalcular.addAll(entrenamientoSaved.getMarcas().stream().map(m -> m.getEjercicioRutina().getEjercicio()).toList());
+        
+        for (Ejercicio ej : ejerciciosA_Recalcular.stream().distinct().toList()) {
+            recordPersonalService.recalcularRecord(usuarioLogueado, ej);
+        }
 
         return mapEntrenamientoLogResponse(entrenamientoSaved);
     }
 
-    public EntrenamientoLogResponse getEntrenamientoLogById (Long idEntrenamientoLog) {
+    public EntrenamientoLogResponse getEntrenamientoLogById (Long idEntrenamientoLog, Usuario usuario) {
         EntrenamientoLog entrenamientoLog = entrenamientoLogRepository.findById(idEntrenamientoLog)
                 .orElseThrow(()-> new ResourceNotFoundException("Entrenamiento no encontrado"));
+
+        if (!entrenamientoLog.getUsuario().getId().equals(usuario.getId()) && usuario.getRol() != Rol.ADMIN) {
+            throw new BusinessLogicException("No tenés permiso para ver este entrenamiento");
+        }
 
         return mapEntrenamientoLogResponse(entrenamientoLog);
     }
@@ -198,7 +206,16 @@ public class EntrenamientoLogService {
 
         if (!entrenamientoLog.getUsuario().getId().equals(usuario.getId())) throw new UserNotFoundException("Usted no es duenio de este entrenamiento");
 
+        List<Ejercicio> ejerciciosA_Recalcular = entrenamientoLog.getMarcas().stream()
+                .map(m -> m.getEjercicioRutina().getEjercicio())
+                .distinct()
+                .toList();
+
         entrenamientoLogRepository.delete(entrenamientoLog);
+
+        for (Ejercicio ej : ejerciciosA_Recalcular) {
+            recordPersonalService.recalcularRecord(usuario, ej);
+        }
     }
 
     private void registrarRacha(Usuario usuarioLogueado, LocalDate fechaUltimo, LocalDate fechaHoy) {
@@ -241,7 +258,8 @@ public class EntrenamientoLogService {
         }
 
         // Evaluar si hoy es un día de cumplimiento
-        boolean sumaRacha = false;
+        boolean sumaRacha;
+
         if (!diasProgramados.isEmpty()) {
             sumaRacha = diasProgramados.contains(fechaHoy.getDayOfWeek());
         } else {
