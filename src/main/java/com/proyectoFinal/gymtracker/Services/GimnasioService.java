@@ -102,8 +102,11 @@ public class GimnasioService {
         
         Usuario admin = gimnasio.getAdmin();
         if (admin != null && admin.getRol() == Rol.ADMIN_GIMNASIO) {
-            admin.setRol(Rol.USUARIO);
-            usuarioRepository.save(admin);
+            List<Gimnasio> gimnasiosDelAdmin = gimnasioRepository.findByAdminId(admin.getId());
+            if (gimnasiosDelAdmin.size() <= 1) {
+                admin.setRol(Rol.USUARIO);
+                usuarioRepository.save(admin);
+            }
         }
 
         gimnasioRepository.delete(gimnasio);
@@ -121,10 +124,9 @@ public class GimnasioService {
             }
         }
 
-        // 3. Mapeamos la lista de entidades a DTOs de respuesta utilizando el mapeador que ya creaste
-        return gimnasio.getMiembros().stream()
-                .map(usuarioService::toResponse)
-                .collect(Collectors.toList());
+        return usuarioRepository.findAllByGimnasioId(idGimnasio)
+                .stream().map(usuarioService::toResponse)
+                .toList();
     }
 
     private GimnasioResponse gimnasioToResponse(Gimnasio gimnasio){
@@ -138,6 +140,7 @@ public class GimnasioService {
                 .horarioApertura(gimnasio.getHorarioApertura())
                 .horarioCierre(gimnasio.getHorarioCierre())
                 .diasDeApertura(gimnasio.getDiasAbierto())
+                .isMercadoPagoVinculado(gimnasio.getMpAccessToken() != null && !gimnasio.getMpAccessToken().isEmpty())
                 .build();
     }
 }

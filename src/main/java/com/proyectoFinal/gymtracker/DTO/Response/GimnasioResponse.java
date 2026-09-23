@@ -24,4 +24,6 @@ public class GimnasioResponse {
     private List<DayOfWeek> diasDeApertura;
     private LocalTime horarioApertura;
     private LocalTime horarioCierre;
+    @com.fasterxml.jackson.annotation.JsonProperty("isMercadoPagoVinculado")
+    private Boolean isMercadoPagoVinculado;
 }

@@ -26,6 +26,10 @@ public class PagoController {
 
         SuscripcionGimnasio suscripcion =
                 suscripcionService.getByIdAndUser(idSuscripcion, usuario);
+                
+        if (suscripcion.getGimnasio().getMpAccessToken() == null || suscripcion.getGimnasio().getMpAccessToken().isEmpty()) {
+            return ResponseEntity.badRequest().body("El gimnasio no está vinculado a Mercado Pago");
+        }
 
         String url = IpagoService.generarLinkPago(suscripcion);
 
