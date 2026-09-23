@@ -1,5 +1,6 @@
 package com.proyectoFinal.gymtracker.Config;
 
+import com.proyectoFinal.gymtracker.Enum.Rol;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,21 +32,23 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/webhook/mercadopago").permitAll()
+                        .requestMatchers("/mercadopago/callback").permitAll()
                         .requestMatchers("/usuarios/registro", "/usuarios/login").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.GET, "/ejercicios/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/musculos/**").permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/usuarios/me/alumnos").hasRole("ENTRENADOR")
-                        .requestMatchers(HttpMethod.GET, "/entrenamientos/alumno/**").hasRole("ENTRENADOR")
-                        .requestMatchers(HttpMethod.GET, "/usuarios", "/usuarios/{id:[0-9]+}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/usuarios/me/alumnos").hasRole(Rol.ENTRENADOR.name())
+                        .requestMatchers(HttpMethod.DELETE, "/usuarios/me/alumnos/**").hasRole(Rol.ENTRENADOR.name())
+                        .requestMatchers(HttpMethod.GET, "/entrenamientos/alumno/**").hasRole(Rol.ENTRENADOR.name())
+                        .requestMatchers(HttpMethod.GET, "/usuarios", "/usuarios/{id:[0-9]+}").hasRole(Rol.ADMIN.name())
 
-                        .requestMatchers(HttpMethod.POST, "/ejercicios/**", "/musculos/**", "/gimnasios").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/gimnasios/me").hasRole("ADMIN_GIMNASIO")
+                        .requestMatchers(HttpMethod.POST, "/ejercicios/**", "/musculos/**", "/gimnasios").hasRole(Rol.ADMIN.name())
+                        .requestMatchers(HttpMethod.PUT, "/gimnasios/me").hasRole(Rol.ADMIN_GIMNASIO.name())
 
-                        .requestMatchers(HttpMethod.PUT, "/ejercicios/**", "/musculos/**", "/gimnasios/{id}").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/ejercicios/**", "/musculos/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/gimnasios/**").hasAnyRole("ADMIN", "ADMIN_GIMNASIO")
+                        .requestMatchers(HttpMethod.PUT, "/ejercicios/**", "/musculos/**", "/gimnasios/{id}").hasRole(Rol.ADMIN.name())
+                        .requestMatchers(HttpMethod.DELETE, "/ejercicios/**", "/musculos/**").hasRole(Rol.ADMIN.name())
+                        .requestMatchers(HttpMethod.DELETE, "/gimnasios/**").hasAnyRole(Rol.ADMIN.name(), Rol.ADMIN_GIMNASIO.name())
 
                         .requestMatchers("/rutinas/**", "/entrenamientos/**").authenticated()
                         .requestMatchers("/usuarios/**").authenticated()

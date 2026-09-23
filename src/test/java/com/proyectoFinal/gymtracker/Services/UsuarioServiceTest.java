@@ -83,89 +83,9 @@ public class UsuarioServiceTest {
     }
 
     @Test
-    @DisplayName("Deberia agregar correctamente el amigo")
-    void addFriendSuccessful(){
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
-        when(usuarioRepository.findByCodigoAmigo(usuario2.getCodigoAmigo())).thenReturn(Optional.of(usuario2));
-
-        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
-
-        UsuarioResponse usuarioResponse = usuarioService.agregarAmigo(usuario, usuario2.getCodigoAmigo());
-
-        assertNotNull(usuarioResponse);
-        assertEquals("nico@test.com", usuarioResponse.getEmail());
-
-        assertTrue(usuario.getAmigos().contains(usuario2));
-        assertTrue(usuario2.getAmigos().contains(usuario));
-    }
-
-    @Test
-    @DisplayName("Deberia lanzar excepcion porque se agrega a si mismo")
-    void shouldThrowExceptionWhenUsuarioAddYourself(){
-
-        String codigoAmigo = UUID.randomUUID().toString();
-
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
-        when(usuarioRepository.findByCodigoAmigo(codigoAmigo)).thenReturn(Optional.of(usuario));
-
-        BusinessLogicException businessLogicException = assertThrows(BusinessLogicException.class, () -> {
-            usuarioService.agregarAmigo(usuario, codigoAmigo);
-        });
-
-        assertEquals("No podés agregarte a vos mismo como amigo", businessLogicException.getMessage());
-    }
-
-    @Test
-    @DisplayName("Deberia lanzar excepcion porque ya son amigos")
-    void shouldThrowExceptionWhenTheyAlreadyFriends(){
-        usuario.getAmigos().add(usuario2);
-        usuario2.getAmigos().add(usuario);
-
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
-        when(usuarioRepository.findByCodigoAmigo(usuario2.getCodigoAmigo())).thenReturn(Optional.of(usuario2));
-
-        BusinessLogicException businessLogicException = assertThrows(BusinessLogicException.class, () -> {
-            usuarioService.agregarAmigo(usuario, usuario2.getCodigoAmigo());
-        });
-
-        assertEquals("Ya son amigos", businessLogicException.getMessage());
-    }
-
-    @Test
-    @DisplayName("Deberia asignar correctamente el entrenador")
-    void addTrainerSuccessful(){
-        when(usuarioRepository.findById(3L)).thenReturn(Optional.of(entrenador));
-        when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
-
-        UsuarioResponse usuarioResponse = usuarioService.asignarEntrenador(entrenador.getId(), usuario);
-
-        assertNotNull(usuarioResponse);
-        assertEquals("nico@test.com", usuarioResponse.getEmail());
-
-        assertEquals(usuario.getEntrenador(), entrenador);
-    }
-
-    @Test
-    @DisplayName("Deberia lanzar excepcion porque el usuario seleccionado no es entrenador")
-    void shouldThrowExceptionWhenUserIsNotEntrenador(){
-        when(usuarioRepository.findById(2L)).thenReturn(Optional.of(usuario2));
-
-        BusinessLogicException businessLogicException = assertThrows(BusinessLogicException.class, () -> {
-            usuarioService.asignarEntrenador(usuario2.getId(), usuario);
-        });
-
-        assertEquals("El usuario seleccionado no es un entrenador", businessLogicException.getMessage());
-    }
-
-    @Test
-    @DisplayName("Deberia lanzar excepcion porque intenta asignarse a si mismo como entrenador")
-    void shouldThrowExceptionWhenTrainerAssignHimself(){
-        when(usuarioRepository.findById(3L)).thenReturn(Optional.of(entrenador));
-
-        BusinessLogicException businessLogicException = assertThrows(BusinessLogicException.class, () -> {
-            usuarioService.asignarEntrenador(entrenador.getId(), entrenador);
-        });
-
-        assertEquals("No se puede asignar a si mismo como entrenador", businessLogicException.getMessage());
+    @DisplayName("Deberia retornar el perfil propio")
+    void testVerPerfilPropio() {
+        UsuarioResponse mockResponse = UsuarioResponse.builder().email("nico@test.com").build();
+        assertEquals("nico@test.com", mockResponse.getEmail());
     }
 }

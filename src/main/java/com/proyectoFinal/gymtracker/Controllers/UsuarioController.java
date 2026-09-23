@@ -4,9 +4,13 @@ import com.proyectoFinal.gymtracker.DTO.Request.LoginRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.PerfilUpdateRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.UsuarioRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.AmigoResponse;
+import com.proyectoFinal.gymtracker.DTO.Response.GananciaGimnasioProjection;
 import com.proyectoFinal.gymtracker.DTO.Response.LoginResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
+import com.proyectoFinal.gymtracker.Services.AuthService;
+import com.proyectoFinal.gymtracker.Services.SocialService;
+import com.proyectoFinal.gymtracker.Services.TutoriaService;
 import com.proyectoFinal.gymtracker.Services.UsuarioService;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import jakarta.validation.Valid;
@@ -14,12 +18,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -28,18 +34,6 @@ import java.util.List;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
-
-    @PostMapping("/registro")
-    public ResponseEntity<UsuarioResponse> registrar(@Valid @RequestBody UsuarioRequest usuarioRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.registrar(usuarioRequest));
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.status(HttpStatus.OK).body(usuarioService.login(loginRequest));
-    }
-
-    //Ver perfil
     @GetMapping("/me")
     public ResponseEntity<UsuarioResponse> verPerfilPropio(@AuthenticationPrincipal Usuario usuario) {
         return ResponseEntity.ok(usuarioService.verPerfilPropio(usuario));
@@ -63,50 +57,6 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.activarRutina(usuario, idRutina));
     }
 
-    @PostMapping("/me/amigos/{codigoAmigo}")
-    public ResponseEntity<UsuarioResponse> agregarAmigo(@AuthenticationPrincipal Usuario usuario,
-                                                        @PathVariable String codigoAmigo) {
-        return ResponseEntity.ok(usuarioService.agregarAmigo(usuario, codigoAmigo));
-    }
-
-    @DeleteMapping("/me/amigos/{amigoId}")
-    public ResponseEntity<UsuarioResponse> eliminarAmigo(@PathVariable Long amigoId,
-                                                         @AuthenticationPrincipal Usuario usuario) {
-        return ResponseEntity.ok(usuarioService.eliminarAmigo(amigoId, usuario));
-    }
-
-    @GetMapping("/me/amigos")
-    public ResponseEntity<List<AmigoResponse>> getAmigos(@AuthenticationPrincipal Usuario usuario) {
-        return ResponseEntity.ok(usuarioService.getAmigos(usuario));
-    }
-
-    @GetMapping("/me/amigos/{amigoId}/perfil")
-    public ResponseEntity<UsuarioResponse> getPerfilAmigo(@AuthenticationPrincipal Usuario usuario,
-                                                     @PathVariable Long amigoId) {
-        return ResponseEntity.ok(usuarioService.verPerfilAmigo(usuario, amigoId));
-    }
-
-    @PutMapping("/me/entrenador/{idEntrenador}")
-    public ResponseEntity<UsuarioResponse> asignarEntrenador(@PathVariable Long idEntrenador,
-                                                             @AuthenticationPrincipal Usuario usuario ) {
-        return ResponseEntity.ok(usuarioService.asignarEntrenador(idEntrenador, usuario));
-    }
-
-    @DeleteMapping("/me/entrenador")
-    public ResponseEntity<UsuarioResponse> eliminarEntrenador(@AuthenticationPrincipal Usuario usuario ) {
-        return ResponseEntity.ok(usuarioService.eliminarEntrenador(usuario.getId()));
-    }
-
-    @GetMapping("/me/alumnos")
-    public ResponseEntity<List<UsuarioResponse>> getAlumnos(@AuthenticationPrincipal Usuario usuario) {
-        return ResponseEntity.ok(usuarioService.getAlumnos(usuario.getId()));
-    }
-
-    @GetMapping("/me/entrenador")
-    public ResponseEntity<UsuarioResponse> getEntrenadorActual(@AuthenticationPrincipal Usuario usuario) {
-        return ResponseEntity.ok(usuarioService.verEntrenadorActual(usuario.getId()));
-    }
-
     @GetMapping("/entrenadores")
     public ResponseEntity<List<UsuarioResponse>> getEntrenadores() {
         return ResponseEntity.ok(usuarioService.getEntrenadores());
@@ -123,12 +73,12 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.cambiarRol(idUsuario, nuevoRol));
     }
 
-    @PreAuthorize("hasRole('ENTRENADOR')")
-    @PutMapping("/{idAlumno}/rutina-activa/{idRutina}")
-    public ResponseEntity<UsuarioResponse> asignarRutinaAAlumno(
-            @AuthenticationPrincipal Usuario entrenador,
-            @PathVariable Long idAlumno,
-            @PathVariable Long idRutina) {
-        return ResponseEntity.ok(usuarioService.asignarRutinaAAlumno(entrenador, idAlumno, idRutina));
+    @GetMapping("/ganancias")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<GananciaGimnasioProjection>> obtenerGananciasPorGimnasio(
+            @RequestParam(required = false) LocalDate desde,
+            @RequestParam(required = false) LocalDate hasta
+    ) {
+        return ResponseEntity.ok(usuarioService.obtenerGananciasPorGimnasio(desde, hasta));
     }
 }

@@ -5,6 +5,7 @@ import com.proyectoFinal.gymtracker.DTO.Request.LoginRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.PerfilUpdateRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.UsuarioRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.AmigoResponse;
+import com.proyectoFinal.gymtracker.DTO.Response.GananciaGimnasioProjection;
 import com.proyectoFinal.gymtracker.DTO.Response.LoginResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
@@ -41,61 +42,25 @@ public class UsuarioService {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
-
-    public UsuarioResponse registrar(UsuarioRequest usuarioRequest) {
-
-        if (usuarioRequest.getEmail() == null || usuarioRequest.getEmail().isEmpty()) {
-            throw new BusinessLogicException("Email obligatorio");
-        }
-
-        if (usuarioRepository.findByEmail(usuarioRequest.getEmail()).isPresent()) {
-            throw new BusinessLogicException("Email ya registrado");
-        }
-
-        if (usuarioRepository.findByUsername(usuarioRequest.getUsername()).isPresent()) {
-            throw new BusinessLogicException("Username ya existe");
-        }
-
-        Usuario usuario = Usuario.builder().username(usuarioRequest.getUsername()).email(usuarioRequest.getEmail()).password(passwordEncoder.encode(usuarioRequest.getPassword())).peso(usuarioRequest.getPeso()).altura(usuarioRequest.getAltura()).rol(Rol.USUARIO).codigoAmigo(UUID.randomUUID().toString()).build();
-
-        Usuario saved = usuarioRepository.save(usuario);
-
-        return toResponse(saved);
-    }
-
-    public LoginResponse login(LoginRequest request) {
-
-        // El AuthenticationManager busca el mail y comprueba que la password encriptada coincida
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-
-        // Si la contraseña era correcta, fabricamos la "pulsera" (el token)
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-        String token = jwtService.generarToken(userDetails);
-        return new LoginResponse(token);
-    }
+    private final com.proyectoFinal.gymtracker.Repositories.SuscripcionGimnasioRepository suscripcionRepository;
 
     public UsuarioResponse verPerfilPropio(Usuario usuario) {
-
         return toResponse(usuario);
     }
 
     public UsuarioResponse verPerfilOtroUsuario(Long idUsuario) {
         Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
-
         return toResponse(usuario);
     }
 
     public UsuarioResponse editarPerfil(Usuario usuario, PerfilUpdateRequest request) {
-
         usuario.setPeso(request.getPeso());
         usuario.setAltura(request.getAltura());
-
         return toResponse(usuarioRepository.save(usuario));
     }
 
     @Transactional
     public UsuarioResponse activarRutina(Usuario usuario, Long idRutina) {
-
         Rutina rutina = rutinaRepository.findById(idRutina).orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
 
         if (!rutina.isEsPublica()) {
@@ -110,91 +75,6 @@ public class UsuarioService {
         usuario.setRutinaActiva(rutina);
         usuario.setRutinaActivaDesde(LocalDate.now());
         return toResponse(usuarioRepository.save(usuario));
-    }
-
-    @Transactional
-    public UsuarioResponse agregarAmigo(Usuario usuarioLog, String codigoAmigo) {
-        Usuario usuario = usuarioRepository.findById(usuarioLog.getId()).orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
-
-        Usuario amigo = usuarioRepository.findByCodigoAmigo(codigoAmigo).orElseThrow(() -> new ResourceNotFoundException("No existe usuario con ese código"));
-
-        if (usuario.getId().equals(amigo.getId()))
-            throw new BusinessLogicException("No podés agregarte a vos mismo como amigo");
-        if (usuario.getAmigos().contains(amigo)) throw new BusinessLogicException("Ya son amigos");
-
-        usuario.getAmigos().add(amigo);
-        amigo.getAmigos().add(usuario);
-        usuarioRepository.save(amigo);
-
-        return toResponse(usuarioRepository.save(usuario));
-    }
-
-    @Transactional
-    public UsuarioResponse eliminarAmigo(Long amigoId, Usuario usuarioLog) {
-
-        Usuario usuario = usuarioRepository.findById(usuarioLog.getId()).orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
-
-        usuario.getAmigos().removeIf(amigo -> amigo.getId().equals(amigoId));
-
-        Usuario amigoToRemove = usuarioRepository.findById(amigoId).orElse(null);
-        if (amigoToRemove != null) {
-            amigoToRemove.getAmigos().removeIf(u -> u.getId().equals(usuario.getId()));
-            usuarioRepository.save(amigoToRemove);
-        }
-
-        return toResponse(usuarioRepository.save(usuario));
-    }
-
-    public List<AmigoResponse> getAmigos(Usuario usuarioLog) {
-        Usuario usuario = usuarioRepository.findById(usuarioLog.getId()).orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
-
-        return usuario.getAmigos().stream().map(this::toAmigoResponse).toList();
-    }
-
-    public UsuarioResponse verPerfilAmigo(Usuario usuarioLog, Long amigoId) {
-        Usuario usuario = usuarioRepository.findById(usuarioLog.getId()).orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
-
-        Usuario amigo = usuarioRepository.findById(amigoId).orElseThrow(() -> new UserNotFoundException("Amigo no encontrado"));
-
-        //no son amigos
-        if (!usuario.getAmigos().contains(amigo)) {
-            throw new BusinessLogicException("No tenés acceso al perfil de este usuario");
-        }
-
-        return toResponse(amigo);
-    }
-
-    @Transactional
-    public UsuarioResponse asignarEntrenador(Long entrenadorId, Usuario usuario) {
-        Usuario entrenador = usuarioRepository.findById(entrenadorId).orElseThrow(() -> new UserNotFoundException("Entrenador no encontrado"));
-
-        if (!entrenador.getRol().equals(Rol.ENTRENADOR))
-            throw new BusinessLogicException("El usuario seleccionado no es un entrenador");
-
-        if (entrenadorId.equals(usuario.getId()))
-            throw new BusinessLogicException("No se puede asignar a si mismo como entrenador");
-
-        usuario.setEntrenador(entrenador);
-        return toResponse(usuarioRepository.save(usuario));
-    }
-
-    public UsuarioResponse eliminarEntrenador(Long usuarioId) {
-        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
-
-        usuario.setEntrenador(null);
-        return toResponse(usuarioRepository.save(usuario));
-    }
-
-    public List<UsuarioResponse> getAlumnos(Long entrenadorId) {
-        return usuarioRepository.findByEntrenadorId(entrenadorId).stream().map(this::toResponse).toList();
-    }
-
-    public UsuarioResponse verEntrenadorActual(Long idUsuario) {
-        Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
-
-        if (usuario.getEntrenador() == null) throw new BusinessLogicException("No tiene entrenador");
-
-        return toResponse(usuario.getEntrenador());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -214,23 +94,7 @@ public class UsuarioService {
         return toResponse(usuarioRepository.save(usuario));
     }
 
-    @Transactional
-    public UsuarioResponse asignarRutinaAAlumno(Usuario entrenador, Long idAlumno, Long idRutina) {
-        Usuario alumno = usuarioRepository.findById(idAlumno).orElseThrow(() -> new ResourceNotFoundException("Alumno no encontrado"));
-
-        // Valida que el alumno realmente pertenezca a este entrenador
-        if (alumno.getEntrenador() == null || !alumno.getEntrenador().getId().equals(entrenador.getId())) {
-            throw new BusinessLogicException("No tienes permiso para asignarle rutinas a este alumno");
-        }
-
-        Rutina rutina = rutinaRepository.findById(idRutina).orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
-
-        alumno.setRutinaActiva(rutina);
-        alumno.setRutinaActivaDesde(LocalDate.now());
-        return toResponse(usuarioRepository.save(alumno));
-    }
-
-    protected UsuarioResponse toResponse(Usuario usuario) {
+    public UsuarioResponse toResponse(Usuario usuario) {
         return UsuarioResponse.builder().id(usuario.getId()).username(usuario.getUsername()).email(usuario.getEmail()).rol(usuario.getRol()).codigoAmigo(usuario.getCodigoAmigo()).peso(usuario.getPeso()).altura(usuario.getAltura()).imc(usuario.getImc()).categoriaImc(calcularCategoriaImc(usuario.getImc())).rachaActualDias(usuario.getRachaActualDias()).rachaMaximaDias(usuario.getRachaMaximaDias()).build();
     }
 
@@ -244,7 +108,12 @@ public class UsuarioService {
         return "Obesidad grado 3";
     }
 
-    private AmigoResponse toAmigoResponse(Usuario usuario) {
+    public AmigoResponse toAmigoResponse(Usuario usuario) {
         return AmigoResponse.builder().id(usuario.getId()).username(usuario.getUsername()).rol(usuario.getRol()).rachaActualDias(usuario.getRachaActualDias()).build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<GananciaGimnasioProjection> obtenerGananciasPorGimnasio(LocalDate desde, LocalDate hasta) {
+        return suscripcionRepository.reporteGananciasPorGimnasio(desde, hasta);
     }
 }
