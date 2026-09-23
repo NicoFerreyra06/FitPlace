@@ -1,6 +1,7 @@
 package com.proyectoFinal.gymtracker.Controllers;
 
 import com.proyectoFinal.gymtracker.DTO.Response.SuscripcionGimnasioResponse;
+import com.proyectoFinal.gymtracker.Enum.MetodoPago;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Services.SuscripcionService;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/suscripciones")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class SuscripcionController {
 
     private final SuscripcionService suscripcionService;
@@ -27,8 +27,9 @@ public class SuscripcionController {
     @PreAuthorize("hasRole('ADMIN_GIMNASIO') or hasRole('ADMIN')")
     @PutMapping("/{idSuscripcion}/activar")
     public ResponseEntity<SuscripcionGimnasioResponse> activarSuscripcion(@AuthenticationPrincipal Usuario usuario,
-                                                                 @PathVariable Long idSuscripcion) {
-        return new ResponseEntity<>(suscripcionService.activarSuscripcion(idSuscripcion, usuario), HttpStatus.OK);
+                                                                 @PathVariable Long idSuscripcion,
+                                                                 @RequestParam(required = false) MetodoPago metodoPago) {
+        return new ResponseEntity<>(suscripcionService.activarSuscripcion(idSuscripcion, usuario, metodoPago), HttpStatus.OK);
     }
 
     @GetMapping("/mia")

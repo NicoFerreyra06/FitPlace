@@ -56,7 +56,7 @@ public class SuscripcionService {
     }
 
     @Transactional
-    public SuscripcionGimnasioResponse activarSuscripcion(Long idSuscripcion, Usuario adminAutenticado) {
+    public SuscripcionGimnasioResponse activarSuscripcion(Long idSuscripcion, Usuario adminAutenticado, MetodoPago metodoPago) {
 
         SuscripcionGimnasio suscripcion = suscripcionGimnasioRepository.findById(idSuscripcion)
                 .orElseThrow(() -> new BusinessLogicException("Suscripción no encontrada"));
@@ -81,7 +81,9 @@ public class SuscripcionService {
         suscripcion.setEstadoSuscripcion(EstadoSuscripcion.ACTIVA);
         suscripcion.setFechaInicio(LocalDate.now());
         suscripcion.setFechaFin(LocalDate.now().plusMonths(1));
-        suscripcion.setMetodoPago(MetodoPago.EFECTIVO);
+
+        if (metodoPago == null)suscripcion.setMetodoPago(MetodoPago.EFECTIVO);
+        else suscripcion.setMetodoPago(metodoPago);
 
         cliente.setGimnasio(suscripcion.getGimnasio());
 
