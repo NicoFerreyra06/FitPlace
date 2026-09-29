@@ -3,7 +3,7 @@ package com.proyectoFinal.gymtracker.Services;
 import com.proyectoFinal.gymtracker.DTO.Request.EntrenamientoLogRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.MarcaEjercicioRequest;
 import com.proyectoFinal.gymtracker.Enum.Rol;
-import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
+import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.*;
 import com.proyectoFinal.gymtracker.Repositories.EjercicioRutinaRepository;
@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -54,6 +55,12 @@ public class EntrenamientoLogServiceTest {
 
     private Rutina rutina;
 
+    private Ejercicio ejercicio;
+
+    private MarcaEjercicio marcaEjercicio;
+
+    private EntrenamientoLog logSimulado;
+
     @BeforeEach
     void setUp() {
         usuario = Usuario.builder()
@@ -85,6 +92,28 @@ public class EntrenamientoLogServiceTest {
                 .nombre("Test_rutina")
                 .tokenCompartir(UUID.randomUUID().toString())
                 .dias(List.of()).build();
+
+
+        ejercicio = Ejercicio.builder()
+                .id(1L)
+                .nombre("Ejercicio")
+                .descripcion("descripcion")
+                .musculosPrincipales(List.of())
+                .musculosSecundarios(List.of()).build();
+
+        marcaEjercicio = MarcaEjercicio.builder()
+                .id(1L)
+                .pesoLevantado(20.0)
+                .repeticionesLogradas(5)
+                .ejercicioRutina(crearEjercicioRutinaSimulado())
+                .build();
+
+        logSimulado = EntrenamientoLog.builder()
+                .id(99L)
+                .usuario(usuario)
+                .rutinaEjecutada(rutina)
+                .marcas(List.of(marcaEjercicio))
+                .build();
     }
 
     @Test
@@ -98,6 +127,7 @@ public class EntrenamientoLogServiceTest {
                 .id(99L)
                 .usuario(usuario)
                 .rutinaEjecutada(rutina)
+                .marcas(List.of(marcaEjercicio))
                 .build();
 
         when(usuarioRepository.save(usuario)).thenReturn(usuario);
@@ -110,7 +140,7 @@ public class EntrenamientoLogServiceTest {
         assertNotNull(response);
         verify(rutinaRepository, times(1)).findById(1L);
         verify(ejercicioRutinaRepository, times(1)).findById(1L);
-        verify(recordPersonalService, times(1)).actualizarRecordSiCorresponde(eq(usuario), any(), anyDouble(), any());
+        verify(recordPersonalService, times(1)).recalcularRecord(eq(usuario), any(Ejercicio.class));
         verify(entrenamientoLogRepository, times(1)).save(any(EntrenamientoLog.class));
     }
 
@@ -218,7 +248,7 @@ public class EntrenamientoLogServiceTest {
 
         when(entrenamientoLogRepository.findById(1L)).thenReturn(Optional.of(entrenamientoLogViejo));
 
-        var response = assertThrows(BusinessLogicException.class,
+        var response = assertThrows(ForbiddenAccessException.class,
                 ()-> entrenamientoLogService.updateEntrenamiento(entrenamientoLogRequest, 1L, infiltrado));
 
         assertNotNull(response);
@@ -237,6 +267,7 @@ public class EntrenamientoLogServiceTest {
         return EjercicioRutina.builder()
                 .id(1L)
                 .dia(diaRutina)
+                .ejercicio(ejercicio)
                 .build();
     }
 }

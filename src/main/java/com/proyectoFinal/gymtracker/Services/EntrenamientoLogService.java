@@ -6,6 +6,7 @@ import com.proyectoFinal.gymtracker.DTO.Response.HistorialEjercicioResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.MarcaEjercicioResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
+import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.*;
@@ -87,7 +88,7 @@ public class EntrenamientoLogService {
                 .orElseThrow(() -> new ResourceNotFoundException("Entrenamiento no encontrado"));
 
         if (!entrenamientoExistente.getUsuario().getId().equals(usuarioLogueado.getId())) {
-            throw new BusinessLogicException("No tenés permiso para editar un entrenamiento que no es tuyo");
+            throw new ForbiddenAccessException("No tenés permiso para editar un entrenamiento que no es tuyo");
         }
 
         LocalDate fechaEntrenamiento = entrenamientoExistente.getFecha();
@@ -144,7 +145,7 @@ public class EntrenamientoLogService {
                 .orElseThrow(()-> new ResourceNotFoundException("Entrenamiento no encontrado"));
 
         if (!entrenamientoLog.getUsuario().getId().equals(usuario.getId()) && usuario.getRol() != Rol.ADMIN) {
-            throw new BusinessLogicException("No tenés permiso para ver este entrenamiento");
+            throw new ForbiddenAccessException ("No tenés permiso para ver este entrenamiento");
         }
 
         return mapEntrenamientoLogResponse(entrenamientoLog);
@@ -153,7 +154,7 @@ public class EntrenamientoLogService {
     public Page<EntrenamientoLogResponse> getEntrenamientos(Long idUsuario, Pageable pageable, LocalDate desde, LocalDate hasta, Usuario usuarioLogueado) {
 
         if (!usuarioLogueado.getId().equals(idUsuario) && usuarioLogueado.getRol() != Rol.ADMIN) {
-            throw new BusinessLogicException("No tienes permisos para ver estos entrenamientos");
+            throw new ForbiddenAccessException("No tienes permisos para ver estos entrenamientos");
         }
 
         Page<EntrenamientoLog> entrenamientosUsuario = entrenamientoLogRepository.findByUsuarioIdAndFechas(idUsuario, desde, hasta, pageable);
@@ -166,11 +167,11 @@ public class EntrenamientoLogService {
                 .orElseThrow(() -> new UserNotFoundException("Alumno no encontrado"));
 
         if (!entrenadorLogueado.getRol().equals(Rol.ENTRENADOR)) {
-            throw new BusinessLogicException("No tienes rol de ENTRENADOR");
+            throw new ForbiddenAccessException("No tienes rol de ENTRENADOR");
         }
 
         if (alumno.getEntrenador() == null || !alumno.getEntrenador().getId().equals(entrenadorLogueado.getId())) {
-            throw new BusinessLogicException("Este alumno no está a tu cargo");
+            throw new ForbiddenAccessException("Este alumno no está a tu cargo");
         }
 
         Page<EntrenamientoLog> entrenamientosUsuario = entrenamientoLogRepository.findByUsuarioIdAndFechas(idAlumno, desde, hasta, pageable);
@@ -193,7 +194,7 @@ public class EntrenamientoLogService {
         }
 
         if (!esElMismo && !esAdmin && !esSuEntrenador) {
-            throw new BusinessLogicException("Sin permisos");
+            throw new ForbiddenAccessException("Sin permisos");
         }
         
         return Map.of(ejercicio.getNombre(), entrenamientoLogRepository.historialEjercicio(idUsuario, idEjercicio));
@@ -204,7 +205,7 @@ public class EntrenamientoLogService {
         EntrenamientoLog entrenamientoLog = entrenamientoLogRepository.findById(idEntrenamientoLog)
                 .orElseThrow(() -> new ResourceNotFoundException("Entrenamiento no encontrado"));
 
-        if (!entrenamientoLog.getUsuario().getId().equals(usuario.getId())) throw new UserNotFoundException("Usted no es duenio de este entrenamiento");
+        if (!entrenamientoLog.getUsuario().getId().equals(usuario.getId())) throw new ForbiddenAccessException("Usted no es duenio de este entrenamiento");
 
         List<Ejercicio> ejerciciosA_Recalcular = entrenamientoLog.getMarcas().stream()
                 .map(m -> m.getEjercicioRutina().getEjercicio())

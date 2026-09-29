@@ -6,6 +6,7 @@ import com.proyectoFinal.gymtracker.DTO.Response.GimnasioResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
+import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Gimnasio;
@@ -16,11 +17,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -71,7 +70,7 @@ public class GimnasioService {
         Gimnasio gimnasio = gimnasioRepository.findById(idGimnasio)
                         .orElseThrow(()-> new ResourceNotFoundException("Gimnasio no encontrado"));
 
-        if (!gimnasio.getAdmin().getId().equals(admin.getId())) throw new BusinessLogicException("Usuario no encontrado");
+        if (!gimnasio.getAdmin().getId().equals(admin.getId())) throw new ForbiddenAccessException("Usted no es el admin del gimnasio");
 
         gimnasio.setNombre(request.getNombre());
         gimnasio.setDireccion(request.getDireccion());
@@ -98,7 +97,7 @@ public class GimnasioService {
         boolean isOwner = gimnasio.getAdmin() != null &&
                 gimnasio.getAdmin().getId().equals(actor.getId());
 
-        if (!isAdmin && !isOwner) throw new BusinessLogicException("Sin permisos");
+        if (!isAdmin && !isOwner) throw new ForbiddenAccessException("Sin permisos");
         
         Usuario admin = gimnasio.getAdmin();
         if (admin != null && admin.getRol() == Rol.ADMIN_GIMNASIO) {
@@ -120,7 +119,7 @@ public class GimnasioService {
 
         if (!adminAutenticado.getRol().name().equals("ADMIN")) {
             if (gimnasio.getAdmin() == null || !gimnasio.getAdmin().getId().equals(adminAutenticado.getId())) {
-                throw new BusinessLogicException("Usted no es el administrador de este gimnasio");
+                throw new ForbiddenAccessException("Usted no es el administrador de este gimnasio");
             }
         }
 

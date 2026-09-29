@@ -4,6 +4,7 @@ package com.proyectoFinal.gymtracker.Services;
 import com.proyectoFinal.gymtracker.DTO.Response.RecordPersonalResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
+import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Ejercicio;
 import com.proyectoFinal.gymtracker.Modelo.RecordPersonal;
@@ -39,7 +40,6 @@ public class RecordPersonalService {
                 .build();
     }
 
-
     // Muestra el record personal en 1 ejercicio de 1 usuario.
     public RecordPersonalResponse getRecordPersonalByEjercicioId(Long usuarioId, Long ejercicioId) {
         RecordPersonal record = recordPersonalRepository.findByUsuarioIdAndEjercicioId(usuarioId, ejercicioId);
@@ -53,7 +53,7 @@ public class RecordPersonalService {
     // Muestra los record personales en todos los ejercicios de 1 usuario.
     public List<RecordPersonalResponse> getRecordsPersonalesByUsuarioId(Long usuarioId, Usuario authUser) {
         if (!authUser.getId().equals(usuarioId) && authUser.getRol() != Rol.ADMIN) {
-            throw new BusinessLogicException("No tienes permisos para ver estos records");
+            throw new ForbiddenAccessException("No tienes permisos para ver estos records");
         }
         return recordPersonalRepository.findRecordPersonalByUsuarioId(usuarioId)
                 .stream()

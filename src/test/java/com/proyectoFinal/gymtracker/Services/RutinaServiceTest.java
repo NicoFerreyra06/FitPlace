@@ -3,7 +3,7 @@ package com.proyectoFinal.gymtracker.Services;
 import com.proyectoFinal.gymtracker.DTO.Request.RutinaRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.RutinaResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
-import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
+import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Rutina;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
@@ -139,11 +139,11 @@ public class RutinaServiceTest {
 
         when(rutinaRepository.findById(rutinaId)).thenReturn(Optional.of(rutinaExistente));
 
-        var response = assertThrows(BusinessLogicException.class,
+        var response = assertThrows(ForbiddenAccessException.class,
                 () -> rutinaService.deleteRutina(usuario2, rutinaId));
 
         assertNotNull(response);
         verify(rutinaRepository, never()).delete(any(Rutina.class));
-        assertEquals("No sos el creador de la rutina para eliminarla", response.getMessage());
+        assertEquals("No tenés permiso para eliminar esta rutina", response.getMessage());
     }
 }

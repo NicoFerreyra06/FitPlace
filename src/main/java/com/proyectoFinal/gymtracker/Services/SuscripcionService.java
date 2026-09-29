@@ -5,6 +5,7 @@ import com.proyectoFinal.gymtracker.Enum.EstadoSuscripcion;
 import com.proyectoFinal.gymtracker.Enum.MetodoPago;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
+import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
 import com.proyectoFinal.gymtracker.Modelo.Gimnasio;
 import com.proyectoFinal.gymtracker.Modelo.SuscripcionGimnasio;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
@@ -37,9 +38,7 @@ public class SuscripcionService {
                         EstadoSuscripcion.PENDIENTE
                 )
         )) {
-            throw new BusinessLogicException(
-                    "Ya posee una suscripción activa o pendiente"
-            );
+            throw new BusinessLogicException("Ya posee una suscripción activa o pendiente");
         }
 
         SuscripcionGimnasio suscripcionGimnasio = SuscripcionGimnasio
@@ -64,7 +63,7 @@ public class SuscripcionService {
         if (adminAutenticado.getRol() != Rol.ADMIN) {
             // Comparamos directamente si el admin del gimnasio es el usuario autenticado
             if (!suscripcion.getGimnasio().getAdmin().getId().equals(adminAutenticado.getId())) {
-                throw new BusinessLogicException("No tienes permisos para administrar las suscripciones de este gimnasio");
+                throw new ForbiddenAccessException("No tienes permisos para administrar las suscripciones de este gimnasio");
             }
         }
 
@@ -103,7 +102,7 @@ public class SuscripcionService {
                 .orElseThrow(() -> new BusinessLogicException("Suscripción no encontrada"));
 
         if (!suscripcion.getUsuario().getId().equals(usuario.getId())) {
-            throw new BusinessLogicException("No puede cancelar esta suscripción");
+            throw new ForbiddenAccessException("No puede cancelar esta suscripción");
         }
 
         if (suscripcion.getEstadoSuscripcion() == EstadoSuscripcion.CANCELADA) {
@@ -133,7 +132,7 @@ public class SuscripcionService {
 
         if (adminAutenticado.getRol() != Rol.ADMIN) {
             if (gimnasio.getAdmin() == null || !gimnasio.getAdmin().getId().equals(adminAutenticado.getId())) {
-                throw new BusinessLogicException("No tienes permisos para ver las suscripciones de este gimnasio");
+                throw new ForbiddenAccessException("No tienes permisos para ver las suscripciones de este gimnasio");
             }
         }
 

@@ -3,6 +3,7 @@ package com.proyectoFinal.gymtracker.Services;
 import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
+import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Rutina;
@@ -61,7 +62,7 @@ public class TutoriaService {
         Usuario alumno = usuarioRepository.findById(idAlumno).orElseThrow(() -> new ResourceNotFoundException("Alumno no encontrado"));
 
         if (alumno.getEntrenador() == null || !alumno.getEntrenador().getId().equals(entrenador.getId())) {
-            throw new BusinessLogicException("No tienes permiso para asignarle rutinas a este alumno");
+            throw new ForbiddenAccessException("No tienes permiso para asignarle rutinas a este alumno");
         }
 
         Rutina rutina = rutinaRepository.findById(idRutina).orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
@@ -76,7 +77,7 @@ public class TutoriaService {
         Usuario alumno = usuarioRepository.findById(idAlumno).orElseThrow(() -> new ResourceNotFoundException("Alumno no encontrado"));
 
         if (alumno.getEntrenador() == null || !alumno.getEntrenador().getId().equals(entrenador.getId())) {
-            throw new BusinessLogicException("No tienes permiso para eliminar a este alumno porque no te pertenece");
+            throw new ForbiddenAccessException("No tienes permiso para eliminar a este alumno porque no te pertenece");
         }
 
         alumno.setEntrenador(null);
