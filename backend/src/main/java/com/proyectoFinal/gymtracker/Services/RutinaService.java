@@ -8,6 +8,7 @@ import com.proyectoFinal.gymtracker.DTO.Response.EjercicioRutinaResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.RutinaResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
+import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.*;
@@ -83,7 +84,7 @@ public class RutinaService {
                 .orElseThrow(()-> new BusinessLogicException("Rutina no encontrada"));
 
         if(!rutinaExistente.getCreador().getId().equals(usuario.getId())) {
-            throw new BusinessLogicException("No tienes permiso para editar esta rutina");
+            throw new ForbiddenAccessException("No tienes permiso para editar esta rutina");
         }
 
         rutinaExistente.setNombre(rutinaRequest.getNombre());
@@ -190,7 +191,7 @@ public class RutinaService {
                     && usuario.getEntrenador().getId().equals(rutinaSaved.getCreador().getId());
 
             if (!esCreador && !esAdmin && !esAlumnoDelCreador) {
-                throw new BusinessLogicException("No tienes permiso para ver esta rutina");
+                throw new ForbiddenAccessException("No tienes permiso para ver esta rutina");
             }
         }
 
@@ -218,7 +219,7 @@ public class RutinaService {
                 .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
 
         if (!rutina.getCreador().getId().equals(usuario.getId()) && usuario.getRol() != Rol.ADMIN) {
-            throw new BusinessLogicException("No tenés permiso para eliminar esta rutina");
+            throw new ForbiddenAccessException("No tenés permiso para eliminar esta rutina");
         }
 
         if (usuario.getRutinaActiva() != null && usuario.getRutinaActiva().getId().equals(idRutina)) {
@@ -252,11 +253,11 @@ public class RutinaService {
                 .orElseThrow(() -> new UserNotFoundException("Alumno no encontrado"));
 
         if (!entrenador.getRol().equals(Rol.ENTRENADOR)) {
-            throw new BusinessLogicException("Usted no es entrenador");
+            throw new ForbiddenAccessException("Usted no es entrenador");
         }
 
         if (alumno.getEntrenador() == null || !alumno.getEntrenador().getId().equals(entrenador.getId())) {
-            throw new BusinessLogicException("Este alumno no está a su cargo");
+            throw new ForbiddenAccessException("Este alumno no está a su cargo");
         }
 
         Page<Rutina> rutinasDelAlumno = rutinaRepository.findByCreadorId(alumno.getId(), pageable);

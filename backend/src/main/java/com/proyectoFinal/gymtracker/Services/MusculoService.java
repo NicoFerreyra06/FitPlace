@@ -47,7 +47,6 @@ public class MusculoService {
         Musculo musculo = musculoRepository.findById(idMusculo)
                 .orElseThrow(() -> new ResourceNotFoundException("Musculo no encontrado"));
 
-
         return musculoToResponse(musculo);
     }
 
