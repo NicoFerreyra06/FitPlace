@@ -4,17 +4,26 @@
 
 # 🏋️ FitPlace
 
-API para entrenar, seguir tu progreso y gestionar gimnasios.
+App para entrenar, seguir tu progreso y gestionar gimnasios.
 
 ![Java](https://img.shields.io/badge/Java-17-ED8B00?logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-4-6DB33F?logo=springboot&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white)
+![Angular](https://img.shields.io/badge/Angular-22-DD0031?logo=angular&logoColor=white)
 
-[Features](#features) · [Instalación](#instalación) · [API](#api) · [Tests](#tests) · [Equipo](#equipo)
+[Estructura](#estructura) · [Features](#features) · [Instalación](#instalación) · [API](#api) · [Tests](#tests) · [Equipo](#equipo)
 
 </div>
 
 ---
+
+## Estructura
+
+```
+FitPlace/
+├── backend/    API REST (Spring Boot + MySQL)
+└── frontend/   App web (Angular 22)
+```
 
 ## Features
 
@@ -28,15 +37,29 @@ API para entrenar, seguir tu progreso y gestionar gimnasios.
 
 ## Instalación
 
+### Backend
+
 Requiere **Java 17** y **MySQL** con una base `gymtracker` en `localhost:3306`.
 
 ```bash
 git clone https://github.com/NicoFerreyra06/FitPlace.git
-cd FitPlace
+cd FitPlace/backend
 ./mvnw spring-boot:run
 ```
 
 Queda corriendo en `http://localhost:8080`.
+
+### Frontend
+
+Requiere **Node 22+**.
+
+```bash
+cd FitPlace/frontend
+npm install
+npm start
+```
+
+Queda corriendo en `http://localhost:5173` (el puerto que el backend tiene habilitado en CORS).
 
 <details>
 <summary><b>Variables de entorno</b></summary>
@@ -61,6 +84,7 @@ Queda corriendo en `http://localhost:8080`.
 <br>
 
 ```bash
+cd backend
 docker build -t fitplace .
 docker run -p 8080:8080 \
   -e MYSQLUSER=root -e MYSQLPASSWORD=secret \
@@ -122,10 +146,11 @@ sequenceDiagram
 ## Tests
 
 ```bash
-./mvnw test
+cd backend && ./mvnw test      # backend: H2 en memoria
+cd frontend && npm test        # frontend
 ```
 
-Corren con H2 en memoria. El reporte de cobertura (JaCoCo) queda en `target/site/jacoco/index.html`.
+El reporte de cobertura del backend (JaCoCo) queda en `backend/target/site/jacoco/index.html`.
 
 ## Equipo
 
