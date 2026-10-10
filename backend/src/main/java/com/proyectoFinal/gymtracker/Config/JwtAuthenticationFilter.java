@@ -1,5 +1,6 @@
 package com.proyectoFinal.gymtracker.Config;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -44,24 +46,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Extraemos el token (cortamos los primeros 7 caracteres de "Bearer ")
         jwt = authHeader.substring(7);
-        userEmail = jwtService.extraerUsername(jwt);
 
-        // Si encontramos un email y el usuario no está autenticado aún en este hilo
-        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+        try {
+            userEmail = jwtService.extraerUsername(jwt);
 
-            // Validamos que el token no esté vencido y sea del usuario correcto
-            if (jwtService.validarToken(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            // Si encontramos un email y el usuario no está autenticado aún en este hilo
+            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
-                // Efectivamente "logueamos" al usuario en el contexto de Spring
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                // Validamos que el token no esté vencido y sea del usuario correcto
+                if (jwtService.validarToken(jwt, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                    // Efectivamente "logueamos" al usuario en el contexto de Spring
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+        } catch (JwtException | IllegalArgumentException | UsernameNotFoundException e) {
+            // Token vencido, mal firmado, mal formado o de un usuario que ya no existe:
+            // no autenticamos y dejamos que Spring responda 401 si la ruta es privada
+            SecurityContextHolder.clearContext();
         }
         filterChain.doFilter(request, response);
     }

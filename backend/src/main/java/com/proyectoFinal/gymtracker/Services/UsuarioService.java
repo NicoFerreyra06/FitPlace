@@ -1,48 +1,36 @@
 package com.proyectoFinal.gymtracker.Services;
 
-import com.proyectoFinal.gymtracker.Config.JwtService;
-import com.proyectoFinal.gymtracker.DTO.Request.LoginRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.PerfilUpdateRequest;
-import com.proyectoFinal.gymtracker.DTO.Request.UsuarioRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.AmigoResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.GananciaGimnasioProjection;
-import com.proyectoFinal.gymtracker.DTO.Response.LoginResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
+import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Rutina;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Repositories.RutinaRepository;
+import com.proyectoFinal.gymtracker.Repositories.SuscripcionGimnasioRepository;
 import com.proyectoFinal.gymtracker.Repositories.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UsuarioService {
 
-    private final PasswordEncoder passwordEncoder;
     private final UsuarioRepository usuarioRepository;
     private final RutinaRepository rutinaRepository;
-    private final AuthenticationManager authenticationManager;
-    private final UserDetailsService userDetailsService;
-    private final JwtService jwtService;
-    private final com.proyectoFinal.gymtracker.Repositories.SuscripcionGimnasioRepository suscripcionRepository;
+    private final SuscripcionGimnasioRepository suscripcionRepository;
 
     public UsuarioResponse verPerfilPropio(Usuario usuario) {
         return toResponse(usuario);
@@ -68,7 +56,7 @@ public class UsuarioService {
             boolean esAlumnoDelCreador = usuario.getEntrenador() != null && usuario.getEntrenador().getId().equals(rutina.getCreador().getId());
             
             if (!esCreador && !esAlumnoDelCreador) {
-                throw new BusinessLogicException("No tienes permiso para utilizar esta rutina privada");
+                throw new ForbiddenAccessException("No tienes permiso para utilizar esta rutina privada");
             }
         }
 
@@ -95,7 +83,7 @@ public class UsuarioService {
     }
 
     public UsuarioResponse toResponse(Usuario usuario) {
-        return UsuarioResponse.builder().id(usuario.getId()).username(usuario.getUsername()).email(usuario.getEmail()).rol(usuario.getRol()).codigoAmigo(usuario.getCodigoAmigo()).peso(usuario.getPeso()).altura(usuario.getAltura()).imc(usuario.getImc()).categoriaImc(calcularCategoriaImc(usuario.getImc())).rachaActualDias(usuario.getRachaActualDias()).rachaMaximaDias(usuario.getRachaMaximaDias()).build();
+        return UsuarioResponse.builder().id(usuario.getId()).username(usuario.getNombreUsuario()).email(usuario.getEmail()).rol(usuario.getRol()).codigoAmigo(usuario.getCodigoAmigo()).peso(usuario.getPeso()).altura(usuario.getAltura()).imc(usuario.getImc()).categoriaImc(calcularCategoriaImc(usuario.getImc())).rachaActualDias(usuario.getRachaActualDias()).rachaMaximaDias(usuario.getRachaMaximaDias()).build();
     }
 
     private String calcularCategoriaImc(Double imc) {
@@ -109,7 +97,7 @@ public class UsuarioService {
     }
 
     public AmigoResponse toAmigoResponse(Usuario usuario) {
-        return AmigoResponse.builder().id(usuario.getId()).username(usuario.getUsername()).rol(usuario.getRol()).rachaActualDias(usuario.getRachaActualDias()).build();
+        return AmigoResponse.builder().id(usuario.getId()).username(usuario.getNombreUsuario()).rol(usuario.getRol()).rachaActualDias(usuario.getRachaActualDias()).build();
     }
 
     @PreAuthorize("hasRole('ADMIN')")

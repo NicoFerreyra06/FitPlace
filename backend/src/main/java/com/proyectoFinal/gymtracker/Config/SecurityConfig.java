@@ -1,6 +1,7 @@
 package com.proyectoFinal.gymtracker.Config;
 
 import com.proyectoFinal.gymtracker.Enum.Rol;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +30,12 @@ public class SecurityConfig {
                 )
 
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+
+                // Sin autenticar respondemos 401 (el 403 queda para quien está logueado pero sin rol suficiente)
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) ->
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED))
+                )
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/webhook/mercadopago").permitAll()

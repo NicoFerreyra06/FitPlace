@@ -3,7 +3,7 @@ package com.proyectoFinal.gymtracker.Services;
 import com.proyectoFinal.gymtracker.DTO.Request.EntrenamientoLogRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.MarcaEjercicioRequest;
 import com.proyectoFinal.gymtracker.Enum.Rol;
-import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
+import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.*;
 import com.proyectoFinal.gymtracker.Repositories.EjercicioRutinaRepository;
@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -54,6 +55,12 @@ public class EntrenamientoLogServiceTest {
 
     private Rutina rutina;
 
+    private Ejercicio ejercicio;
+
+    private MarcaEjercicio marcaEjercicio;
+
+    private EntrenamientoLog logSimulado;
+
     @BeforeEach
     void setUp() {
         usuario = Usuario.builder()
@@ -85,6 +92,28 @@ public class EntrenamientoLogServiceTest {
                 .nombre("Test_rutina")
                 .tokenCompartir(UUID.randomUUID().toString())
                 .dias(List.of()).build();
+
+
+        ejercicio = Ejercicio.builder()
+                .id(1L)
+                .nombre("Ejercicio")
+                .descripcion("descripcion")
+                .musculosPrincipales(List.of())
+                .musculosSecundarios(List.of()).build();
+
+        marcaEjercicio = MarcaEjercicio.builder()
+                .id(1L)
+                .pesoLevantado(20.0)
+                .repeticionesLogradas(5)
+                .ejercicioRutina(crearEjercicioRutinaSimulado())
+                .build();
+
+        logSimulado = EntrenamientoLog.builder()
+                .id(99L)
+                .usuario(usuario)
+                .rutinaEjecutada(rutina)
+                .marcas(List.of(marcaEjercicio))
+                .build();
     }
 
     @Test
@@ -98,6 +127,11 @@ public class EntrenamientoLogServiceTest {
                 .id(99L)
                 .usuario(usuario)
                 .rutinaEjecutada(rutina)
+                .marcas(List.of(MarcaEjercicio.builder()
+                        .pesoLevantado(20.0)
+                        .repeticionesLogradas(5)
+                        .ejercicioRutina(ejercicioRutina)
+                        .build()))
                 .build();
 
         when(usuarioRepository.save(usuario)).thenReturn(usuario);
@@ -110,7 +144,7 @@ public class EntrenamientoLogServiceTest {
         assertNotNull(response);
         verify(rutinaRepository, times(1)).findById(1L);
         verify(ejercicioRutinaRepository, times(1)).findById(1L);
-        verify(recordPersonalService, times(1)).actualizarRecordSiCorresponde(eq(usuario), any(), anyDouble(), any());
+        verify(recordPersonalService, times(1)).recalcularRecord(eq(usuario), any(Ejercicio.class));
         verify(entrenamientoLogRepository, times(1)).save(any(EntrenamientoLog.class));
     }
 
@@ -218,12 +252,88 @@ public class EntrenamientoLogServiceTest {
 
         when(entrenamientoLogRepository.findById(1L)).thenReturn(Optional.of(entrenamientoLogViejo));
 
-        var response = assertThrows(BusinessLogicException.class,
+        var response = assertThrows(ForbiddenAccessException.class,
                 ()-> entrenamientoLogService.updateEntrenamiento(entrenamientoLogRequest, 1L, infiltrado));
 
         assertNotNull(response);
         assertEquals("No tenés permiso para editar un entrenamiento que no es tuyo", response.getMessage());
         verify(entrenamientoLogRepository, never()).save(any(EntrenamientoLog.class));
+    }
+
+    @Test
+    @DisplayName("Deberia recalcular la racha actual al borrar un entrenamiento y conservar la maxima")
+    void shouldRecalculateRachaWhenDeletingEntrenamiento() {
+        usuario.setRachaActualDias(3);
+        usuario.setRachaMaximaDias(3);
+
+        EntrenamientoLog entrenamientoBorrado = EntrenamientoLog.builder()
+                .id(1L)
+                .usuario(usuario)
+                .rutinaEjecutada(rutina)
+                .fecha(LocalDate.of(2026, 10, 6))
+                .build();
+
+        // Quedan el lunes y el miercoles: el martes (borrado) era dia de entrenamiento, asi que se rompe la racha
+        when(entrenamientoLogRepository.findById(1L)).thenReturn(Optional.of(entrenamientoBorrado));
+        when(entrenamientoLogRepository.findFechasByUsuarioId(1L))
+                .thenReturn(List.of(LocalDate.of(2026, 10, 5), LocalDate.of(2026, 10, 7)));
+
+        entrenamientoLogService.deleteEntrenamientoLog(1L, usuario);
+
+        verify(entrenamientoLogRepository, times(1)).delete(entrenamientoBorrado);
+        verify(usuarioRepository, times(1)).save(usuario);
+        assertEquals(1, usuario.getRachaActualDias());
+        assertEquals(3, usuario.getRachaMaximaDias());
+    }
+
+    @Test
+    @DisplayName("Deberia dejar la racha actual en 0 al borrar el unico entrenamiento")
+    void shouldResetRachaWhenDeletingLastEntrenamiento() {
+        usuario.setRachaActualDias(1);
+        usuario.setRachaMaximaDias(5);
+
+        EntrenamientoLog entrenamientoBorrado = EntrenamientoLog.builder()
+                .id(1L)
+                .usuario(usuario)
+                .rutinaEjecutada(rutina)
+                .fecha(LocalDate.of(2026, 10, 6))
+                .build();
+
+        when(entrenamientoLogRepository.findById(1L)).thenReturn(Optional.of(entrenamientoBorrado));
+        when(entrenamientoLogRepository.findFechasByUsuarioId(1L)).thenReturn(List.of());
+
+        entrenamientoLogService.deleteEntrenamientoLog(1L, usuario);
+
+        verify(usuarioRepository, times(1)).save(usuario);
+        assertEquals(0, usuario.getRachaActualDias());
+        assertEquals(5, usuario.getRachaMaximaDias());
+    }
+
+    @Test
+    @DisplayName("Deberia recalcular la racha segun el historial al editar un entrenamiento")
+    void shouldRecalculateRachaWhenUpdatingEntrenamiento() {
+        usuario.setRachaActualDias(0);
+        usuario.setRachaMaximaDias(0);
+
+        EntrenamientoLog entrenamientoViejo = EntrenamientoLog.builder()
+                .id(1L)
+                .usuario(usuario)
+                .rutinaEjecutada(rutina)
+                .fecha(LocalDate.now())
+                .build();
+
+        when(entrenamientoLogRepository.findById(1L)).thenReturn(Optional.of(entrenamientoViejo));
+        when(rutinaRepository.findById(1L)).thenReturn(Optional.of(rutina));
+        when(ejercicioRutinaRepository.findById(1L)).thenReturn(Optional.of(crearEjercicioRutinaSimulado()));
+        when(entrenamientoLogRepository.save(any(EntrenamientoLog.class))).thenReturn(entrenamientoViejo);
+        when(entrenamientoLogRepository.findFechasByUsuarioId(1L)).thenReturn(List.of(
+                LocalDate.of(2026, 10, 5), LocalDate.of(2026, 10, 6), LocalDate.of(2026, 10, 7)));
+
+        entrenamientoLogService.updateEntrenamiento(entrenamientoLogRequest, 1L, usuario);
+
+        verify(usuarioRepository, times(1)).save(usuario);
+        assertEquals(3, usuario.getRachaActualDias());
+        assertEquals(3, usuario.getRachaMaximaDias());
     }
 
     private EjercicioRutina crearEjercicioRutinaSimulado() {
@@ -237,6 +347,7 @@ public class EntrenamientoLogServiceTest {
         return EjercicioRutina.builder()
                 .id(1L)
                 .dia(diaRutina)
+                .ejercicio(ejercicio)
                 .build();
     }
 }
