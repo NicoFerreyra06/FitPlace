@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -42,28 +43,14 @@ public class EntrenamientoLogService {
 
         EntrenamientoLog ultimoEntrenamiento = entrenamientoLogRepository
                 .findFirstByUsuarioIdOrderByFechaDesc(usuarioLogueado.getId());
+
         LocalDate fechaUltimo = ultimoEntrenamiento != null ? ultimoEntrenamiento.getFecha() : null;
         LocalDate hoy = LocalDate.now();
 
         EntrenamientoLog entrenamientoLog = EntrenamientoLog.builder()
                 .usuario(usuarioLogueado).fecha(hoy).rutinaEjecutada(rutina).build();
 
-        List<MarcaEjercicio> marcaEjercicioList = entrenamientoLogRequest.getMarcasEjercicio()
-                .stream().map(marca -> {
-                    EjercicioRutina ejercicioRutina = ejercicioRutinaRepository
-                            .findById(marca.getEjercicioRutinaId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
-
-                    if (!ejercicioRutina.getDia().getRutina().getId().equals(rutina.getId())) {
-                        throw new BusinessLogicException("El ejercicio no pertenece a la rutina ejecutada");
-                    }
-
-                    return MarcaEjercicio.builder()
-                            .pesoLevantado(marca.getPesoLevantado())
-                            .repeticionesLogradas(marca.getRepeticionesLogradas())
-                            .entrenamientoLog(entrenamientoLog)
-                            .ejercicioRutina(ejercicioRutina).build();
-                }).toList();
+        List<MarcaEjercicio> marcaEjercicioList = getMarcasEjercicio(entrenamientoLogRequest, rutina, entrenamientoLog);
 
         entrenamientoLog.setMarcas(marcaEjercicioList);
 
@@ -110,21 +97,7 @@ public class EntrenamientoLogService {
                 
         entrenamientoExistente.getMarcas().clear();
 
-        List<MarcaEjercicio> nuevasMarcas = entrenamientoLogRequest.getMarcasEjercicio()
-                .stream().map(marcaEjercicioRequest -> {
-                    EjercicioRutina ejercicioRutina = ejercicioRutinaRepository.findById(marcaEjercicioRequest.getEjercicioRutinaId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
-
-                    if (!ejercicioRutina.getDia().getRutina().getId().equals(rutina.getId())) {
-                        throw new BusinessLogicException("El ejercicio no pertenece a la rutina ejecutada");
-                    }
-
-                    return MarcaEjercicio.builder()
-                            .pesoLevantado(marcaEjercicioRequest.getPesoLevantado())
-                            .repeticionesLogradas(marcaEjercicioRequest.getRepeticionesLogradas())
-                            .entrenamientoLog(entrenamientoExistente)
-                            .ejercicioRutina(ejercicioRutina).build();
-                }).toList();
+        List<MarcaEjercicio> nuevasMarcas = getMarcasEjercicio(entrenamientoLogRequest, rutina, entrenamientoExistente);
 
         entrenamientoExistente.getMarcas().addAll(nuevasMarcas);
         EntrenamientoLog entrenamientoSaved = entrenamientoLogRepository.save(entrenamientoExistente);
@@ -238,7 +211,7 @@ public class EntrenamientoLogService {
 
     // Reconstruye la racha actual desde cero recorriendo el historial real, para cuando se borra o edita un entrenamiento
     private void recalcularRacha(Usuario usuario) {
-        List<java.time.DayOfWeek> diasProgramados = getDiasProgramados(usuario);
+        List<DayOfWeek> diasProgramados = getDiasProgramados(usuario);
 
         int rachaActual = 0;
         LocalDate fechaAnterior = null;
@@ -252,18 +225,18 @@ public class EntrenamientoLogService {
     }
 
     // Devuelve la racha que queda al entrenar en "fecha", sabiendo que el entrenamiento anterior fue en "fechaUltimo"
-    private int calcularRacha(int rachaActual, LocalDate fechaUltimo, LocalDate fecha, List<java.time.DayOfWeek> diasProgramados) {
+    private int calcularRacha(int rachaActual, LocalDate fechaUltimo, LocalDate fecha, List<DayOfWeek> diasProgramados) {
         boolean rachaRota = false;
 
         // Verificar si faltó a algún día programado desde su último entrenamiento
         if (fechaUltimo != null) {
             LocalDate current = fechaUltimo.plusDays(1);
             while (current.isBefore(fecha)) {
-                boolean debiaEntrenar = false;
+                boolean debiaEntrenar;
                 if (!diasProgramados.isEmpty()) {
                     debiaEntrenar = diasProgramados.contains(current.getDayOfWeek());
                 } else {
-                    debiaEntrenar = current.getDayOfWeek() != java.time.DayOfWeek.SUNDAY;
+                    debiaEntrenar = current.getDayOfWeek() != DayOfWeek.SUNDAY;
                 }
 
                 if (debiaEntrenar) {
@@ -284,7 +257,7 @@ public class EntrenamientoLogService {
         if (!diasProgramados.isEmpty()) {
             sumaRacha = diasProgramados.contains(fecha.getDayOfWeek());
         } else {
-            sumaRacha = fecha.getDayOfWeek() != java.time.DayOfWeek.SUNDAY;
+            sumaRacha = fecha.getDayOfWeek() != DayOfWeek.SUNDAY;
         }
 
         // Incrementa si es día de cumplimiento, o si la racha está en 0 (para al menos arrancar en 1)
@@ -295,7 +268,7 @@ public class EntrenamientoLogService {
         return rachaActual;
     }
 
-    private List<java.time.DayOfWeek> getDiasProgramados(Usuario usuario) {
+    private List<DayOfWeek> getDiasProgramados(Usuario usuario) {
         Rutina rutinaActiva = usuario.getRutinaActiva();
         return (rutinaActiva != null && rutinaActiva.getDias() != null)
                 ? rutinaActiva.getDias().stream().map(DiaRutina::getDiaDeLaSemana).toList()
@@ -333,5 +306,23 @@ public class EntrenamientoLogService {
                 .nombreEjercicio(marcaEjercicio.getEjercicioRutina().getEjercicio().getNombre())
                 .pesoLevantado(marcaEjercicio.getPesoLevantado())
                 .repeticionesLogradas(marcaEjercicio.getRepeticionesLogradas()).build();
+    }
+
+    private List<MarcaEjercicio> getMarcasEjercicio(EntrenamientoLogRequest entrenamientoLogRequest, Rutina rutina, EntrenamientoLog entrenamientoLog) {
+        return entrenamientoLogRequest.getMarcasEjercicio()
+                .stream().map(marcaEjercicioRequest -> {
+                    EjercicioRutina ejercicioRutina = ejercicioRutinaRepository.findById(marcaEjercicioRequest.getEjercicioRutinaId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
+
+                    if (!ejercicioRutina.getDia().getRutina().getId().equals(rutina.getId())) {
+                        throw new BusinessLogicException("El ejercicio no pertenece a la rutina ejecutada");
+                    }
+
+                    return MarcaEjercicio.builder()
+                            .pesoLevantado(marcaEjercicioRequest.getPesoLevantado())
+                            .repeticionesLogradas(marcaEjercicioRequest.getRepeticionesLogradas())
+                            .entrenamientoLog(entrenamientoLog)
+                            .ejercicioRutina(ejercicioRutina).build();
+                }).toList();
     }
 }

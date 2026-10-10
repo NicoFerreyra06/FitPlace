@@ -81,7 +81,7 @@ public class RutinaService {
     @Transactional
     public RutinaResponse updateRutina(Usuario usuario, RutinaRequest rutinaRequest, Long idRutina){
         Rutina rutinaExistente = rutinaRepository.findById(idRutina)
-                .orElseThrow(()-> new BusinessLogicException("Rutina no encontrada"));
+                .orElseThrow(()-> new ResourceNotFoundException("Rutina no encontrada"));
 
         if(!rutinaExistente.getCreador().getId().equals(usuario.getId())) {
             throw new ForbiddenAccessException("No tienes permiso para editar esta rutina");
@@ -116,7 +116,8 @@ public class RutinaService {
 
                 if (diaReq.getEjercicios() != null) {
                     for (EjercicioRutinaRequest ejReq : diaReq.getEjercicios()) {
-                        Ejercicio ej = ejercicioRepository.findById(ejReq.getEjercicioId()).orElseThrow();
+                        Ejercicio ej = ejercicioRepository.findById(ejReq.getEjercicioId())
+                                .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
                         nuevoDia.getEjercicios().add(EjercicioRutina.builder()
                                 .dia(nuevoDia)
                                 .ejercicio(ej)
@@ -161,7 +162,7 @@ public class RutinaService {
                 }
 
                 for (EjercicioRutinaRequest newReq : unmatchedReqs) {
-                    Ejercicio ej = ejercicioRepository.findById(newReq.getEjercicioId()).orElseThrow();
+                    Ejercicio ej = ejercicioRepository.findById(newReq.getEjercicioId()).orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
                     ejerciciosActuales.add(EjercicioRutina.builder()
                             .dia(diaActual)
                             .ejercicio(ej)
@@ -212,7 +213,8 @@ public class RutinaService {
                 .orElseThrow(() -> new BusinessLogicException("La rutina no tiene día configurado para hoy"));
         return mapToDiaRutinaResponse(dia);
     }
-        
+
+    @Transactional
     public void deleteRutina(Usuario usuario, Long idRutina) {
 
         Rutina rutina = rutinaRepository.findById(idRutina)
