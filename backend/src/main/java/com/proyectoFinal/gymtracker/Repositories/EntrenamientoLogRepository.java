@@ -37,4 +37,7 @@ public interface EntrenamientoLogRepository extends JpaRepository<EntrenamientoL
     );
 
     EntrenamientoLog findFirstByUsuarioIdOrderByFechaDesc(Long idUsuario);
+
+    @Query("SELECT DISTINCT e.fecha FROM EntrenamientoLog e WHERE e.usuario.id = :idUsuario ORDER BY e.fecha ASC")
+    List<LocalDate> findFechasByUsuarioId(@Param("idUsuario") Long idUsuario);
 }

@@ -231,6 +231,82 @@ public class EntrenamientoLogServiceTest {
         verify(entrenamientoLogRepository, never()).save(any(EntrenamientoLog.class));
     }
 
+    @Test
+    @DisplayName("Deberia recalcular la racha actual al borrar un entrenamiento y conservar la maxima")
+    void shouldRecalculateRachaWhenDeletingEntrenamiento() {
+        usuario.setRachaActualDias(3);
+        usuario.setRachaMaximaDias(3);
+
+        EntrenamientoLog entrenamientoBorrado = EntrenamientoLog.builder()
+                .id(1L)
+                .usuario(usuario)
+                .rutinaEjecutada(rutina)
+                .fecha(LocalDate.of(2026, 10, 6))
+                .build();
+
+        // Quedan el lunes y el miercoles: el martes (borrado) era dia de entrenamiento, asi que se rompe la racha
+        when(entrenamientoLogRepository.findById(1L)).thenReturn(Optional.of(entrenamientoBorrado));
+        when(entrenamientoLogRepository.findFechasByUsuarioId(1L))
+                .thenReturn(List.of(LocalDate.of(2026, 10, 5), LocalDate.of(2026, 10, 7)));
+
+        entrenamientoLogService.deleteEntrenamientoLog(1L, usuario);
+
+        verify(entrenamientoLogRepository, times(1)).delete(entrenamientoBorrado);
+        verify(usuarioRepository, times(1)).save(usuario);
+        assertEquals(1, usuario.getRachaActualDias());
+        assertEquals(3, usuario.getRachaMaximaDias());
+    }
+
+    @Test
+    @DisplayName("Deberia dejar la racha actual en 0 al borrar el unico entrenamiento")
+    void shouldResetRachaWhenDeletingLastEntrenamiento() {
+        usuario.setRachaActualDias(1);
+        usuario.setRachaMaximaDias(5);
+
+        EntrenamientoLog entrenamientoBorrado = EntrenamientoLog.builder()
+                .id(1L)
+                .usuario(usuario)
+                .rutinaEjecutada(rutina)
+                .fecha(LocalDate.of(2026, 10, 6))
+                .build();
+
+        when(entrenamientoLogRepository.findById(1L)).thenReturn(Optional.of(entrenamientoBorrado));
+        when(entrenamientoLogRepository.findFechasByUsuarioId(1L)).thenReturn(List.of());
+
+        entrenamientoLogService.deleteEntrenamientoLog(1L, usuario);
+
+        verify(usuarioRepository, times(1)).save(usuario);
+        assertEquals(0, usuario.getRachaActualDias());
+        assertEquals(5, usuario.getRachaMaximaDias());
+    }
+
+    @Test
+    @DisplayName("Deberia recalcular la racha segun el historial al editar un entrenamiento")
+    void shouldRecalculateRachaWhenUpdatingEntrenamiento() {
+        usuario.setRachaActualDias(0);
+        usuario.setRachaMaximaDias(0);
+
+        EntrenamientoLog entrenamientoViejo = EntrenamientoLog.builder()
+                .id(1L)
+                .usuario(usuario)
+                .rutinaEjecutada(rutina)
+                .fecha(LocalDate.now())
+                .build();
+
+        when(entrenamientoLogRepository.findById(1L)).thenReturn(Optional.of(entrenamientoViejo));
+        when(rutinaRepository.findById(1L)).thenReturn(Optional.of(rutina));
+        when(ejercicioRutinaRepository.findById(1L)).thenReturn(Optional.of(crearEjercicioRutinaSimulado()));
+        when(entrenamientoLogRepository.save(any(EntrenamientoLog.class))).thenReturn(entrenamientoViejo);
+        when(entrenamientoLogRepository.findFechasByUsuarioId(1L)).thenReturn(List.of(
+                LocalDate.of(2026, 10, 5), LocalDate.of(2026, 10, 6), LocalDate.of(2026, 10, 7)));
+
+        entrenamientoLogService.updateEntrenamiento(entrenamientoLogRequest, 1L, usuario);
+
+        verify(usuarioRepository, times(1)).save(usuario);
+        assertEquals(3, usuario.getRachaActualDias());
+        assertEquals(3, usuario.getRachaMaximaDias());
+    }
+
     private EjercicioRutina crearEjercicioRutinaSimulado() {
         DiaRutina diaRutina = DiaRutina
                 .builder()

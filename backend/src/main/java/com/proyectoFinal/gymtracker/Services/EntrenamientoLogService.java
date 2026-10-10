@@ -136,6 +136,8 @@ public class EntrenamientoLogService {
             recordPersonalService.recalcularRecord(usuarioLogueado, ej);
         }
 
+        recalcularRacha(usuarioLogueado);
+
         return mapEntrenamientoLogResponse(entrenamientoSaved);
     }
 
@@ -199,6 +201,7 @@ public class EntrenamientoLogService {
         return Map.of(ejercicio.getNombre(), entrenamientoLogRepository.historialEjercicio(idUsuario, idEjercicio));
     }
 
+    @Transactional
     public void deleteEntrenamientoLog (Long idEntrenamientoLog, Usuario usuario) {
 
         EntrenamientoLog entrenamientoLog = entrenamientoLogRepository.findById(idEntrenamientoLog)
@@ -216,28 +219,45 @@ public class EntrenamientoLogService {
         for (Ejercicio ej : ejerciciosA_Recalcular) {
             recordPersonalService.recalcularRecord(usuario, ej);
         }
+
+        recalcularRacha(usuario);
     }
 
     private void registrarRacha(Usuario usuarioLogueado, LocalDate fechaUltimo, LocalDate fechaHoy) {
-        int rachaActual = (usuarioLogueado.getRachaActualDias() != null) ? usuarioLogueado.getRachaActualDias() : 0;
-        int rachaMaxima = (usuarioLogueado.getRachaMaximaDias() != null) ? usuarioLogueado.getRachaMaximaDias() : 0;
-
         // Si ya registró entrenamiento hoy, no hacer nada para evitar doble conteo
         if (fechaUltimo != null && fechaUltimo.equals(fechaHoy)) {
             return;
         }
 
-        Rutina rutinaActiva = usuarioLogueado.getRutinaActiva();
-        List<java.time.DayOfWeek> diasProgramados = (rutinaActiva != null && rutinaActiva.getDias() != null)
-                ? rutinaActiva.getDias().stream().map(DiaRutina::getDiaDeLaSemana).toList()
-                : List.of();
+        int rachaActual = (usuarioLogueado.getRachaActualDias() != null) ? usuarioLogueado.getRachaActualDias() : 0;
 
+        rachaActual = calcularRacha(rachaActual, fechaUltimo, fechaHoy, getDiasProgramados(usuarioLogueado));
+        guardarRacha(usuarioLogueado, rachaActual);
+    }
+
+    // Reconstruye la racha actual desde cero recorriendo el historial real, para cuando se borra o edita un entrenamiento
+    private void recalcularRacha(Usuario usuario) {
+        List<java.time.DayOfWeek> diasProgramados = getDiasProgramados(usuario);
+
+        int rachaActual = 0;
+        LocalDate fechaAnterior = null;
+
+        for (LocalDate fecha : entrenamientoLogRepository.findFechasByUsuarioId(usuario.getId())) {
+            rachaActual = calcularRacha(rachaActual, fechaAnterior, fecha, diasProgramados);
+            fechaAnterior = fecha;
+        }
+
+        guardarRacha(usuario, rachaActual);
+    }
+
+    // Devuelve la racha que queda al entrenar en "fecha", sabiendo que el entrenamiento anterior fue en "fechaUltimo"
+    private int calcularRacha(int rachaActual, LocalDate fechaUltimo, LocalDate fecha, List<java.time.DayOfWeek> diasProgramados) {
         boolean rachaRota = false;
 
         // Verificar si faltó a algún día programado desde su último entrenamiento
         if (fechaUltimo != null) {
             LocalDate current = fechaUltimo.plusDays(1);
-            while (current.isBefore(fechaHoy)) {
+            while (current.isBefore(fecha)) {
                 boolean debiaEntrenar = false;
                 if (!diasProgramados.isEmpty()) {
                     debiaEntrenar = diasProgramados.contains(current.getDayOfWeek());
@@ -257,13 +277,13 @@ public class EntrenamientoLogService {
             rachaActual = 0;
         }
 
-        // Evaluar si hoy es un día de cumplimiento
+        // Evaluar si ese día es un día de cumplimiento
         boolean sumaRacha;
 
         if (!diasProgramados.isEmpty()) {
-            sumaRacha = diasProgramados.contains(fechaHoy.getDayOfWeek());
+            sumaRacha = diasProgramados.contains(fecha.getDayOfWeek());
         } else {
-            sumaRacha = fechaHoy.getDayOfWeek() != java.time.DayOfWeek.SUNDAY;
+            sumaRacha = fecha.getDayOfWeek() != java.time.DayOfWeek.SUNDAY;
         }
 
         // Incrementa si es día de cumplimiento, o si la racha está en 0 (para al menos arrancar en 1)
@@ -271,14 +291,28 @@ public class EntrenamientoLogService {
             rachaActual++;
         }
 
+        return rachaActual;
+    }
+
+    private List<java.time.DayOfWeek> getDiasProgramados(Usuario usuario) {
+        Rutina rutinaActiva = usuario.getRutinaActiva();
+        return (rutinaActiva != null && rutinaActiva.getDias() != null)
+                ? rutinaActiva.getDias().stream().map(DiaRutina::getDiaDeLaSemana).toList()
+                : List.of();
+    }
+
+    // La racha máxima solo sube, nunca se baja aunque se borre el entrenamiento que la generó
+    private void guardarRacha(Usuario usuario, int rachaActual) {
+        int rachaMaxima = (usuario.getRachaMaximaDias() != null) ? usuario.getRachaMaximaDias() : 0;
+
         if (rachaActual > rachaMaxima) {
-            rachaMaxima = rachaActual;
-            usuarioLogueado.setRachaMaximaDias(rachaMaxima);
+            usuario.setRachaMaximaDias(rachaActual);
         }
 
-        usuarioLogueado.setRachaActualDias(rachaActual);
-        usuarioRepository.save(usuarioLogueado);
+        usuario.setRachaActualDias(rachaActual);
+        usuarioRepository.save(usuario);
     }
+
     // === Metodos auxiliares ===
 
     private EntrenamientoLogResponse mapEntrenamientoLogResponse(EntrenamientoLog entrenamientoLog) {
