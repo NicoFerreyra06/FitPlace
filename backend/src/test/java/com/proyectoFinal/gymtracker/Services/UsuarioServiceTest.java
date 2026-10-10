@@ -88,4 +88,21 @@ public class UsuarioServiceTest {
         UsuarioResponse mockResponse = UsuarioResponse.builder().email("nico@test.com").build();
         assertEquals("nico@test.com", mockResponse.getEmail());
     }
+
+    @Test
+    @DisplayName("Deberia devolver el username elegido y no el email en el perfil")
+    void testToResponseDevuelveUsernameYNoEmail() {
+        UsuarioResponse response = usuarioService.toResponse(usuario);
+
+        assertEquals("nico_dev", response.getUsername());
+        assertEquals("nico@test.com", response.getEmail());
+    }
+
+    @Test
+    @DisplayName("Deberia devolver el username de un amigo sin exponer su email")
+    void testToAmigoResponseNoExponeEmail() {
+        var response = usuarioService.toAmigoResponse(usuario2);
+
+        assertEquals("lucio_dev", response.getUsername());
+    }
 }

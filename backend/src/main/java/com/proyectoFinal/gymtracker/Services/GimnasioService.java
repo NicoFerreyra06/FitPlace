@@ -136,7 +136,7 @@ public class GimnasioService {
                 .direccion(gimnasio.getDireccion())
                 .precioCuota(gimnasio.getPrecioCuota())
                 .idAdmin(gimnasio.getAdmin().getId())
-                .nombreAdmin(gimnasio.getAdmin().getUsername())
+                .nombreAdmin(gimnasio.getAdmin().getNombreUsuario())
                 .horarioApertura(gimnasio.getHorarioApertura())
                 .horarioCierre(gimnasio.getHorarioCierre())
                 .diasDeApertura(gimnasio.getDiasAbierto())

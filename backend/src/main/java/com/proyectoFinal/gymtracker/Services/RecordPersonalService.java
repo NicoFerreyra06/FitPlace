@@ -27,12 +27,11 @@ public class RecordPersonalService {
     private final RecordPersonalRepository recordPersonalRepository;
     private final MarcaEjercicioRepository marcaEjercicioRepository;
 
-
     private RecordPersonalResponse toResponse(RecordPersonal record) {
         return RecordPersonalResponse.builder()
                 .id(record.getId())
                 .ejercicioId(record.getEjercicio().getId())
-                .nombreUsuario(record.getUsuario().getUsername())
+                .nombreUsuario(record.getUsuario().getNombreUsuario())
                 .nombreEjercicio(record.getEjercicio().getNombre())
                 .pesoMaximo(record.getPesoMaximo())
                 .fechaLogro(record.getFechaLogro())

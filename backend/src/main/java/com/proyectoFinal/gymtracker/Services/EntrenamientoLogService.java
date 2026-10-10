@@ -284,7 +284,7 @@ public class EntrenamientoLogService {
     private EntrenamientoLogResponse mapEntrenamientoLogResponse(EntrenamientoLog entrenamientoLog) {
         return EntrenamientoLogResponse.builder()
                 .id(entrenamientoLog.getId())
-                .nombreUsuario(entrenamientoLog.getUsuario().getUsername())
+                .nombreUsuario(entrenamientoLog.getUsuario().getNombreUsuario())
                 .nombreRutina(entrenamientoLog.getRutinaEjecutada().getNombre())
                 .fecha(entrenamientoLog.getFecha())
                 .marcasEjercicio(entrenamientoLog.getMarcas()

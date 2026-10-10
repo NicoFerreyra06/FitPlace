@@ -95,7 +95,7 @@ public class UsuarioService {
     }
 
     public UsuarioResponse toResponse(Usuario usuario) {
-        return UsuarioResponse.builder().id(usuario.getId()).username(usuario.getUsername()).email(usuario.getEmail()).rol(usuario.getRol()).codigoAmigo(usuario.getCodigoAmigo()).peso(usuario.getPeso()).altura(usuario.getAltura()).imc(usuario.getImc()).categoriaImc(calcularCategoriaImc(usuario.getImc())).rachaActualDias(usuario.getRachaActualDias()).rachaMaximaDias(usuario.getRachaMaximaDias()).build();
+        return UsuarioResponse.builder().id(usuario.getId()).username(usuario.getNombreUsuario()).email(usuario.getEmail()).rol(usuario.getRol()).codigoAmigo(usuario.getCodigoAmigo()).peso(usuario.getPeso()).altura(usuario.getAltura()).imc(usuario.getImc()).categoriaImc(calcularCategoriaImc(usuario.getImc())).rachaActualDias(usuario.getRachaActualDias()).rachaMaximaDias(usuario.getRachaMaximaDias()).build();
     }
 
     private String calcularCategoriaImc(Double imc) {
@@ -109,7 +109,7 @@ public class UsuarioService {
     }
 
     public AmigoResponse toAmigoResponse(Usuario usuario) {
-        return AmigoResponse.builder().id(usuario.getId()).username(usuario.getUsername()).rol(usuario.getRol()).rachaActualDias(usuario.getRachaActualDias()).build();
+        return AmigoResponse.builder().id(usuario.getId()).username(usuario.getNombreUsuario()).rol(usuario.getRol()).rachaActualDias(usuario.getRachaActualDias()).build();
     }
 
     @PreAuthorize("hasRole('ADMIN')")

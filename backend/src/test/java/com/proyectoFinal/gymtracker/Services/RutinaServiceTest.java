@@ -144,6 +144,6 @@ public class RutinaServiceTest {
 
         assertNotNull(response);
         verify(rutinaRepository, never()).delete(any(Rutina.class));
-        assertEquals("No sos el creador de la rutina para eliminarla", response.getMessage());
+        assertEquals("No tenés permiso para eliminar esta rutina", response.getMessage());
     }
 }

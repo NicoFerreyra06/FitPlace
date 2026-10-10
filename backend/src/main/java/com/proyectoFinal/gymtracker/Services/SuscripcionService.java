@@ -154,7 +154,7 @@ public class SuscripcionService {
                 .id(suscripcion.getId())
                 .idGimnasio(suscripcion.getGimnasio().getId()).
                 idUsuario(suscripcion.getUsuario().getId()).
-                nombreUsuario(suscripcion.getUsuario().getUsername()).
+                nombreUsuario(suscripcion.getUsuario().getNombreUsuario()).
                 fechaInicio(suscripcion.getFechaInicio()).
                 fechaFin(suscripcion.getFechaFin()).
                 metodoPago(suscripcion.getMetodoPago()).

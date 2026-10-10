@@ -99,9 +99,15 @@ public class Usuario implements UserDetails {
         return List.of(new SimpleGrantedAuthority("ROLE_" + rol.name()));
     }
 
+    // Spring Security usa getUsername() como identificador de login, y en esta app es el email
     @Override
     public String getUsername() {
         return this.email;
+    }
+
+    // Nombre visible elegido por el usuario (el campo username), para usar en las respuestas
+    public String getNombreUsuario() {
+        return this.username;
     }
 
     @Override

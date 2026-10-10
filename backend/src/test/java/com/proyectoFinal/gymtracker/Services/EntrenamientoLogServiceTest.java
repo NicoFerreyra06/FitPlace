@@ -98,6 +98,11 @@ public class EntrenamientoLogServiceTest {
                 .id(99L)
                 .usuario(usuario)
                 .rutinaEjecutada(rutina)
+                .marcas(List.of(MarcaEjercicio.builder()
+                        .pesoLevantado(20.0)
+                        .repeticionesLogradas(5)
+                        .ejercicioRutina(ejercicioRutina)
+                        .build()))
                 .build();
 
         when(usuarioRepository.save(usuario)).thenReturn(usuario);
@@ -110,7 +115,7 @@ public class EntrenamientoLogServiceTest {
         assertNotNull(response);
         verify(rutinaRepository, times(1)).findById(1L);
         verify(ejercicioRutinaRepository, times(1)).findById(1L);
-        verify(recordPersonalService, times(1)).actualizarRecordSiCorresponde(eq(usuario), any(), anyDouble(), any());
+        verify(recordPersonalService, times(1)).recalcularRecord(eq(usuario), any());
         verify(entrenamientoLogRepository, times(1)).save(any(EntrenamientoLog.class));
     }
 
@@ -237,6 +242,7 @@ public class EntrenamientoLogServiceTest {
         return EjercicioRutina.builder()
                 .id(1L)
                 .dia(diaRutina)
+                .ejercicio(Ejercicio.builder().id(1L).nombre("Press banca").build())
                 .build();
     }
 }
