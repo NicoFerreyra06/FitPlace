@@ -3,6 +3,7 @@ package com.proyectoFinal.gymtracker.Exception;
 import com.proyectoFinal.gymtracker.DTO.Response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -55,6 +56,12 @@ public class GlobalHandlerException {
     public ResponseEntity<ErrorResponse> handlerAccessDeniedException() {
         ErrorResponse errorResponse = new ErrorResponse("Acceso denegado", LocalDateTime.now().toString());
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> badCredentialsException() {
+        ErrorResponse errorResponse = new ErrorResponse("Email o contraseña incorrectos", LocalDateTime.now().toString());
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(Exception.class)
