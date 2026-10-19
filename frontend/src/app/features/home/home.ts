@@ -9,11 +9,10 @@ import { Auth } from '../../core/auth/auth';
   templateUrl: './home.html',
 })
 export class Home {
-
   private readonly router = inject(Router);
   private readonly auth = inject(Auth);
 
-  cerrarSesion(){
+  cerrarSesion() {
     this.auth.logOut();
     this.router.navigate(['/login']);
   }

@@ -21,15 +21,16 @@ export class Registro {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
     peso: [0, [Validators.required, Validators.min(30), Validators.max(500)]],
-    altura: [0, [Validators.required, Validators.min(0.5), Validators.max(3.0)]]
+    altura: [0, [Validators.required, Validators.min(0.5), Validators.max(3.0)]],
   });
 
   protected readonly errorMsg = signal<string | null>(null);
 
-  onSubmit(){
+  onSubmit() {
     this.authService.register(this.formularioRegistro.getRawValue()).subscribe({
       next: () => this.router.navigate(['/login']),
-      error: (err) => this.errorMsg.set(err.error?.message ?? 'No se pudo conectar con el servidor')
-    })
+      error: (err) =>
+        this.errorMsg.set(err.error?.message ?? 'No se pudo conectar con el servidor'),
+    });
   }
 }

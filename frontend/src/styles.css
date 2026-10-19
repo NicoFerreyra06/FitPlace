@@ -2,40 +2,40 @@
 
 :root {
   /* Fondos */
-    --bg: #0b0b0c;
-    --surface: rgb(255 255 255 / 0.06);
-    --surface-hover: rgb(255 255 255 / 0.1);
-    --surface-raised: #18181a;
+  --bg: #0b0b0c;
+  --surface: rgb(255 255 255 / 0.06);
+  --surface-hover: rgb(255 255 255 / 0.1);
+  --surface-raised: #18181a;
 
-    /* Bordes */
-    --border: rgb(255 255 255 / 0.14);
-    --border-strong: rgb(255 255 255 / 0.28);
-    --focus: #ffffff;
+  /* Bordes */
+  --border: rgb(255 255 255 / 0.14);
+  --border-strong: rgb(255 255 255 / 0.28);
+  --focus: #ffffff;
 
-    /* Texto */
-    --text: #ffffff;
-    --text-muted: #a1a1a6;
-    --text-disabled: #6b6b70;
+  /* Texto */
+  --text: #ffffff;
+  --text-muted: #a1a1a6;
+  --text-disabled: #6b6b70;
 
-    /* Marca */
-    --primary: #1d4ed8;
-    --primary-hover: #2563eb;
-    --on-primary: #ffffff;
-    --link: #3b82f6;
+  /* Marca */
+  --primary: #1d4ed8;
+  --primary-hover: #2563eb;
+  --on-primary: #ffffff;
+  --link: #3b82f6;
 
-    /* Estados */
-    --success: #4ade80;
-    --warning: #facc15;
-    --danger: #f87171;
+  /* Estados */
+  --success: #4ade80;
+  --warning: #facc15;
+  --danger: #f87171;
 
-    --shadow: 0 8px 24px #0000007a;
+  --shadow: 0 8px 24px #0000007a;
 
-    /* Tipografía y formas */
-    --font: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
-    --radius-sm: 10px;
-    --radius-md: 16px;
+  /* Tipografía y formas */
+  --font: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --radius-sm: 10px;
+  --radius-md: 16px;
 
-    color-scheme: dark;
+  color-scheme: dark;
 }
 
 /* ===== Base ===== */
@@ -43,20 +43,20 @@
 *,
 *::before,
 *::after {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 15px;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
 input,
 button {
-    font: inherit;
+  font: inherit;
 }
