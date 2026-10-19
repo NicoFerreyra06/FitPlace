@@ -26,6 +26,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -148,6 +150,54 @@ public class EntrenamientoLogServiceTest {
         verify(entrenamientoLogRepository, times(1)).save(any(EntrenamientoLog.class));
     }
 
+    @Test
+    @DisplayName("Deberia lanzar excepcion al registrar un entrenamiento con una rutina privada ajena")
+    void shouldThrowExceptionWhenRutinaPrivadaAjenaOnAdd() {
+        Usuario ajeno = crearUsuarioAjeno();
+
+        when(rutinaRepository.findById(1L)).thenReturn(Optional.of(rutina));
+
+        ForbiddenAccessException exception = assertThrows(ForbiddenAccessException.class,
+                () -> entrenamientoLogService.addEntrenamientoLog(entrenamientoLogRequest, ajeno));
+
+        assertEquals("No tienes permiso para utilizar esta rutina privada", exception.getMessage());
+        verify(entrenamientoLogRepository, never()).save(any(EntrenamientoLog.class));
+    }
+
+    @Test
+    @DisplayName("Deberia lanzar excepcion al editar un entrenamiento con una rutina privada ajena")
+    void shouldThrowExceptionWhenRutinaPrivadaAjenaOnUpdate() {
+        Usuario ajeno = crearUsuarioAjeno();
+
+        EntrenamientoLog entrenamientoPropio = EntrenamientoLog.builder()
+                .id(1L)
+                .usuario(ajeno)
+                .fecha(LocalDate.now())
+                .build();
+
+        when(entrenamientoLogRepository.findById(1L)).thenReturn(Optional.of(entrenamientoPropio));
+        when(rutinaRepository.findById(1L)).thenReturn(Optional.of(rutina));
+
+        ForbiddenAccessException exception = assertThrows(ForbiddenAccessException.class,
+                () -> entrenamientoLogService.updateEntrenamiento(entrenamientoLogRequest, 1L, ajeno));
+
+        assertEquals("No tienes permiso para utilizar esta rutina privada", exception.getMessage());
+        verify(entrenamientoLogRepository, never()).save(any(EntrenamientoLog.class));
+    }
+
+    private Usuario crearUsuarioAjeno() {
+        return Usuario.builder()
+                .id(2L)
+                .username("ajeno_dev")
+                .email("ajeno@test.com")
+                .password("password")
+                .rol(Rol.USUARIO)
+                .peso(75.5)
+                .altura(1.80)
+                .codigoAmigo(UUID.randomUUID().toString())
+                .build();
+    }
+    
     @Test
     @DisplayName("Deberia lanzar excepcion porque no encuentra la rutina")
     void shouldThrowExceptionWhenRutineNotFound() {
