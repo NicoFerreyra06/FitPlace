@@ -307,6 +307,19 @@ public class EntrenamientoLogService {
                 .pesoLevantado(marcaEjercicio.getPesoLevantado())
                 .repeticionesLogradas(marcaEjercicio.getRepeticionesLogradas()).build();
     }
+    private void validarAccesoRutina(Rutina rutina, Usuario usuario) {
+        if (rutina.isEsPublica()) {
+            return;
+        }
+
+        boolean esCreador = rutina.getCreador().getId().equals(usuario.getId());
+        boolean esAlumnoDelCreador = usuario.getEntrenador() != null
+                && usuario.getEntrenador().getId().equals(rutina.getCreador().getId());
+
+        if (!esCreador && !esAlumnoDelCreador) {
+            throw new ForbiddenAccessException("No tienes permiso para utilizar esta rutina privada");
+        }
+    }
 
     private List<MarcaEjercicio> getMarcasEjercicio(EntrenamientoLogRequest entrenamientoLogRequest, Rutina rutina, EntrenamientoLog entrenamientoLog) {
         return entrenamientoLogRequest.getMarcasEjercicio()
