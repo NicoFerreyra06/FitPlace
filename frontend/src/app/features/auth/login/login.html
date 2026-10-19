@@ -30,6 +30,8 @@
 
         <button type="submit" [disabled]="formularioLogin.invalid">Ingresar</button>
 
+        <p class="switch">¿No tenes cuenta? <a routerLink="/register">Registrate</a></p>
+
         @if(errorMsg()){
         <span class="field-error">{{errorMsg()}}</span>
         }

@@ -1,0 +1,76 @@
+<main class="register">
+    <form class="card" [formGroup]="formularioRegistro" (ngSubmit)="onSubmit()">
+        <header class="card-header">
+            <span class="brand">FitPlace</span>
+            <h1>Crear cuenta</h1>
+        </header>
+
+        <div class="field">
+            <label for="username">Usuario</label>
+            <input type="text" formControlName="username" id="username" autocomplete="username" />
+            @if (formularioRegistro.get('username')?.hasError('required') &&
+                formularioRegistro.get('username')?.touched) {
+                    <span class="field-error">El usuario es obligatorio</span>
+                }
+        </div>
+
+        <div class="field">
+            <label for="email">Email</label>
+            <input type="email" formControlName="email" id="email" autocomplete="email" />
+            @if (formularioRegistro.get('email')?.hasError('required') &&
+                formularioRegistro.get('email')?.touched) {
+                    <span class="field-error">El email es obligatorio</span>
+                }
+
+            @if (formularioRegistro.get('email')?.hasError('email') &&
+                formularioRegistro.get('email')?.touched) {
+                    <span class="field-error">El email no es válido</span>
+                }
+        </div>
+
+        <div class="field">
+            <label for="password">Contraseña</label>
+            <input type="password" formControlName="password" id="password" autocomplete="new-password" />
+            @if (formularioRegistro.get('password')?.hasError('required') &&
+                formularioRegistro.get('password')?.touched) {
+                    <span class="field-error">La contraseña es obligatoria</span>
+                }
+
+            @if ((formularioRegistro.get('password')?.hasError('minlength') ||
+                formularioRegistro.get('password')?.hasError('maxlength')) &&
+                formularioRegistro.get('password')?.touched) {
+                    <span class="field-error">La contraseña debe tener entre 3 y 30 caracteres</span>
+                }
+        </div>
+
+        <div class="row">
+            <div class="field">
+                <label for="peso">Peso (kg)</label>
+                <input type="number" formControlName="peso" id="peso" step="0.1" />
+                @if ((formularioRegistro.get('peso')?.hasError('min') ||
+                    formularioRegistro.get('peso')?.hasError('max')) &&
+                    formularioRegistro.get('peso')?.touched) {
+                        <span class="field-error">Entre 30 y 500 kg</span>
+                    }
+            </div>
+
+            <div class="field">
+                <label for="altura">Altura (m)</label>
+                <input type="number" formControlName="altura" id="altura" step="0.01" />
+                @if ((formularioRegistro.get('altura')?.hasError('min') ||
+                    formularioRegistro.get('altura')?.hasError('max')) &&
+                    formularioRegistro.get('altura')?.touched) {
+                        <span class="field-error">Entre 0.5 y 3 m</span>
+                    }
+            </div>
+        </div>
+
+        <button type="submit" [disabled]="formularioRegistro.invalid">Registrarme</button>
+
+        @if (errorMsg()) {
+            <span class="field-error">{{ errorMsg() }}</span>
+        }
+
+        <p class="switch">¿Ya tenes cuenta? <a routerLink="/login">Iniciá sesión</a></p>
+    </form>
+</main>

@@ -6,9 +6,17 @@ export interface authResponse{
     'token': string;
 }
 
-export interface authRequest{
+export interface loginRequest{
     'email':string;
     'password': string;
+}
+
+export interface registerRequest{
+    'username': string,
+    'email': string,
+    'password': string,
+    'peso': number,
+    'altura': number
 }
 @Service()
 export class Auth {
@@ -16,8 +24,12 @@ export class Auth {
     private readonly http = inject(HttpClient);
     private readonly TOKEN_KEY = 'token';
 
-    login(authRequest: authRequest): Observable<authResponse>{
+    login(authRequest: loginRequest): Observable<authResponse>{
         return this.http.post<authResponse>('http://localhost:8080/usuarios/login', authRequest);
+    }
+
+    register(registerRequest: registerRequest): Observable<authResponse>{
+        return this.http.post<authResponse>('http://localhost:8080/usuarios/registro', registerRequest);
     }
 
     logOut(){
