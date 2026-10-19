@@ -1,0 +1,46 @@
+<main class="perfil">
+  <header class="perfil-header">
+    <a routerLink="/home" class="volver">← Volver</a>
+    <h1>Mi perfil</h1>
+  </header>
+
+  @if (perfil.isLoading()) {
+    <p class="estado-msg">Cargando perfil…</p>
+  } @else if (perfil.error()) {
+    <p class="estado-msg error">No se pudo cargar tu perfil. Probá de nuevo.</p>
+    <button (click)="perfil.reload()">Reintentar</button>
+  } @else if (perfil.hasValue()) {
+    @let p = perfil.value();
+
+    <section class="card datos">
+      <h2>{{ p.username }}</h2>
+      <p class="muted">{{ p.email }}</p>
+      <p class="muted">Código de amigo: <strong>{{ p.codigoAmigo }}</strong></p>
+    </section>
+
+    <section class="grid">
+      <article class="card" [class]="claseImc()">
+        <h3>IMC</h3>
+        @if (p.imc !== null) {
+          <p class="numero">{{ p.imc | number: '1.1-1' }}</p>
+          <p class="etiqueta">{{ p.categoriaImc }}</p>
+          <p class="muted">{{ p.peso }} kg · {{ p.altura }} m</p>
+        } @else {
+          <p class="muted">Cargá tu peso y altura para calcular tu IMC.</p>
+        }
+      </article>
+
+      <article class="card">
+        <h3>Racha actual</h3>
+        <p class="numero"> {{ p.rachaActualDias }}</p>
+        <p class="etiqueta">{{ p.rachaActualDias === 1 ? 'día' : 'días' }} seguidos</p>
+      </article>
+
+      <article class="card">
+        <h3>Racha máxima</h3>
+        <p class="numero">{{ p.rachaMaximaDias }}</p>
+        <p class="etiqueta">{{ p.rachaMaximaDias === 1 ? 'día' : 'días' }}</p>
+      </article>
+    </section>
+  }
+</main>
