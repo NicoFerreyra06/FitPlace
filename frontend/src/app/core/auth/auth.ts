@@ -20,6 +20,10 @@ export class Auth {
         return this.http.post<authResponse>('http://localhost:8080/usuarios/login', authRequest);
     }
 
+    logOut(){
+        localStorage.removeItem(this.TOKEN_KEY);
+    }
+
     guardarToken (token: string){
         localStorage.setItem(this.TOKEN_KEY, token);
     }
