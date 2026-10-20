@@ -7,6 +7,7 @@ import lombok.Data;
 @Builder
 public class MarcaEjercicioResponse {
     private Long id;
+    private Long ejercicioRutinaId;
     private String nombreEjercicio;
     private Double pesoLevantado;
     private Integer repeticionesLogradas;

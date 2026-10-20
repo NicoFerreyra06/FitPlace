@@ -15,6 +15,7 @@ import java.util.List;
 public class EntrenamientoLogResponse {
 
     private Long id;
+    private Long idRutina;
     private String nombreUsuario;
     private String nombreRutina;
     private LocalDate fecha;

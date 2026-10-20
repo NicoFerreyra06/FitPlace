@@ -292,6 +292,7 @@ public class EntrenamientoLogService {
     private EntrenamientoLogResponse mapEntrenamientoLogResponse(EntrenamientoLog entrenamientoLog) {
         return EntrenamientoLogResponse.builder()
                 .id(entrenamientoLog.getId())
+                .idRutina(entrenamientoLog.getRutinaEjecutada().getId())
                 .nombreUsuario(entrenamientoLog.getUsuario().getNombreUsuario())
                 .nombreRutina(entrenamientoLog.getRutinaEjecutada().getNombre())
                 .fecha(entrenamientoLog.getFecha())
@@ -303,6 +304,7 @@ public class EntrenamientoLogService {
     private MarcaEjercicioResponse mapMarcaEjercicioResponse(MarcaEjercicio marcaEjercicio) {
         return MarcaEjercicioResponse.builder()
                 .id(marcaEjercicio.getId())
+                .ejercicioRutinaId(marcaEjercicio.getEjercicioRutina().getId())
                 .nombreEjercicio(marcaEjercicio.getEjercicioRutina().getEjercicio().getNombre())
                 .pesoLevantado(marcaEjercicio.getPesoLevantado())
                 .repeticionesLogradas(marcaEjercicio.getRepeticionesLogradas()).build();
