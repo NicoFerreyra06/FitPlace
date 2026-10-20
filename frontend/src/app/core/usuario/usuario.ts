@@ -16,11 +16,20 @@ export interface UsuarioPerfil {
   rachaMaximaDias: number | null;
 }
 
+export interface PerfilUpdateRequest {
+  altura: number;
+  peso: number;
+}
+
 @Service()
 export class Usuario {
   private readonly http = inject(HttpClient);
 
   getMiPerfil(): Observable<UsuarioPerfil> {
     return this.http.get<UsuarioPerfil>('http://localhost:8080/usuarios/me');
+  }
+
+  updateMiPerfil(perfilUpdateRequest: PerfilUpdateRequest): Observable<UsuarioPerfil> {
+    return this.http.put<UsuarioPerfil>('http://localhost:8080/usuarios/me', perfilUpdateRequest);
   }
 }
