@@ -1,0 +1,193 @@
+.perfil {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.perfil-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+button {
+  padding: 6px 8px;
+  font-weight: 600;
+  color: var(--on-primary);
+  background: var(--primary);
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+button:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.boton-secundario {
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--border);
+}
+
+.boton-secundario:hover:not(:disabled) {
+  background: var(--surface-hover);
+}
+
+input {
+  width: 100%;
+  padding: 10px 12px;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s;
+}
+
+input:hover {
+  border-color: var(--border-strong);
+}
+
+input:focus-visible {
+  outline: none;
+  border-color: var(--focus);
+}
+
+input.ng-invalid.ng-touched {
+  border-color: var(--danger);
+}
+
+.volver {
+  font-size: 14px;
+  color: var(--link);
+  text-decoration: none;
+}
+
+.volver:hover {
+  text-decoration: underline;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+h3,
+.muted,
+.etiqueta,
+.estado-msg {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
+}
+
+.card:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+}
+
+.card.imc {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, rgb(29 78 216 / 0.35), rgb(59 130 246 / 0.08));
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.grid .card {
+  flex: 1 1 180px;
+  min-height: 250px;
+}
+
+.numero {
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.estado-msg,
+.error {
+  text-align: center;
+}
+
+.error {
+  color: var(--danger);
+}
+
+.boton-editar {
+  margin-top: 6px;
+  padding: 8px 11px;
+}
+
+.form-editar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.field-error {
+  font-size: 12.5px;
+  color: var(--danger);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  button,
+  input {
+    transition: none;
+  }
+}

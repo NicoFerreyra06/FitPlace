@@ -1,0 +1,35 @@
+<main class="container">
+    <h1>Lista de ejercicios</h1>
+
+    @if (cargando()) {
+        <p class="empty-state">Cargando ejercicios desde la base de datos...</p>
+    } @else {
+        <section class="cards-grid">
+    @for (ejercicio of ejercicios(); track ejercicio.id) {
+        <article class="card" (click)="verDetalle(ejercicio)">
+        <h3>{{ ejercicio.nombre }}</h3>
+        
+        <div class="muscles-summary">
+            <span class="label">Músculos Principales:</span>
+            <div class="tags">
+            @for (m of ejercicio.musculosPrincipales; track m.id) {
+                <span class="badge primary">{{ m.nombre }}</span>
+            }
+            </div>
+        </div>
+
+        <button class="btn-detail" type="button">Ver detalle</button>
+        </article>
+    } @empty {
+        <p class="empty-state">No hay ejercicios registrados.</p>
+        
+    }
+    </section>
+
+    }
+    
+    <!-- Modal / Detalle -->
+    @if (ejercicioSeleccionado(); as ej) {
+        <app-ejercicio-details [ejercicio]="ej" (cerrar)="cerrarDetalle()" />
+    }
+</main>

@@ -1,0 +1,234 @@
+:host {
+  --glass: rgb(24 24 26 / 0.62);
+  --glass-highlight: inset 0 1px 0 rgb(255 255 255 / 0.08);
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+
+  display: contents;
+}
+
+.sidebar {
+  position: fixed;
+  inset: var(--gap) auto var(--gap) var(--gap);
+  z-index: 20;
+  width: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px 12px 12px;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: var(--glass-highlight), var(--shadow);
+  transition:
+    transform 0.4s var(--ease),
+    visibility 0.4s;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px 12px;
+}
+
+.brand {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+}
+
+.item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    transform 0.15s var(--ease);
+}
+
+.item svg,
+.icon-btn svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.item:hover {
+  color: var(--text);
+  background: var(--surface);
+}
+
+.item:active {
+  transform: scale(0.97);
+}
+
+.item.activo {
+  color: var(--primary);
+  background: var(--surface-hover);
+  border-color: var(--border);
+  box-shadow: var(--glass-highlight);
+}
+
+.item.activo::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 50%;
+  width: 3px;
+  height: 16px;
+  border-radius: 3px;
+  background: var(--link);
+  transform: translateY(-50%);
+}
+
+.item.activo svg {
+  color: var(--link);
+}
+
+.salir {
+  margin-top: auto;
+}
+
+.salir:hover {
+  color: var(--danger);
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    transform 0.15s var(--ease);
+}
+
+.icon-btn:hover {
+  background: var(--surface-hover);
+}
+
+.icon-btn:active {
+  transform: scale(0.92);
+}
+
+.item:focus-visible,
+.icon-btn:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.topbar,
+.backdrop,
+.cerrar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    backdrop-filter: blur(24px) saturate(160%);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cerrar {
+    display: grid;
+  }
+
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 15;
+    background: rgb(0 0 0 / 0.4);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.3s,
+      visibility 0.3s;
+  }
+
+  .backdrop.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .sidebar {
+    width: min(300px, 100vw - var(--gap) * 4);
+    transform: translateX(calc(-100% - var(--gap) * 2));
+    visibility: hidden;
+  }
+
+  .sidebar.abierto {
+    transform: none;
+    visibility: visible;
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .sidebar,
+  .topbar {
+    background: var(--surface-raised);
+  }
+
+  .backdrop {
+    background: rgb(0 0 0 / 0.65);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .backdrop,
+  .item,
+  .icon-btn {
+    transition: none;
+  }
+
+  .item:active,
+  .icon-btn:active {
+    transform: none;
+  }
+}
