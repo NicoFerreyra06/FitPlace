@@ -3,6 +3,7 @@ package com.proyectoFinal.gymtracker.Services;
 import com.proyectoFinal.gymtracker.DTO.Request.RutinaRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.RutinaResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
+import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
 import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Rutina;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -102,6 +104,28 @@ public class RutinaServiceTest {
         rutinaService.deleteRutina(usuario, rutinaId);
 
         verify(rutinaRepository, times((1))).delete(rutinaExistente);
+        verify(rutinaRepository, times(1)).flush();
+    }
+
+    @Test
+    @DisplayName("Deberia fallar con mensaje claro si la rutina esta en un historial de entrenamiento")
+    void shouldThrowBusinessExceptionWhenRutinaHasHistory(){
+        Long rutinaId = 10L;
+
+        Rutina rutinaConHistorial = Rutina.builder()
+                .id(rutinaId)
+                .nombre("Rutina con entrenamientos")
+                .creador(usuario)
+                .build();
+
+        when(rutinaRepository.findById(rutinaId)).thenReturn(Optional.of(rutinaConHistorial));
+        doThrow(new DataIntegrityViolationException("FK entrenamiento_log.rutina_ejecutada_id"))
+                .when(rutinaRepository).flush();
+
+        var response = assertThrows(BusinessLogicException.class,
+                () -> rutinaService.deleteRutina(usuario, rutinaId));
+
+        assertTrue(response.getMessage().contains("historial de entrenamiento"));
     }
 
     @Test

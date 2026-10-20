@@ -231,7 +231,9 @@ public class RutinaService {
 
         try {
             rutinaRepository.delete(rutina);
-
+            // Fuerza el DELETE acá: con @Transactional se ejecutaría recién en el commit,
+            // fuera de este try, y el error de FK terminaría como un 500 genérico.
+            rutinaRepository.flush();
         } catch (DataIntegrityViolationException e) {
             throw new BusinessLogicException("No se puede eliminar la rutina porque actualmente está asignada a un usuario o existe en un historial de entrenamiento.");
         }
