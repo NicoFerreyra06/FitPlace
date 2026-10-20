@@ -1,0 +1,17 @@
+:host {
+  --sidebar-width: 248px;
+  --gap: 12px;
+
+  display: block;
+  min-height: 100dvh;
+}
+
+.contenido {
+  margin-left: calc(var(--sidebar-width) + var(--gap) * 2);
+}
+
+@media (max-width: 768px) {
+  .contenido {
+    margin-left: 0;
+  }
+}
