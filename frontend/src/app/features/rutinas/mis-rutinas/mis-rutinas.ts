@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { Rutinas } from '../../../core/rutinas/rutinas';
-import { Usuarios } from '../../../core/usuarios/usuarios';
+import { Usuario } from '../../../core/usuario/usuario';
 import { RutinaResponse } from '../../../core/rutinas/rutinas.model';
 
 @Component({
@@ -13,7 +13,7 @@ import { RutinaResponse } from '../../../core/rutinas/rutinas.model';
 })
 export class MisRutinas implements OnInit {
   private readonly rutinasService = inject(Rutinas);
-  private readonly usuariosService = inject(Usuarios);
+  private readonly usuarioService = inject(Usuario);
 
   protected readonly cargando = signal(true);
   protected readonly rutinas = signal<RutinaResponse[]>([]);
@@ -23,7 +23,7 @@ export class MisRutinas implements OnInit {
   ngOnInit() {
     forkJoin({
       rutinas: this.rutinasService.getMisRutinas(),
-      usuario: this.usuariosService.getMe(),
+      usuario: this.usuarioService.getMiPerfil(),
     }).subscribe({
       next: ({ rutinas, usuario }) => {
         this.rutinas.set(rutinas.content);
@@ -39,7 +39,7 @@ export class MisRutinas implements OnInit {
 
   activar(rutina: RutinaResponse) {
     this.errorMsg.set(null);
-    this.usuariosService.activarRutina(rutina.id).subscribe({
+    this.usuarioService.activarRutina(rutina.id).subscribe({
       next: (usuario) => this.rutinaActivaId.set(usuario.rutinaActivaId),
       error: (err) =>
         this.errorMsg.set(err.error?.message ?? 'No se pudo activar la rutina'),

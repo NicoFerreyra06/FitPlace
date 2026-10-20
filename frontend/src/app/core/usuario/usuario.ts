@@ -14,6 +14,7 @@ export interface UsuarioPerfil {
   categoriaImc: string;
   rachaActualDias: number | null;
   rachaMaximaDias: number | null;
+  rutinaActivaId: number | null;
 }
 
 export interface PerfilUpdateRequest {
@@ -31,5 +32,12 @@ export class Usuario {
 
   updateMiPerfil(perfilUpdateRequest: PerfilUpdateRequest): Observable<UsuarioPerfil> {
     return this.http.put<UsuarioPerfil>('http://localhost:8080/usuarios/me', perfilUpdateRequest);
+  }
+
+  activarRutina(idRutina: number): Observable<UsuarioPerfil> {
+    return this.http.put<UsuarioPerfil>(
+      `http://localhost:8080/usuarios/me/rutina-activa/${idRutina}`,
+      null,
+    );
   }
 }
