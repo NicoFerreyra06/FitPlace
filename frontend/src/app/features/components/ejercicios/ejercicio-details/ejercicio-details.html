@@ -1,0 +1,35 @@
+<div class="modal-backdrop" (click)="onCerrar()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ ejercicio().nombre }}</h2>
+      <button class="close-btn" (click)="onCerrar()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <section class="section">
+        <h3>Técnica y Ejecución</h3>
+        <p>{{ ejercicio().descripcion }}</p>
+      </section>
+
+      <section class="section">
+        <h3>Músculos Principales</h3>
+        <div class="tags">
+          @for (musculo of ejercicio().musculosPrincipales; track musculo.id) {
+            <span class="badge primary">{{ musculo.nombre }} ({{ musculo.grupoMuscular }})</span>
+          }
+        </div>
+      </section>
+
+      @if (ejercicio().musculosSecundarios && ejercicio().musculosSecundarios.length > 0) {
+        <section class="section">
+          <h3>Músculos Secundarios</h3>
+          <div class="tags">
+            @for (musculo of ejercicio().musculosSecundarios; track musculo.id) {
+              <span class="badge secondary">{{ musculo.nombre }}</span>
+            }
+          </div>
+        </section>
+      }
+    </div>
+  </div>
+</div>
