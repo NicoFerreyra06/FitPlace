@@ -1,0 +1,91 @@
+<main class="pagina">
+    <header class="topbar">
+        <a class="back" routerLink="/rutinas">← Volver</a>
+    </header>
+
+    <h1>{{ esEdicion ? 'Editar rutina' : 'Nueva rutina' }}</h1>
+
+    @if (cargando()) {
+        <p class="muted">Cargando…</p>
+    } @else {
+        <form class="form" [formGroup]="form" (ngSubmit)="guardar()">
+            <div class="field">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" formControlName="nombre" />
+                @if (form.controls.nombre.hasError('required') && form.controls.nombre.touched) {
+                    <span class="field-error">El nombre es obligatorio</span>
+                }
+            </div>
+
+            <label class="check">
+                <input type="checkbox" formControlName="esPublica" />
+                Rutina pública (la pueden usar otros usuarios)
+            </label>
+
+            <h2>Días de entrenamiento</h2>
+
+            <div formArrayName="dias" class="dias">
+                @for (dia of dias.controls; track $index; let i = $index) {
+                    <section class="dia" [formGroupName]="i">
+                        <header class="dia-header">
+                            <select formControlName="diaDeLaSemana" aria-label="Día de la semana">
+                                @for (d of diasLibres(i); track d.valor) {
+                                    <option [value]="d.valor">{{ d.etiqueta }}</option>
+                                }
+                            </select>
+                            <button type="button" class="peligro" (click)="quitarDia(i)">Quitar día</button>
+                        </header>
+
+                        <div class="cabecera-ejercicios" aria-hidden="true">
+                            <span>Ejercicio</span>
+                            <span>Series</span>
+                            <span>Reps</span>
+                            <span></span>
+                        </div>
+
+                        <div formArrayName="ejercicios" class="ejercicios">
+                            @for (ej of dia.controls.ejercicios.controls; track $index; let j = $index) {
+                                <div class="ejercicio" [formGroupName]="j">
+                                    <select formControlName="ejercicioId" aria-label="Ejercicio">
+                                        <option [ngValue]="0" disabled>Elegí un ejercicio</option>
+                                        @for (e of ejerciciosLibres(dia, j); track e.id) {
+                                            <option [ngValue]="e.id">{{ e.nombre }}</option>
+                                        }
+                                    </select>
+                                    <input type="number" min="1" formControlName="series" aria-label="Series" />
+                                    <input type="number" min="1" formControlName="repeticiones" aria-label="Repeticiones" />
+                                    <button type="button" class="icono" aria-label="Quitar ejercicio"
+                                            (click)="quitarEjercicio(dia, j)">✕</button>
+                                </div>
+                            }
+                        </div>
+
+                        @if (dia.controls.ejercicios.length === 0) {
+                            <span class="field-error">Agregá al menos un ejercicio a este día</span>
+                        }
+
+                        <button type="button" class="secundario" (click)="agregarEjercicio(dia)">
+                            + Agregar ejercicio
+                        </button>
+                    </section>
+                }
+            </div>
+
+            @if (dias.length === 0) {
+                <span class="field-error">Agregá al menos un día</span>
+            }
+
+            @if (hayDiasLibres()) {
+                <button type="button" class="secundario" (click)="agregarDia()">+ Agregar día</button>
+            }
+
+            @if (errorMsg()) {
+                <span class="field-error">{{ errorMsg() }}</span>
+            }
+
+            <button type="submit" [disabled]="form.invalid || guardando()">
+                {{ esEdicion ? 'Guardar cambios' : 'Crear rutina' }}
+            </button>
+        </form>
+    }
+</main>

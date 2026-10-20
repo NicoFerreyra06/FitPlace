@@ -6,7 +6,7 @@
 
 App para entrenar, seguir tu progreso y gestionar gimnasios.
 
-![Java](https://img.shields.io/badge/Java-17-ED8B00?logo=openjdk&logoColor=white)
+![Java](https://img.shields.io/badge/Java-25-ED8B00?logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-4-6DB33F?logo=springboot&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white)
 ![Angular](https://img.shields.io/badge/Angular-22-DD0031?logo=angular&logoColor=white)
@@ -39,7 +39,7 @@ FitPlace/
 
 ### Backend
 
-Requiere **Java 17** y **MySQL** con una base `gymtracker` en `localhost:3306`.
+Requiere **Java 25** y **MySQL** con una base `gymtracker` en `localhost:3306`.
 
 ```bash
 git clone https://github.com/NicoFerreyra06/FitPlace.git

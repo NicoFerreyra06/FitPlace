@@ -40,6 +40,7 @@ public class EntrenamientoLogService {
 
         Rutina rutina = rutinaRepository.findById(entrenamientoLogRequest.getIdRutina())
                 .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
+        validarAccesoRutina(rutina, usuarioLogueado);
 
         EntrenamientoLog ultimoEntrenamiento = entrenamientoLogRepository
                 .findFirstByUsuarioIdOrderByFechaDesc(usuarioLogueado.getId());
@@ -87,6 +88,7 @@ public class EntrenamientoLogService {
 
         Rutina rutina = rutinaRepository.findById(entrenamientoLogRequest.getIdRutina())
                         .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
+        validarAccesoRutina(rutina, usuarioLogueado);
 
 
         entrenamientoExistente.setRutinaEjecutada(rutina);

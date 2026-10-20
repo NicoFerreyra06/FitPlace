@@ -197,7 +197,6 @@ public class EntrenamientoLogServiceTest {
                 .codigoAmigo(UUID.randomUUID().toString())
                 .build();
     }
-    
     @Test
     @DisplayName("Deberia lanzar excepcion porque no encuentra la rutina")
     void shouldThrowExceptionWhenRutineNotFound() {
