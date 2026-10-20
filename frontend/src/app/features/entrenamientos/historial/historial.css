@@ -1,0 +1,253 @@
+.historial {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.historial-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.muted,
+.estado-msg {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.estado-msg,
+.error {
+  text-align: center;
+}
+
+.error {
+  color: var(--danger);
+}
+
+/* ===== Botones (mismo estilo que perfil) ===== */
+
+button {
+  padding: 8px 12px;
+  font-weight: 600;
+  color: var(--on-primary);
+  background: var(--primary);
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+button:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.boton-secundario {
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--border);
+}
+
+.boton-secundario:hover:not(:disabled) {
+  background: var(--surface-hover);
+}
+
+.peligro {
+  color: var(--bg);
+  background: var(--danger);
+}
+
+.peligro:hover:not(:disabled) {
+  background: var(--danger);
+  filter: brightness(1.1);
+}
+
+.boton-reintentar {
+  align-self: center;
+}
+
+/* ===== Inputs ===== */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+input {
+  width: 100%;
+  padding: 8px 10px;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s;
+}
+
+input:hover {
+  border-color: var(--border-strong);
+}
+
+input:focus-visible {
+  outline: none;
+  border-color: var(--focus);
+}
+
+input.ng-invalid.ng-touched {
+  border-color: var(--danger);
+}
+
+/* ===== Filtros ===== */
+
+.filtros {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: end;
+  gap: 12px;
+}
+
+.filtros-acciones {
+  display: flex;
+  gap: 8px;
+}
+
+/* ===== Lista de entrenamientos ===== */
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.entrenamiento-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.marcas {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.marcas li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.marcas li:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.nota {
+  margin-right: auto;
+  font-size: 13px;
+}
+
+/* ===== Edición ===== */
+
+.form-editar,
+.marcas-editar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fila-marca {
+  display: grid;
+  grid-template-columns: 1fr 110px 90px;
+  align-items: end;
+  gap: 12px;
+}
+
+.nombre-ejercicio {
+  padding-bottom: 9px;
+}
+
+/* ===== Paginación ===== */
+
+.paginacion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 520px) {
+  .filtros {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filtros-acciones {
+    grid-column: 1 / -1;
+  }
+
+  .fila-marca {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .nombre-ejercicio {
+    grid-column: 1 / -1;
+    padding-bottom: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button,
+  input {
+    transition: none;
+  }
+}

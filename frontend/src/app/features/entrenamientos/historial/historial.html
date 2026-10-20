@@ -1,0 +1,140 @@
+<main class="historial">
+  <header class="historial-header">
+    <h1>Mis entrenamientos</h1>
+  </header>
+
+  <section class="filtros" aria-label="Filtrar por fecha">
+    <label class="field">
+      Desde
+      <input #inputDesde type="date" [value]="desde()" />
+    </label>
+    <label class="field">
+      Hasta
+      <input #inputHasta type="date" [value]="hasta()" />
+    </label>
+    <div class="filtros-acciones">
+      <button type="button" (click)="aplicarFiltro(inputDesde.value, inputHasta.value)">
+        Filtrar
+      </button>
+      <button type="button" class="boton-secundario" (click)="aplicarFiltro('', '')">
+        Limpiar
+      </button>
+    </div>
+  </section>
+
+  @if (errorMsg()) {
+    <p class="error" role="alert">{{ errorMsg() }}</p>
+  }
+
+  @if (cargando) {
+    <p class="estado-msg">Cargando historial…</p>
+  } @else if (historial.error()) {
+    <p class="error">No se pudo cargar el historial.</p>
+    <button type="button" class="boton-reintentar" (click)="historial.reload()">Reintentar</button>
+  } @else if (historial.hasValue()) {
+    @let datos = historial.value();
+
+    @if (datos.empty) {
+      <p class="estado-msg">
+        @if (desde() || hasta()) {
+          No hay entrenamientos en ese rango de fechas.
+        } @else {
+          Todavía no registraste entrenamientos.
+        }
+      </p>
+    } @else {
+      <section class="lista">
+        @for (e of datos.content; track e.id) {
+          <article class="card entrenamiento">
+            <header class="entrenamiento-header">
+              <h2>{{ e.nombreRutina }}</h2>
+              <span class="muted">{{ e.fecha | date: 'dd/MM/yyyy' }}</span>
+            </header>
+
+            @if (editandoId() === e.id) {
+              <form [formGroup]="formEdicion" (ngSubmit)="guardar(e)" class="form-editar">
+                <div formArrayName="marcas" class="marcas-editar">
+                  @for (marca of marcas.controls; track $index) {
+                    <div class="fila-marca" [formGroupName]="$index">
+                      <span class="nombre-ejercicio">{{
+                        e.marcasEjercicio[$index].nombreEjercicio
+                      }}</span>
+                      <label class="field">
+                        Peso (kg)
+                        <input type="number" step="0.5" min="0" formControlName="pesoLevantado" />
+                      </label>
+                      <label class="field">
+                        Reps
+                        <input type="number" min="1" formControlName="repeticionesLogradas" />
+                      </label>
+                    </div>
+                  }
+                </div>
+                <div class="acciones">
+                  <button type="submit" [disabled]="formEdicion.invalid">Guardar</button>
+                  <button type="button" class="boton-secundario" (click)="cancelarEdicion()">
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            } @else {
+              <ul class="marcas">
+                @for (m of e.marcasEjercicio; track m.id) {
+                  <li>
+                    <span>{{ m.nombreEjercicio }}</span>
+                    <span class="muted"
+                      >{{ m.pesoLevantado }} kg × {{ m.repeticionesLogradas }}</span
+                    >
+                  </li>
+                }
+              </ul>
+
+              <footer class="acciones">
+                @if (borrandoId() === e.id) {
+                  <span class="muted">¿Borrar este entrenamiento?</span>
+                  <button type="button" class="peligro" (click)="confirmarBorrado(e.id)">
+                    Sí, borrar
+                  </button>
+                  <button type="button" class="boton-secundario" (click)="borrandoId.set(null)">
+                    No
+                  </button>
+                } @else {
+                  @if (e.fecha >= limiteEdicion) {
+                    <button type="button" (click)="editar(e)">Editar</button>
+                  } @else {
+                    <span class="muted nota">Solo se pueden editar los últimos 7 días</span>
+                  }
+                  <button type="button" class="boton-secundario" (click)="pedirBorrado(e.id)">
+                    Borrar
+                  </button>
+                }
+              </footer>
+            }
+          </article>
+        }
+      </section>
+
+      @if (datos.totalPages > 1) {
+        <nav class="paginacion" aria-label="Paginación">
+          <button
+            type="button"
+            class="boton-secundario"
+            [disabled]="datos.first"
+            (click)="cambiarPagina(-1)"
+          >
+            ← Anterior
+          </button>
+          <span class="muted">Página {{ datos.number + 1 }} de {{ datos.totalPages }}</span>
+          <button
+            type="button"
+            class="boton-secundario"
+            [disabled]="datos.last"
+            (click)="cambiarPagina(1)"
+          >
+            Siguiente →
+          </button>
+        </nav>
+      }
+    }
+  }
+</main>
