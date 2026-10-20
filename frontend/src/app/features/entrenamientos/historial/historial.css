@@ -29,16 +29,6 @@ h2 {
   font-weight: 600;
 }
 
-.volver {
-  font-size: 14px;
-  color: var(--link);
-  text-decoration: none;
-}
-
-.volver:hover {
-  text-decoration: underline;
-}
-
 .muted,
 .estado-msg {
   font-size: 14px;

@@ -1,7 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import {
   FormArray,
   FormBuilder,
@@ -27,7 +26,7 @@ type MarcaForm = FormGroup<{
 const DIAS_EDITABLES = 7;
 
 @Component({
-  imports: [DatePipe, RouterLink, ReactiveFormsModule],
+  imports: [DatePipe, ReactiveFormsModule],
   selector: 'app-historial',
   styleUrl: './historial.css',
   templateUrl: './historial.html',
