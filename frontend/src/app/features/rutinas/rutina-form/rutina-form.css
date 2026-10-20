@@ -1,0 +1,231 @@
+.pagina {
+  min-height: 100dvh;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+}
+
+.back {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.back:hover {
+  color: var(--text);
+}
+
+h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  margin: 8px 0 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.muted {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+}
+
+input[type='text'],
+input[type='number'],
+select {
+  width: 100%;
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s;
+}
+
+select option {
+  color: var(--text);
+  background: var(--surface-raised);
+}
+
+input:hover,
+select:hover {
+  border-color: var(--border-strong);
+}
+
+input:focus-visible,
+select:focus-visible {
+  outline: none;
+  border-color: var(--focus);
+}
+
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched {
+  border-color: var(--danger);
+}
+
+.field-error {
+  font-size: 12.5px;
+  color: var(--danger);
+}
+
+.dias {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dia {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.dia-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dia-header select {
+  max-width: 200px;
+  font-weight: 600;
+}
+
+.cabecera-ejercicios,
+.ejercicio {
+  display: grid;
+  grid-template-columns: 1fr 72px 72px 36px;
+  align-items: center;
+  gap: 8px;
+}
+
+.cabecera-ejercicios {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.ejercicios {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+button {
+  padding: 10px 16px;
+  font: inherit;
+  font-weight: 600;
+  color: var(--on-primary);
+  background: var(--primary);
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+button:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+button.secundario {
+  align-self: flex-start;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--border-strong);
+}
+
+button.secundario:hover:not(:disabled) {
+  background: var(--surface-hover);
+}
+
+button.peligro {
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--danger);
+  background: transparent;
+  border: 1px solid var(--danger);
+}
+
+button.peligro:hover:not(:disabled) {
+  background: rgb(248 113 113 / 0.12);
+}
+
+button.icono {
+  padding: 8px 0;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border);
+}
+
+button.icono:hover:not(:disabled) {
+  color: var(--danger);
+  background: transparent;
+  border-color: var(--danger);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  input,
+  select,
+  button {
+    transition: none;
+  }
+}

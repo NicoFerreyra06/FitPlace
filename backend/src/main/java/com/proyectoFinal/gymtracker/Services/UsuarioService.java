@@ -83,7 +83,7 @@ public class UsuarioService {
     }
 
     public UsuarioResponse toResponse(Usuario usuario) {
-        return UsuarioResponse.builder().id(usuario.getId()).username(usuario.getNombreUsuario()).email(usuario.getEmail()).rol(usuario.getRol()).codigoAmigo(usuario.getCodigoAmigo()).peso(usuario.getPeso()).altura(usuario.getAltura()).imc(usuario.getImc()).categoriaImc(calcularCategoriaImc(usuario.getImc())).rachaActualDias(usuario.getRachaActualDias()).rachaMaximaDias(usuario.getRachaMaximaDias()).build();
+        return UsuarioResponse.builder().id(usuario.getId()).username(usuario.getNombreUsuario()).email(usuario.getEmail()).rol(usuario.getRol()).codigoAmigo(usuario.getCodigoAmigo()).peso(usuario.getPeso()).altura(usuario.getAltura()).imc(usuario.getImc()).categoriaImc(calcularCategoriaImc(usuario.getImc())).rachaActualDias(usuario.getRachaActualDias()).rachaMaximaDias(usuario.getRachaMaximaDias()).rutinaActivaId(usuario.getRutinaActiva() != null ? usuario.getRutinaActiva().getId() : null).build();
     }
 
     private String calcularCategoriaImc(Double imc) {

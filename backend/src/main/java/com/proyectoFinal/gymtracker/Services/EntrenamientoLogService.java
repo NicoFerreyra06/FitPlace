@@ -40,6 +40,7 @@ public class EntrenamientoLogService {
 
         Rutina rutina = rutinaRepository.findById(entrenamientoLogRequest.getIdRutina())
                 .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
+        validarAccesoRutina(rutina, usuarioLogueado);
 
         EntrenamientoLog ultimoEntrenamiento = entrenamientoLogRepository
                 .findFirstByUsuarioIdOrderByFechaDesc(usuarioLogueado.getId());
@@ -87,6 +88,7 @@ public class EntrenamientoLogService {
 
         Rutina rutina = rutinaRepository.findById(entrenamientoLogRequest.getIdRutina())
                         .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
+        validarAccesoRutina(rutina, usuarioLogueado);
 
 
         entrenamientoExistente.setRutinaEjecutada(rutina);
@@ -306,6 +308,19 @@ public class EntrenamientoLogService {
                 .nombreEjercicio(marcaEjercicio.getEjercicioRutina().getEjercicio().getNombre())
                 .pesoLevantado(marcaEjercicio.getPesoLevantado())
                 .repeticionesLogradas(marcaEjercicio.getRepeticionesLogradas()).build();
+    }
+    private void validarAccesoRutina(Rutina rutina, Usuario usuario) {
+        if (rutina.isEsPublica()) {
+            return;
+        }
+
+        boolean esCreador = rutina.getCreador().getId().equals(usuario.getId());
+        boolean esAlumnoDelCreador = usuario.getEntrenador() != null
+                && usuario.getEntrenador().getId().equals(rutina.getCreador().getId());
+
+        if (!esCreador && !esAlumnoDelCreador) {
+            throw new ForbiddenAccessException("No tienes permiso para utilizar esta rutina privada");
+        }
     }
 
     private List<MarcaEjercicio> getMarcasEjercicio(EntrenamientoLogRequest entrenamientoLogRequest, Rutina rutina, EntrenamientoLog entrenamientoLog) {

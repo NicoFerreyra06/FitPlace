@@ -22,4 +22,5 @@ public class UsuarioResponse {
     private String categoriaImc;
     private Integer rachaActualDias;
     private Integer rachaMaximaDias;
+    private Long rutinaActivaId;
 }
