@@ -1,0 +1,81 @@
+<main class="perfil">
+  <header class="perfil-header">
+    <a routerLink="/home" class="volver">← Volver</a>
+    <h1>Mi perfil</h1>
+  </header>
+
+  @if (perfil.isLoading()) {
+    <p class="estado-msg">Cargando perfil…</p>
+  } @else if (perfil.error()) {
+    <p class="error">No se pudo cargar tu perfil. Probá de nuevo.</p>
+  } @else if (perfil.hasValue()) {
+    @let p = perfil.value();
+
+    <section class="card datos">
+      <h2>{{ p.username }}</h2>
+      <p class="muted">{{ p.email }}</p>
+      <p class="muted">
+        Código de amigo: <strong>{{ p.codigoAmigo }}</strong>
+      </p>
+    </section>
+
+    <section class="grid">
+      <article class="card imc">
+        @if (editando()) {
+          <form [formGroup]="formularioPerfil" (ngSubmit)="guardar()" class="form-editar">
+            <div class="row">
+              <div class="field">
+                <label for="peso">Peso (kg)</label>
+                <input type="number" formControlName="peso" id="peso" step="0.1" />
+                @if (
+                  (formularioPerfil.get('peso')?.hasError('min') ||
+                    formularioPerfil.get('peso')?.hasError('max')) &&
+                  formularioPerfil.get('peso')?.touched
+                ) {
+                  <span class="field-error">Entre 30 y 500 kg</span>
+                }
+              </div>
+
+              <div class="field">
+                <label for="altura">Altura (m)</label>
+                <input type="number" formControlName="altura" id="altura" step="0.01" />
+                @if (
+                  (formularioPerfil.get('altura')?.hasError('min') ||
+                    formularioPerfil.get('altura')?.hasError('max')) &&
+                  formularioPerfil.get('altura')?.touched
+                ) {
+                  <span class="field-error">Entre 0.5 y 3 m</span>
+                }
+              </div>
+            </div>
+
+            @if (errorMsg()) {
+              <span class="field-error">{{ errorMsg() }}</span>
+            }
+
+            <button type="submit" [disabled]="formularioPerfil.invalid">Guardar</button>
+            <button class="boton-secundario" type="button" (click)="cancelar()">Cancelar</button>
+          </form>
+        } @else {
+          <h3>IMC</h3>
+          <p class="numero">{{ p.imc | number: '1.1-1' }}</p>
+          <p class="etiqueta">{{ p.categoriaImc }}</p>
+          <p class="muted">{{ p.peso }} kg · {{ p.altura }} m</p>
+          <button class="boton-editar" type="button" (click)="editar(p)">Editar</button>
+        }
+      </article>
+
+      <article class="card">
+        <h3>Racha actual</h3>
+        <p class="numero">{{ p.rachaActualDias ? p.rachaActualDias : 0 }}</p>
+        <p class="etiqueta">{{ p.rachaActualDias === 1 ? 'día' : 'días' }} seguidos</p>
+      </article>
+
+      <article class="card">
+        <h3>Racha máxima</h3>
+        <p class="numero">{{ p.rachaMaximaDias ? p.rachaMaximaDias : 0 }}</p>
+        <p class="etiqueta">{{ p.rachaMaximaDias === 1 ? 'día' : 'días' }}</p>
+      </article>
+    </section>
+  }
+</main>

@@ -23,8 +23,13 @@ export class Login {
 
   onSubmit() {
     this.authService.login(this.formularioLogin.getRawValue()).subscribe({
-      next: (res) => {this.errorMsg.set(null); this.authService.guardarToken(res.token); this.router.navigate(['/home'])},
-      error: (err) => this.errorMsg.set(err.error?.message ?? 'No se pudo conectar con el servidor')
-    })
+      next: (res) => {
+        this.errorMsg.set(null);
+        this.authService.guardarToken(res.token);
+        this.router.navigate(['/home']);
+      },
+      error: (err) =>
+        this.errorMsg.set(err.error?.message ?? 'No se pudo conectar con el servidor'),
+    });
   }
 }
