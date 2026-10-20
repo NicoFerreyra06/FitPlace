@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { MisRutinas } from './mis-rutinas';
 import { Rutinas } from '../../../core/rutinas/rutinas';
-import { Usuarios } from '../../../core/usuarios/usuarios';
+import { Usuario } from '../../../core/usuario/usuario';
 
 describe('MisRutinas', () => {
   let component: MisRutinas;
@@ -15,7 +15,7 @@ describe('MisRutinas', () => {
       providers: [
         provideRouter([]),
         { provide: Rutinas, useValue: { getMisRutinas: () => of({ content: [] }) } },
-        { provide: Usuarios, useValue: { getMe: () => of({ rutinaActivaId: null }) } },
+        { provide: Usuario, useValue: { getMiPerfil: () => of({ rutinaActivaId: null }) } },
       ],
     })
       .compileComponents();
