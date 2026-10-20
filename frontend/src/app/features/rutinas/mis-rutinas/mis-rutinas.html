@@ -1,0 +1,43 @@
+<main class="rutinas">
+    <header class="topbar">
+        <a class="back" routerLink="/home">← Volver</a>
+        <a class="btn" routerLink="/rutinas/nueva">Nueva rutina</a>
+    </header>
+
+    <h1>Mis rutinas</h1>
+
+    @if (errorMsg()) {
+        <p class="error">{{ errorMsg() }}</p>
+    }
+
+    @if (cargando()) {
+        <p class="muted">Cargando…</p>
+    } @else if (rutinas().length === 0) {
+        <p class="muted">Todavía no creaste ninguna rutina.</p>
+    } @else {
+        <ul class="lista">
+            @for (rutina of rutinas(); track rutina.id) {
+                <li class="item">
+                    <div class="info">
+                        <div class="titulo">
+                            <strong>{{ rutina.nombre }}</strong>
+                            @if (rutina.id === rutinaActivaId()) {
+                                <span class="badge activa">Activa</span>
+                            }
+                            <span class="badge">{{ rutina.esPublica ? 'Pública' : 'Privada' }}</span>
+                        </div>
+                        <span class="muted">{{ rutina.diaRutinas.length }} días por semana</span>
+                    </div>
+
+                    <div class="acciones">
+                        @if (rutina.id !== rutinaActivaId()) {
+                            <button type="button" (click)="activar(rutina)">Activar</button>
+                        }
+                        <a class="btn secundario" [routerLink]="['/rutinas', rutina.id, 'editar']">Editar</a>
+                        <button type="button" class="peligro" (click)="eliminar(rutina)">Eliminar</button>
+                    </div>
+                </li>
+            }
+        </ul>
+    }
+</main>

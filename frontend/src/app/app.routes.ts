@@ -7,6 +7,8 @@ import { Perfil } from './features/perfil/perfil';
 import { EjercicioList } from './features/components/ejercicios/ejercicio-list/ejercicio-list';
 import { Layout } from './features/layout/layout';
 import { Historial } from './features/entrenamientos/historial/historial';
+import { MisRutinas } from './features/rutinas/mis-rutinas/mis-rutinas';
+import { RutinaForm } from './features/rutinas/rutina-form/rutina-form';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -20,6 +22,9 @@ export const routes: Routes = [
       { path: 'ejercicios', component: EjercicioList, canActivate: [authGuard] },
       { path: 'perfil', component: Perfil, canActivate: [authGuard] },
       { path: 'entrenamientos', component: Historial, canActivate: [authGuard] },
+      { path: 'rutinas', component: MisRutinas, canActivate: [authGuard] },
+      { path: 'rutinas/nueva', component: RutinaForm, canActivate: [authGuard] },
+      { path: 'rutinas/:id/editar', component: RutinaForm, canActivate: [authGuard] },
     ],
   },
   { path: '**', redirectTo: 'login' },
