@@ -22,7 +22,7 @@
             <p class="muted">Esta rutina no tiene días asignados.</p>
         } @else {
             <div class="dias">
-                @for (dia of r.diaRutinas; track dia.id) {
+                @for (dia of diasOrdenados(); track dia.id) {
                     <section class="dia" [class.abierto]="estaAbierto(dia)">
                         <button type="button" class="dia-toggle" (click)="toggleDia(dia)">
                             <span class="dia-nombre">{{ etiquetaDia(dia.diaDeLaSemana) }}</span>
@@ -45,14 +45,19 @@
                                         </thead>
                                         <tbody>
                                             @for (ej of dia.ejercicioRutinas; track ej.id) {
-                                                <tr>
+                                                <tr (click)="verDetalle(ej.ejercicioId)">
                                                     <td>{{ ej.nombreEjercicio }}</td>
                                                     <td>{{ ej.series }}</td>
                                                     <td>{{ ej.repeticiones }}</td>
                                                 </tr>
+                                                
                                             }
                                         </tbody>
                                     </table>
+
+                                    @if (ejercicioSeleccionado(); as ej) {
+                                        <app-ejercicio-details [ejercicio]="ej" (cerrar)="cerrarDetalle()" />
+                                    }
                                 }
                             </div>
                         }
