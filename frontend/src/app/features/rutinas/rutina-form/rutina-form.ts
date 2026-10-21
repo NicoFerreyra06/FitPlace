@@ -2,7 +2,8 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
-import { EjercicioResponse, Ejercicios } from '../../../core/ejercicios/ejercicios';
+import { EjercicioService } from '../../../core/services/ejercicio-service';
+import { Ejercicio } from '../../../model/ejercicio';
 import {
   DIAS_SEMANA,
   DiaSemana,
@@ -47,7 +48,7 @@ export class RutinaForm implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly rutinasService = inject(Rutinas);
-  private readonly ejerciciosService = inject(Ejercicios);
+  private readonly ejercicioService = inject(EjercicioService);
 
   // Si la ruta trae :id estamos editando; si no, estamos creando
   protected readonly idRutina = Number(this.route.snapshot.paramMap.get('id')) || null;
@@ -56,7 +57,7 @@ export class RutinaForm implements OnInit {
   protected readonly cargando = signal(true);
   protected readonly guardando = signal(false);
   protected readonly errorMsg = signal<string | null>(null);
-  protected readonly ejercicios = signal<EjercicioResponse[]>([]);
+  protected readonly ejercicios = signal<Ejercicio[]>([]);
 
   protected readonly form = this.fb.group({
     nombre: ['', Validators.required],
@@ -70,7 +71,7 @@ export class RutinaForm implements OnInit {
 
   ngOnInit() {
     forkJoin({
-      ejercicios: this.ejerciciosService.getTodos(),
+      ejercicios: this.ejercicioService.getAllEjercicio(),
       rutina: this.idRutina !== null ? this.rutinasService.getRutina(this.idRutina) : of(null),
     }).subscribe({
       next: ({ ejercicios, rutina }) => {

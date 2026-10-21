@@ -6,20 +6,22 @@ import { Page } from '../../model/page';
 
 @Service()
 export class EjercicioService {
-    private http = inject(HttpClient);
-    private apiUrl = 'http://localhost:8080/ejercicios';
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:8080/ejercicios';
 
-    getAllEjercicio(): Observable<Page<Ejercicio>> {
-        return this.http.get<Page<Ejercicio>>(this.apiUrl);
-    }
+  getAllEjercicio(): Observable<Page<Ejercicio>> {
+    return this.http.get<Page<Ejercicio>>(this.apiUrl, { params: { size: 50 } });
+  }
 
-    getEjercicioById(id: string | number): Observable<Ejercicio> {
-        return this.http.get<Ejercicio>(`${this.apiUrl}/${id}`);
-    }
+  getEjercicioById(id: string | number): Observable<Ejercicio> {
+    return this.http.get<Ejercicio>(`${this.apiUrl}/${id}`);
+  }
 
-    getEjercicioByNombre(nombre: string): Observable<Ejercicio> {
-        return this.http.get<Ejercicio>(`${this.apiUrl}/${nombre}`);
-    }
+  getEjercicioByNombre(nombre: string): Observable<Ejercicio> {
+    return this.http.get<Ejercicio>(`${this.apiUrl}/${nombre}`);
+  }
+
+  getEjerciciosPorMusculo(id: string | number): Observable<Ejercicio[]> {
+    return this.http.get<Ejercicio[]>(`${this.apiUrl}/porMusculo/${id}`);
+  }
 }
-
-

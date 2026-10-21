@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
-import { DiaRutinaResponse, Page, RutinaRequest, RutinaResponse } from './rutinas.model';
+import { DiaRutinaResponse, RutinaRequest, RutinaResponse } from './rutinas.model';
+import { Page } from '../../model/page';
 
 @Service()
 export class Rutinas {

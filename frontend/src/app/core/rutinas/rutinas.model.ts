@@ -64,13 +64,3 @@ export interface RutinaRequest {
   esPublica: boolean;
   dias: DiaRutinaRequest[];
 }
-
-// ===== Paginación de Spring =====
-
-export interface Page<T> {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  number: number;
-  size: number;
-}

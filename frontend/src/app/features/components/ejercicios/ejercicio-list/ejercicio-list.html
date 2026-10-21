@@ -18,6 +18,16 @@
         }
     </div>
 
+    <div class="filter">
+        <label for="filtro-musculo">Filtrar por músculo</label>
+        <select id="filtro-musculo" #filtro (change)="filtrarPorMusculo(filtro.value)">
+            <option value="">Mostrar todos</option>
+            @for (musculo of musculos(); track musculo.id) {
+                <option [value]="musculo.id">{{ musculo.nombre }}</option>
+            }
+        </select>
+    </div>
+
     @if (cargando()) {
         <p class="empty-state">Cargando ejercicios desde la base de datos...</p>
     } @else {

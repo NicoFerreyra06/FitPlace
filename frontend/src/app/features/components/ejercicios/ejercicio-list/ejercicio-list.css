@@ -162,3 +162,35 @@
     color: var(--text-muted);
     padding: 48px 0;
 }
+
+.filter {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    align-items: center;
+}
+
+.filter select {
+    min-width: 220px;
+    padding: 10px 12px;
+    font: inherit;
+    color: var(--text);
+    background: transparent;
+    border: 1px solid var(--focus);
+    border-radius: var(--radius-sm);
+    transition: border-color 0.15s;
+}
+
+.filter select option {
+    color: var(--text);
+    background: var(--surface-raised);
+}
+
+.filter select:hover {
+    border-color: var(--border-strong);
+}
+
+.filter select:focus-visible {
+    outline: none;
+    border-color: var(--primary);
+}
