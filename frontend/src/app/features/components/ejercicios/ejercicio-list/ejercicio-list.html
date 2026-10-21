@@ -1,11 +1,28 @@
 <main class="container">
     <h1>Lista de ejercicios</h1>
 
+    <div class="search-bar">
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input
+            type="text"
+            class="search-input"
+            placeholder="Buscar por nombre, músculo o grupo muscular..."
+            [ngModel]="busqueda()"
+            (ngModelChange)="busqueda.set($event)"
+        />
+        @if (busqueda()) {
+            <button class="search-clear" (click)="busqueda.set('')" type="button">&times;</button>
+        }
+    </div>
+
     @if (cargando()) {
         <p class="empty-state">Cargando ejercicios desde la base de datos...</p>
     } @else {
         <section class="cards-grid">
-    @for (ejercicio of ejercicios(); track ejercicio.id) {
+    @for (ejercicio of ejerciciosFiltrados(); track ejercicio.id) {
         <article class="card" (click)="verDetalle(ejercicio)">
         <h3>{{ ejercicio.nombre }}</h3>
         
@@ -21,8 +38,11 @@
         <button class="btn-detail" type="button">Ver detalle</button>
         </article>
     } @empty {
-        <p class="empty-state">No hay ejercicios registrados.</p>
-        
+        @if (busqueda()) {
+            <p class="empty-state">No se encontraron ejercicios para "{{ busqueda() }}".</p>
+        } @else {
+            <p class="empty-state">No hay ejercicios registrados.</p>
+        }
     }
     </section>
 

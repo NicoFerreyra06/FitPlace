@@ -1,10 +1,11 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { EjercicioService } from '../../../../core/services/ejercicio-service';
 import { Ejercicio } from '../../../../model/ejercicio';
 import { EjercicioDetails } from '../ejercicio-details/ejercicio-details';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  imports: [EjercicioDetails],
+  imports: [EjercicioDetails, FormsModule],
   selector: 'app-ejercicio-list',
   styleUrl: './ejercicio-list.css',
   templateUrl: './ejercicio-list.html',
@@ -15,6 +16,25 @@ export class EjercicioList implements OnInit {
   ejercicios = signal<Ejercicio[]>([]);
   ejercicioSeleccionado = signal<Ejercicio | null>(null);
   cargando = signal<boolean>(false);
+  busqueda = signal<string>('');
+
+  ejerciciosFiltrados = computed(() => {
+    const termino = this.busqueda().toLowerCase().trim();
+    if (!termino) {
+      return this.ejercicios();
+    }
+    return this.ejercicios().filter(ej => {
+      const coincideNombre = ej.nombre.toLowerCase().includes(termino);
+      const coincideMusculo = ej.musculosPrincipales.some(m =>
+        m.nombre.toLowerCase().includes(termino) ||
+        m.grupoMuscular.toLowerCase().includes(termino)
+      ) || ej.musculosSecundarios.some(m =>
+        m.nombre.toLowerCase().includes(termino) ||
+        m.grupoMuscular.toLowerCase().includes(termino)
+      );
+      return coincideNombre || coincideMusculo;
+    });
+  });
 
   ngOnInit(): void {
     
