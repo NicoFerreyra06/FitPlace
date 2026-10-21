@@ -16,7 +16,7 @@
         <ul class="lista">
             @for (rutina of rutinas(); track rutina.id) {
                 <li class="item">
-                    <div class="info">
+                    <a class="info" [routerLink]="['/rutinas', rutina.id]">
                         <div class="titulo">
                             <strong>{{ rutina.nombre }}</strong>
                             @if (rutina.id === rutinaActivaId()) {
@@ -25,7 +25,7 @@
                             <span class="badge">{{ rutina.esPublica ? 'Pública' : 'Privada' }}</span>
                         </div>
                         <span class="muted">{{ rutina.diaRutinas.length }} días por semana</span>
-                    </div>
+                    </a>
 
                     <div class="acciones">
                         @if (rutina.id !== rutinaActivaId()) {

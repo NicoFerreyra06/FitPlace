@@ -9,6 +9,7 @@ import { Layout } from './features/layout/layout';
 import { Historial } from './features/entrenamientos/historial/historial';
 import { MisRutinas } from './features/rutinas/mis-rutinas/mis-rutinas';
 import { RutinaForm } from './features/rutinas/rutina-form/rutina-form';
+import { RutinaDetails } from './features/rutinas/rutina-details/rutina-details';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -24,6 +25,7 @@ export const routes: Routes = [
       { path: 'entrenamientos', component: Historial, canActivate: [authGuard] },
       { path: 'rutinas', component: MisRutinas, canActivate: [authGuard] },
       { path: 'rutinas/nueva', component: RutinaForm, canActivate: [authGuard] },
+      { path: 'rutinas/:id', component: RutinaDetails, canActivate: [authGuard] },
       { path: 'rutinas/:id/editar', component: RutinaForm, canActivate: [authGuard] },
     ],
   },

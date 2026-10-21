@@ -1,0 +1,216 @@
+.detalle {
+  min-height: 100dvh;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+}
+
+.back {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.back:hover {
+  color: var(--text);
+}
+
+.cabecera {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.badges {
+  display: flex;
+  gap: 8px;
+}
+
+.badge {
+  padding: 2px 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.muted {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.error {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--danger);
+}
+
+/* ===== Acordeón de días ===== */
+
+.dias {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dia {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--surface);
+  transition: border-color 0.15s;
+}
+
+.dia.abierto {
+  border-color: var(--border-strong);
+}
+
+.dia-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s;
+}
+
+.dia-toggle:hover {
+  background: var(--surface-hover);
+}
+
+.dia-toggle:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+.dia-nombre {
+  flex: 1;
+}
+
+.dia-resumen {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.flecha {
+  font-size: 14px;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+}
+
+.flecha.rotada {
+  transform: rotate(90deg);
+}
+
+/* ===== Contenido desplegado ===== */
+
+.dia-contenido {
+  padding: 0 18px 16px;
+}
+
+.tabla-ejercicios {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.tabla-ejercicios th {
+  text-align: left;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.tabla-ejercicios td {
+  padding: 10px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tabla-ejercicios tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.tabla-ejercicios tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+/* ===== Acciones al pie ===== */
+
+.acciones-pie {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn {
+  padding: 8px 14px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--on-primary);
+  background: var(--primary);
+  border: 0;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btn:hover {
+  background: var(--primary-hover);
+}
+
+.secundario {
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--border-strong);
+}
+
+.secundario:hover {
+  background: var(--surface-hover);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flecha,
+  .dia,
+  .dia-toggle,
+  .btn {
+    transition: none;
+  }
+}

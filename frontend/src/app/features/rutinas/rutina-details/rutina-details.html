@@ -1,0 +1,68 @@
+<main class="detalle">
+    <header class="topbar">
+        <a class="back" routerLink="/rutinas">&leftarrow; Volver a mis rutinas</a>
+    </header>
+
+    @if (errorMsg()) {
+        <p class="error">{{ errorMsg() }}</p>
+    }
+
+    @if (cargando()) {
+        <p class="muted">Cargando…</p>
+    } @else if (rutina(); as r) {
+        <div class="cabecera">
+            <h1>{{ r.nombre }}</h1>
+            <div class="badges">
+                <span class="badge">{{ r.esPublica ? 'Pública' : 'Privada' }}</span>
+                <span class="badge">{{ r.diaRutinas.length }} días</span>
+            </div>
+        </div>
+
+        @if (r.diaRutinas.length === 0) {
+            <p class="muted">Esta rutina no tiene días asignados.</p>
+        } @else {
+            <div class="dias">
+                @for (dia of r.diaRutinas; track dia.id) {
+                    <section class="dia" [class.abierto]="estaAbierto(dia)">
+                        <button type="button" class="dia-toggle" (click)="toggleDia(dia)">
+                            <span class="dia-nombre">{{ etiquetaDia(dia.diaDeLaSemana) }}</span>
+                            <span class="dia-resumen">{{ dia.ejercicioRutinas.length }} ejercicios</span>
+                            <span class="flecha" [class.rotada]="estaAbierto(dia)">▸</span>
+                        </button>
+
+                        @if (estaAbierto(dia)) {
+                            <div class="dia-contenido">
+                                @if (dia.ejercicioRutinas.length === 0) {
+                                    <p class="muted">Sin ejercicios asignados.</p>
+                                } @else {
+                                    <table class="tabla-ejercicios">
+                                        <thead>
+                                            <tr>
+                                                <th>Ejercicio</th>
+                                                <th>Series</th>
+                                                <th>Reps</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (ej of dia.ejercicioRutinas; track ej.id) {
+                                                <tr>
+                                                    <td>{{ ej.nombreEjercicio }}</td>
+                                                    <td>{{ ej.series }}</td>
+                                                    <td>{{ ej.repeticiones }}</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                }
+                            </div>
+                        }
+                    </section>
+                }
+            </div>
+        }
+
+        <div class="acciones-pie">
+            <a class="btn secundario" [routerLink]="['/rutinas', r.id, 'editar']">Editar rutina</a>
+        </div>
+    }
+</main>
