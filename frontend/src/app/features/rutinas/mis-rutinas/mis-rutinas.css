@@ -10,8 +10,10 @@
 
 .topbar {
   display: flex;
-  align-items: center;
+  align-items: start;
+  gap: 20px;
   justify-content: space-between;
+  margin-top: 24px;
 }
 
 .back {

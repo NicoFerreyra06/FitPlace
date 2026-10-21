@@ -1,10 +1,8 @@
 <main class="rutinas">
     <header class="topbar">
-        <a class="back" routerLink="/home">← Volver</a>
+        <h1>Mis rutinas</h1>
         <a class="btn" routerLink="/rutinas/nueva">Nueva rutina</a>
     </header>
-
-    <h1>Mis rutinas</h1>
 
     @if (errorMsg()) {
         <p class="error">{{ errorMsg() }}</p>
