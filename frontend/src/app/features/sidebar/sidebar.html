@@ -11,14 +11,14 @@
       <path d="M4 6h16M4 12h16M4 18h16" />
     </svg>
   </button>
-  <span class="brand">FitPlace</span>
+  <img class="brand" src="svg/fitplace-logo.svg" alt="FitPlace" />
 </header>
 
 <div class="backdrop" [class.visible]="menuAbierto()" (click)="cerrarMenu()"></div>
 
 <aside id="sidebar" class="sidebar" [class.abierto]="menuAbierto()" aria-label="Menú principal">
   <div class="sidebar-header">
-    <span class="brand">FitPlace</span>
+    <img class="brand" src="svg/fitplace-logo.svg" alt="FitPlace" />
     <button class="icon-btn cerrar" type="button" aria-label="Cerrar menú" (click)="cerrarMenu()">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M18 6 6 18M6 6l12 12" />

@@ -13,10 +13,10 @@
       <input #inputHasta type="date" [value]="hasta()" />
     </label>
     <div class="filtros-acciones">
-      <button type="button" (click)="aplicarFiltro(inputDesde.value, inputHasta.value)">
+      <button type="button" class="btn btn--sm" (click)="aplicarFiltro(inputDesde.value, inputHasta.value)">
         Filtrar
       </button>
-      <button type="button" class="boton-secundario" (click)="aplicarFiltro('', '')">
+      <button type="button" class="link link--neutro" (click)="aplicarFiltro('', '')">
         Limpiar
       </button>
     </div>
@@ -30,7 +30,7 @@
     <p class="estado-msg">Cargando historial…</p>
   } @else if (historial.error()) {
     <p class="error">No se pudo cargar el historial.</p>
-    <button type="button" class="boton-reintentar" (click)="historial.reload()">Reintentar</button>
+    <button type="button" class="btn boton-reintentar" (click)="historial.reload()">Reintentar</button>
   } @else if (historial.hasValue()) {
     @let datos = historial.value();
 
@@ -71,8 +71,8 @@
                   }
                 </div>
                 <div class="acciones">
-                  <button type="submit" [disabled]="formEdicion.invalid">Guardar</button>
-                  <button type="button" class="boton-secundario" (click)="cancelarEdicion()">
+                  <button type="submit" class="btn btn--sm" [disabled]="formEdicion.invalid">Guardar</button>
+                  <button type="button" class="link link--neutro" (click)="cancelarEdicion()">
                     Cancelar
                   </button>
                 </div>
@@ -92,19 +92,21 @@
               <footer class="acciones">
                 @if (borrandoId() === e.id) {
                   <span class="muted">¿Borrar este entrenamiento?</span>
-                  <button type="button" class="peligro" (click)="confirmarBorrado(e.id)">
+                  <button type="button" class="btn btn--sm btn--peligro" (click)="confirmarBorrado(e.id)">
                     Sí, borrar
                   </button>
-                  <button type="button" class="boton-secundario" (click)="borrandoId.set(null)">
+                  <button type="button" class="link link--neutro" (click)="borrandoId.set(null)">
                     No
                   </button>
                 } @else {
                   @if (e.fecha >= limiteEdicion) {
-                    <button type="button" (click)="editar(e)">Editar</button>
+                    <button type="button" class="link link--neutro" (click)="editar(e)">
+                      Editar <span class="flecha">›</span>
+                    </button>
                   } @else {
                     <span class="muted nota">Solo se pueden editar los últimos 7 días</span>
                   }
-                  <button type="button" class="boton-secundario" (click)="pedirBorrado(e.id)">
+                  <button type="button" class="link link--peligro" (click)="pedirBorrado(e.id)">
                     Borrar
                   </button>
                 }
@@ -118,7 +120,7 @@
         <nav class="paginacion" aria-label="Paginación">
           <button
             type="button"
-            class="boton-secundario"
+            class="btn btn--sm btn--vidrio"
             [disabled]="datos.first"
             (click)="cambiarPagina(-1)"
           >
@@ -127,7 +129,7 @@
           <span class="muted">Página {{ datos.number + 1 }} de {{ datos.totalPages }}</span>
           <button
             type="button"
-            class="boton-secundario"
+            class="btn btn--sm btn--vidrio"
             [disabled]="datos.last"
             (click)="cambiarPagina(1)"
           >

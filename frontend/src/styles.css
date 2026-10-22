@@ -18,24 +18,29 @@
   --text-disabled: #6b6b70;
 
   /* Marca */
-  --primary: #1d4ed8;
-  --primary-hover: #2563eb;
-  --on-primary: #ffffff;
-  --link: #3b82f6;
+  --primary: #c8f169;
+  --primary-hover: #d6f78a;
+  --on-primary: #0b0b0c;
+  --link: var(--primary);
 
   /* Estados */
-  --success: #4ade80;
+  --success: #2dd4bf;
   --warning: #facc15;
   --danger: #f87171;
 
   --shadow: 0 8px 24px #0000007a;
+  --glow-primary: 0 8px 24px rgb(200 241 105 / 0.28);
+  --glow-danger: 0 8px 24px rgb(248 113 113 / 0.28);
 
   /* Tipografía y formas */
   --font: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --radius-sm: 10px;
   --radius-md: 16px;
+  --radius-pill: 980px;
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
 
   color-scheme: dark;
+  accent-color: var(--primary);
 }
 
 /* ===== Base ===== */
@@ -59,4 +64,159 @@ body {
 input,
 button {
   font: inherit;
+}
+
+/* ===== Botones (píldora, hover con elevación) ===== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 20px;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  color: var(--on-primary);
+  background: var(--primary);
+  border: 0;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    box-shadow 0.2s,
+    transform 0.2s var(--ease);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--glow-primary);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.btn:disabled {
+  color: var(--text-disabled);
+  background: var(--surface);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.btn--sm {
+  padding: 5px 13px;
+  font-size: 13px;
+}
+
+.btn--lg {
+  padding: 13px 28px;
+  font-size: 17px;
+}
+
+.btn--bloque {
+  width: 100%;
+}
+
+.btn--contorno {
+  color: var(--primary);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn--contorno:hover:not(:disabled) {
+  background: rgb(200 241 105 / 0.1);
+  box-shadow:
+    inset 0 0 0 1px var(--primary),
+    var(--glow-primary);
+}
+
+.btn--vidrio {
+  color: var(--text);
+  background: rgb(255 255 255 / 0.1);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.18),
+    inset 0 0 0 1px rgb(255 255 255 / 0.08);
+}
+
+.btn--vidrio:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.16);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.18),
+    inset 0 0 0 1px rgb(255 255 255 / 0.08),
+    var(--shadow);
+}
+
+.btn--peligro {
+  color: var(--bg);
+  background: var(--danger);
+}
+
+.btn--peligro:hover:not(:disabled) {
+  box-shadow: var(--glow-danger);
+}
+
+/* ===== Links con › ===== */
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  font: inherit;
+  font-weight: 500;
+  color: var(--primary);
+  text-decoration: none;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.link .flecha {
+  display: inline-block;
+  transition: transform 0.2s var(--ease);
+}
+
+.link:hover .flecha {
+  transform: translateX(3px);
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.link--neutro {
+  color: var(--text);
+}
+
+.link--peligro {
+  color: var(--danger);
+}
+
+.link--peligro:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .link .flecha {
+    transition: none;
+  }
+
+  .btn:hover:not(:disabled),
+  .btn:active:not(:disabled),
+  .link:hover .flecha {
+    transform: none;
+  }
 }

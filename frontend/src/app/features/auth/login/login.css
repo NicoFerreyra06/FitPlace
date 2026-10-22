@@ -27,8 +27,17 @@
 }
 
 .brand {
-  font-size: 14px;
+  display: block;
+  height: 40px;
+  margin-bottom: 8px;
+}
+
+.lema {
+  margin: 0;
+  font-size: 12px;
   font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--primary);
 }
 
@@ -89,30 +98,8 @@ input.ng-invalid.ng-touched {
   bottom: 0;
 }
 
-button {
+.btn {
   margin-top: 6px;
-  padding: 11px 16px;
-  font-weight: 600;
-  color: var(--on-primary);
-  background: var(--primary);
-  border: 0;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: background-color 0.15s;
-}
-
-button:hover:not(:disabled) {
-  background: var(--primary-hover);
-}
-
-button:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-}
-
-button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
 }
 
 .switch {
@@ -122,13 +109,12 @@ button:disabled {
   color: var(--text-muted);
 }
 
-.switch a {
-  color: var(--primary);
+.switch .link {
+  font-size: 13px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  input,
-  button {
+  input {
     transition: none;
   }
 }

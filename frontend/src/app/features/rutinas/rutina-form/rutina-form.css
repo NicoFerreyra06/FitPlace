@@ -72,6 +72,7 @@ label {
 input[type='checkbox'] {
   width: 16px;
   height: 16px;
+  accent-color: var(--primary);
 }
 
 input[type='text'],
@@ -160,72 +161,42 @@ select.ng-invalid.ng-touched {
   gap: 8px;
 }
 
-button {
-  padding: 10px 16px;
-  font: inherit;
-  font-weight: 600;
-  color: var(--on-primary);
-  background: var(--primary);
-  border: 0;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: background-color 0.15s;
-}
-
-button:hover:not(:disabled) {
-  background: var(--primary-hover);
-}
-
-button:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-}
-
-button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-button.secundario {
+.btn {
   align-self: flex-start;
-  color: var(--text);
-  background: transparent;
-  border: 1px solid var(--border-strong);
 }
 
-button.secundario:hover:not(:disabled) {
-  background: var(--surface-hover);
-}
-
-button.peligro {
-  padding: 6px 12px;
-  font-size: 13px;
-  color: var(--danger);
-  background: transparent;
-  border: 1px solid var(--danger);
-}
-
-button.peligro:hover:not(:disabled) {
-  background: rgb(248 113 113 / 0.12);
-}
-
-button.icono {
-  padding: 8px 0;
+.icono {
+  justify-self: center;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font: inherit;
   color: var(--text-muted);
   background: transparent;
   border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
 }
 
-button.icono:hover:not(:disabled) {
+.icono:hover {
   color: var(--danger);
-  background: transparent;
   border-color: var(--danger);
+}
+
+.icono:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
   input,
   select,
-  button {
+  .icono {
     transition: none;
   }
 }

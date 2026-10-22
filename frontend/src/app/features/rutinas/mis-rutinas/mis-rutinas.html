@@ -29,10 +29,10 @@
 
                     <div class="acciones">
                         @if (rutina.id !== rutinaActivaId()) {
-                            <button type="button" (click)="activar(rutina)">Activar</button>
+                            <button type="button" class="btn btn--sm" (click)="activar(rutina)">Activar</button>
                         }
-                        <a class="btn secundario" [routerLink]="['/rutinas', rutina.id, 'editar']">Editar</a>
-                        <button type="button" class="peligro" (click)="eliminar(rutina)">Eliminar</button>
+                        <a class="link link--neutro" [routerLink]="['/rutinas', rutina.id, 'editar']">Editar <span class="flecha">›</span></a>
+                        <button type="button" class="link link--peligro" (click)="eliminar(rutina)">Eliminar</button>
                     </div>
                 </li>
             }

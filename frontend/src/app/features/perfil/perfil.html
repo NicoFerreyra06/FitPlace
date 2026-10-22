@@ -52,15 +52,15 @@
               <span class="field-error">{{ errorMsg() }}</span>
             }
 
-            <button type="submit" [disabled]="formularioPerfil.invalid">Guardar</button>
-            <button class="boton-secundario" type="button" (click)="cancelar()">Cancelar</button>
+            <button class="btn btn--sm" type="submit" [disabled]="formularioPerfil.invalid">Guardar</button>
+            <button class="link link--neutro" type="button" (click)="cancelar()">Cancelar</button>
           </form>
         } @else {
           <h3>IMC</h3>
           <p class="numero">{{ p.imc | number: '1.1-1' }}</p>
           <p class="etiqueta">{{ p.categoriaImc }}</p>
           <p class="muted">{{ p.peso }} kg · {{ p.altura }} m</p>
-          <button class="boton-editar" type="button" (click)="editar(p)">Editar</button>
+          <button class="btn btn--sm boton-editar" type="button" (click)="editar(p)">Editar</button>
         }
       </article>
 

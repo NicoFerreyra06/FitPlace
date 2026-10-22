@@ -178,44 +178,10 @@ h1 {
   margin-top: 8px;
 }
 
-.btn {
-  padding: 8px 14px;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--on-primary);
-  background: var(--primary);
-  border: 0;
-  border-radius: var(--radius-sm);
-  text-decoration: none;
-  cursor: pointer;
-  transition: background-color 0.15s;
-}
-
-.btn:hover {
-  background: var(--primary-hover);
-}
-
-.secundario {
-  color: var(--text);
-  background: transparent;
-  border: 1px solid var(--border-strong);
-}
-
-.secundario:hover {
-  background: var(--surface-hover);
-}
-
-.btn:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .flecha,
   .dia,
-  .dia-toggle,
-  .btn {
+  .dia-toggle {
     transition: none;
   }
 }

@@ -29,15 +29,13 @@
 .sidebar-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 0 8px 12px;
 }
 
 .brand {
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: var(--text);
+  display: block;
+  height: 22px;
 }
 
 .nav {
@@ -105,12 +103,12 @@
   width: 3px;
   height: 16px;
   border-radius: 3px;
-  background: var(--link);
+  background: var(--primary);
   transform: translateY(-50%);
 }
 
 .item.activo svg {
-  color: var(--link);
+  color: var(--primary);
 }
 
 .salir {

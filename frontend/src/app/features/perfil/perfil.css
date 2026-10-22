@@ -13,36 +13,6 @@
   gap: 8px;
 }
 
-button {
-  padding: 6px 8px;
-  font-weight: 600;
-  color: var(--on-primary);
-  background: var(--primary);
-  border: 0;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: background-color 0.15s;
-}
-
-button:hover:not(:disabled) {
-  background: var(--primary-hover);
-}
-
-button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.boton-secundario {
-  color: var(--text);
-  background: transparent;
-  border: 1px solid var(--border);
-}
-
-.boton-secundario:hover:not(:disabled) {
-  background: var(--surface-hover);
-}
-
 input {
   width: 100%;
   padding: 10px 12px;
@@ -121,7 +91,7 @@ h3,
 
 .card.imc {
   border-color: var(--primary);
-  background: linear-gradient(135deg, rgb(29 78 216 / 0.35), rgb(59 130 246 / 0.08));
+  background: linear-gradient(135deg, rgb(200 241 105 / 0.18), rgb(200 241 105 / 0.03));
 }
 
 .grid {
@@ -151,14 +121,19 @@ h3,
 }
 
 .boton-editar {
+  align-self: flex-start;
   margin-top: 6px;
-  padding: 8px 11px;
 }
 
 .form-editar {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.form-editar .row {
+  align-self: stretch;
 }
 
 .row {
@@ -186,7 +161,6 @@ label {
 
 @media (prefers-reduced-motion: reduce) {
   .card,
-  button,
   input {
     transition: none;
   }

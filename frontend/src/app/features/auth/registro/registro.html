@@ -1,7 +1,8 @@
 <main class="register">
   <form class="card" [formGroup]="formularioRegistro" (ngSubmit)="onSubmit()">
     <header class="card-header">
-      <span class="brand">FitPlace</span>
+      <img class="brand" src="svg/fitplace-logo.svg" alt="FitPlace" />
+      <p class="lema">Cada repetición cuenta</p>
       <h1>Crear cuenta</h1>
     </header>
 
@@ -79,12 +80,14 @@
       </div>
     </div>
 
-    <button type="submit" [disabled]="formularioRegistro.invalid">Registrarme</button>
+    <button class="btn btn--lg btn--bloque" type="submit" [disabled]="formularioRegistro.invalid">
+      Registrarme
+    </button>
 
     @if (errorMsg()) {
       <span class="field-error">{{ errorMsg() }}</span>
     }
 
-    <p class="switch">¿Ya tenes cuenta? <a routerLink="/login">Iniciá sesión</a></p>
+    <p class="switch">¿Ya tenes cuenta? <a class="link" routerLink="/login">Iniciá sesión <span class="flecha">›</span></a></p>
   </form>
 </main>

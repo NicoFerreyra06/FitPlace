@@ -104,58 +104,6 @@ h1 {
 .acciones {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-}
-
-button,
-.btn {
-  padding: 8px 14px;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--on-primary);
-  background: var(--primary);
-  border: 0;
-  border-radius: var(--radius-sm);
-  text-decoration: none;
-  cursor: pointer;
-  transition: background-color 0.15s;
-}
-
-button:hover,
-.btn:hover {
-  background: var(--primary-hover);
-}
-
-.secundario {
-  color: var(--text);
-  background: transparent;
-  border: 1px solid var(--border-strong);
-}
-
-.secundario:hover {
-  background: var(--surface-hover);
-}
-
-.peligro {
-  color: var(--danger);
-  background: transparent;
-  border: 1px solid var(--danger);
-}
-
-.peligro:hover {
-  background: rgb(248 113 113 / 0.12);
-}
-
-button:focus-visible,
-.btn:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  button,
-  .btn {
-    transition: none;
-  }
+  align-items: center;
+  gap: 18px;
 }

@@ -33,7 +33,7 @@
                                     <option [value]="d.valor">{{ d.etiqueta }}</option>
                                 }
                             </select>
-                            <button type="button" class="peligro" (click)="quitarDia(i)">Quitar día</button>
+                            <button type="button" class="link link--peligro" (click)="quitarDia(i)">Quitar día</button>
                         </header>
 
                         <div class="cabecera-ejercicios" aria-hidden="true">
@@ -64,7 +64,7 @@
                             <span class="field-error">Agregá al menos un ejercicio a este día</span>
                         }
 
-                        <button type="button" class="secundario" (click)="agregarEjercicio(dia)">
+                        <button type="button" class="btn btn--sm btn--vidrio" (click)="agregarEjercicio(dia)">
                             + Agregar ejercicio
                         </button>
                     </section>
@@ -76,14 +76,14 @@
             }
 
             @if (hayDiasLibres()) {
-                <button type="button" class="secundario" (click)="agregarDia()">+ Agregar día</button>
+                <button type="button" class="btn btn--contorno" (click)="agregarDia()">+ Agregar día</button>
             }
 
             @if (errorMsg()) {
                 <span class="field-error">{{ errorMsg() }}</span>
             }
 
-            <button type="submit" [disabled]="form.invalid || guardando()">
+            <button type="submit" class="btn btn--lg" [disabled]="form.invalid || guardando()">
                 {{ esEdicion ? 'Guardar cambios' : 'Crear rutina' }}
             </button>
         </form>

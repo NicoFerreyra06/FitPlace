@@ -45,7 +45,7 @@
 
 .search-input:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgb(59 130 246 / 0.15);
+    box-shadow: 0 0 0 3px rgb(200 241 105 / 0.2);
 }
 
 .search-clear {
@@ -134,26 +134,17 @@
 }
 
 .badge.primary {
-    background: rgb(29 78 216 / 0.2);
-    border: 1px solid rgb(59 130 246 / 0.4);
-    color: var(--link);
+    background: rgb(200 241 105 / 0.12);
+    border: 1px solid rgb(200 241 105 / 0.4);
+    color: var(--primary);
 }
 
-.btn-detail {
-    width: 100%;
-    padding: 10px 14px;
-    font-size: 13.5px;
-    font-weight: 600;
-    color: var(--on-primary);
-    background: var(--primary);
-    border: 0;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: background-color 0.15s;
+.card .link {
+    align-self: flex-start;
 }
 
-.card:hover .btn-detail {
-    background: var(--primary-hover);
+.card:hover .link .flecha {
+    transform: translateX(3px);
 }
 
 .empty-state {

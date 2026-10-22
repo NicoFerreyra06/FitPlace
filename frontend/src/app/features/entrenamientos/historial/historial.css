@@ -44,47 +44,7 @@ h2 {
   color: var(--danger);
 }
 
-/* ===== Botones (mismo estilo que perfil) ===== */
-
-button {
-  padding: 8px 12px;
-  font-weight: 600;
-  color: var(--on-primary);
-  background: var(--primary);
-  border: 0;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: background-color 0.15s;
-}
-
-button:hover:not(:disabled) {
-  background: var(--primary-hover);
-}
-
-button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.boton-secundario {
-  color: var(--text);
-  background: transparent;
-  border: 1px solid var(--border);
-}
-
-.boton-secundario:hover:not(:disabled) {
-  background: var(--surface-hover);
-}
-
-.peligro {
-  color: var(--bg);
-  background: var(--danger);
-}
-
-.peligro:hover:not(:disabled) {
-  background: var(--danger);
-  filter: brightness(1.1);
-}
+/* ===== Botones (clases globales .btn y .link) ===== */
 
 .boton-reintentar {
   align-self: center;
@@ -135,7 +95,9 @@ input.ng-invalid.ng-touched {
 
 .filtros-acciones {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 18px;
+  padding-bottom: 6px;
 }
 
 /* ===== Lista de entrenamientos ===== */
@@ -189,7 +151,7 @@ input.ng-invalid.ng-touched {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 18px;
 }
 
 .nota {
@@ -246,7 +208,6 @@ input.ng-invalid.ng-touched {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  button,
   input {
     transition: none;
   }
