@@ -1,0 +1,117 @@
+<main class="rutinas">
+  <header class="topbar">
+    <div class="topbar-titulos">
+      <h1>Rutinas públicas</h1>
+    </div>
+    <div class="topbar-acciones">
+      <a class="btn btn--contorno" routerLink="/rutinas/me">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+        Mis rutinas
+      </a>
+    </div>
+  </header>
+
+  @if (mensajeExito()) {
+    <div class="alerta alerta--exito" role="alert">
+      <span>{{ mensajeExito() }}</span>
+      <button type="button" class="btn-cerrar" (click)="mensajeExito.set(null)" aria-label="Cerrar">✕</button>
+    </div>
+  }
+
+  @if (errorMsg()) {
+    <div class="alerta alerta--error" role="alert">
+      <span>{{ errorMsg() }}</span>
+      <button type="button" class="btn-cerrar" (click)="errorMsg.set(null)" aria-label="Cerrar">✕</button>
+    </div>
+  }
+
+  <div class="search-bar">
+    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input
+      type="text"
+      class="search-input"
+      placeholder="Buscar por nombre de rutina..."
+      [ngModel]="busqueda()"
+      (ngModelChange)="busqueda.set($event)"
+    />
+    @if (busqueda()) {
+      <button class="search-clear" (click)="busqueda.set('')" type="button">&times;</button>
+    }
+  </div>
+
+  @if (cargando()) {
+    <p class="muted">Cargando rutinas públicas…</p>
+  } @else if (rutinasFiltradas().length === 0) {
+    <div class="vacio">
+      <p class="muted">
+        @if (busqueda()) {
+          No se encontraron rutinas públicas para "{{ busqueda() }}".
+        } @else {
+          No hay rutinas públicas disponibles en este momento.
+        }
+      </p>
+    </div>
+  } @else {
+    <ul class="lista">
+      @for (rutina of rutinasFiltradas(); track rutina.id) {
+        <li class="item" [class.es-activa]="rutina.id === rutinaActivaId()">
+          <div class="info-bloque">
+            <a class="info-link" [routerLink]="['/rutinas', rutina.id]">
+              <div class="titulo">
+                <strong>{{ rutina.nombre }}</strong>
+                @if (rutina.id === rutinaActivaId()) {
+                  <span class="badge activa">En uso</span>
+                }
+                <span class="badge publica">Pública</span>
+              </div>
+              <span class="muted">{{ rutina.diaRutinas.length }} {{ rutina.diaRutinas.length === 1 ? 'día' : 'días' }} por semana</span>
+            </a>
+
+            @if (rutina.diaRutinas.length > 0) {
+              <div class="dias-chips">
+                @for (dia of ordenarDias(rutina.diaRutinas); track dia.id) {
+                  <span class="dia-chip" title="{{ dia.ejercicioRutinas.length }} ejercicios">
+                    {{ etiquetaDia(dia.diaDeLaSemana) }}
+                    <span class="chip-conteo">({{ dia.ejercicioRutinas.length }})</span>
+                  </span>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="acciones">
+            <a class="link link--neutro" [routerLink]="['/rutinas', rutina.id]">
+              Ver detalle <span class="flecha">›</span>
+            </a>
+
+            <div class="botones-principales">
+              @if (rutina.id === rutinaActivaId()) {
+                <span class="badge activa-indicador">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  Rutina activa
+                </span>
+              } @else {
+                <button
+                  type="button"
+                  class="btn btn--sm"
+                  [disabled]="activandoId() === rutina.id"
+                  (click)="usar(rutina)"
+                >
+                  {{ activandoId() === rutina.id ? 'Activando…' : 'Usar rutina' }}
+                </button>
+              }
+            </div>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</main>
