@@ -1,0 +1,131 @@
+.entrenamiento-hoy {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.entrenamiento-hoy-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.muted,
+.estado-msg {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.estado-msg,
+.error {
+  text-align: center;
+}
+
+.error {
+  color: var(--danger);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+input {
+  width: 100%;
+  padding: 8px 10px;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s;
+}
+
+input:hover {
+  border-color: var(--border-strong);
+}
+
+input:focus-visible {
+  outline: none;
+  border-color: var(--focus);
+}
+
+input.ng-invalid.ng-touched {
+  border-color: var(--danger);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.marcas {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fila-marca {
+  display: grid;
+  grid-template-columns: 1fr 110px 90px;
+  align-items: end;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.fila-marca:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.nombre-ejercicio {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 4px;
+}
+
+@media (max-width: 520px) {
+  .fila-marca {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .nombre-ejercicio {
+    grid-column: 1 / -1;
+    padding-bottom: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  input {
+    transition: none;
+  }
+}

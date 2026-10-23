@@ -1,0 +1,44 @@
+<main class="entrenamiento-hoy">
+    <header class="entrenamiento-hoy-header">
+    <h1>Entrenamiento de hoy</h1>
+    <p class="muted">Cargá el peso y las repeticiones que hiciste.</p>
+    </header>
+
+    @if (diaDeRutina.isLoading()) {
+        <p class="estado-msg">Cargando…</p>
+    } @else if (diaDeRutina.error()) {
+        <p class="estado-msg">
+            No tenés ejercicios para hoy. Revisá que tengas una rutina activa con este día cargado.
+        </p>
+    } @else if (diaDeRutina.hasValue()) {
+        <form class="card form-hoy" [formGroup]="formMarcas" (ngSubmit)="guardar()">
+        <div formArrayName="marcas" class="marcas">
+            @for (marca of marcas.controls; track $index) {
+            <div class="fila-marca" [formGroupName]="$index">
+                @let e = diaDeRutina.value().ejercicioRutinas[$index];
+                <div class="nombre-ejercicio">
+                    <h2>{{ e.nombreEjercicio }}</h2>
+                    <span class="muted">{{ e.series }} × {{ e.repeticiones }}</span>
+                </div>
+                <label class="field">
+                    Peso (kg)
+                    <input type="number" step="0.5" min="0" formControlName="pesoLevantado" />
+                </label>
+                <label class="field">
+                    Reps
+                    <input type="number" min="1" formControlName="repeticionesLogradas" />
+                </label>
+            </div>
+            }
+        </div>
+
+        @if (errorMsg()) {
+            <p class="error" role="alert">{{ errorMsg() }}</p>
+        }
+
+        <button type="submit" class="btn btn--lg btn--bloque" [disabled]="formMarcas.invalid">
+            Guardar entrenamiento
+        </button>
+        </form>
+    }
+</main>

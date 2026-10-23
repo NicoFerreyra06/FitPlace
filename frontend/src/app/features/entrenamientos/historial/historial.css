@@ -9,8 +9,9 @@
 
 .historial-header {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
 
 h1,

@@ -270,7 +270,8 @@ public class EntrenamientoLogService {
         return rachaActual;
     }
 
-    private List<DayOfWeek> getDiasProgramados(Usuario usuario) {
+    private List<DayOfWeek> getDiasProgramados(Usuario usuarioLog) {
+        Usuario usuario = usuarioRepository.findById(usuarioLog.getId()).orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
         Rutina rutinaActiva = usuario.getRutinaActiva();
         return (rutinaActiva != null && rutinaActiva.getDias() != null)
                 ? rutinaActiva.getDias().stream().map(DiaRutina::getDiaDeLaSemana).toList()
