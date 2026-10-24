@@ -24,7 +24,7 @@
                             }
                             <span class="badge">{{ rutina.esPublica ? 'Pública' : 'Privada' }}</span>
                         </div>
-                        <span class="muted">{{ rutina.diaRutinas.length }} días por semana</span>
+                        <span class="muted">{{ rutina.diaRutinas.length > 1 ? rutina.diaRutinas.length + ' dias por semana' : '1 dia a la semana'}}</span>
                     </a>
 
                     <div class="acciones">

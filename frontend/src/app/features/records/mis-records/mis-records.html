@@ -1,0 +1,77 @@
+<main class="container">
+    <header class="header">
+        <h1>Mis récords</h1>
+    </header>
+
+    <div class="search-bar">
+        <svg
+        class="search-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+        >
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input
+        type="text"
+        class="search-input"
+        placeholder="Buscar por nombre de ejercicio..."
+        [ngModel]="busqueda()"
+        (ngModelChange)="busqueda.set($event)"
+        />
+        @if (busqueda()) {
+        <button
+            class="search-clear"
+            (click)="limpiarBusqueda()"
+            type="button"
+            aria-label="Limpiar búsqueda"
+        >
+            &times;
+        </button>
+        }
+    </div>
+
+    @if (cargando) {
+        <p class="estado-msg" role="status">Cargando récords…</p>
+    } @else if (hayError) {
+        <div class="estado-error" role="alert">
+        <p class="error-msg">No se pudieron cargar tus récords.</p>
+        <button type="button" class="btn btn--sm" (click)="reintentar()">Reintentar</button>
+        </div>
+    } @else {
+        <section class="cards-grid" aria-label="Lista de récords personales">
+        @for (record of recordsFiltrados(); track record.id) {
+            <article class="card">
+            <header class="card-header">
+                <h3>{{ record.nombreEjercicio }}</h3>
+                <span class="badge primary">PR</span>
+            </header>
+
+            <div class="card-body">
+                <span class="peso-valor">{{ record.pesoMaximo }} kg</span>
+                <span class="peso-etiqueta">Peso máximo</span>
+            </div>
+
+            <footer class="card-footer">
+                <span class="fecha-label">Logrado el</span>
+                <time [attr.datetime]="record.fechaLogro">{{
+                record.fechaLogro | date: 'dd/MM/yyyy'
+                }}</time>
+            </footer>
+            </article>
+        } @empty {
+            @if (busqueda()) {
+            <p class="empty-state">No se encontraron récords para "{{ busqueda() }}".</p>
+            } @else {
+            <p class="empty-state">Todavía no registraste ningún récord personal.</p>
+            }
+        }
+        </section>
+    }
+</main>
