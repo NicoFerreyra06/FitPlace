@@ -14,6 +14,14 @@
   gap: 20px;
   justify-content: space-between;
   margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.topbar-acciones {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .back {
@@ -103,7 +111,40 @@ h1 {
 
 .acciones {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 18px;
+  gap: 12px;
+}
+
+.link {
+  font-size: 14px;
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.link--neutro {
+  color: var(--text-muted);
+}
+
+.link--neutro:hover {
+  color: var(--text);
+}
+
+.link--peligro {
+  color: var(--danger);
+}
+
+.link--peligro:hover {
+  filter: brightness(1.15);
+}
+
+.flecha {
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+
+.link:hover .flecha {
+  transform: translateX(3px);
 }
