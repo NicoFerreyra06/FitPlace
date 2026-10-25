@@ -7,8 +7,48 @@
         </div>
     </header>
 
+    @if (!cargando()) {
+        <section class="hoy" aria-labelledby="titulo-hoy">
+            <div class="hoy-cabecera">
+                <div>
+                    <p class="sobrelinea">{{ etiquetaDiaDeHoy }}</p>
+                    <h2 id="titulo-hoy">¿Qué entreno hoy?</h2>
+                </div>
+                @if (rutinaActiva(); as activa) {
+                    <span class="badge activa">Rutina activa</span>
+                }
+            </div>
+
+            @if (rutinaActiva(); as activa) {
+                <p class="muted">{{ activa.nombre }}</p>
+                @if (diaDeHoy(); as dia) {
+                    @if (dia.ejercicioRutinas.length > 0) {
+                        <ul class="ejercicios-hoy">
+                            @for (ejercicio of dia.ejercicioRutinas; track ejercicio.id) {
+                                <li>
+                                    <strong>{{ ejercicio.nombreEjercicio }}</strong>
+                                    <span>{{ ejercicio.series }} series · {{ ejercicio.repeticiones }} reps</span>
+                                </li>
+                            }
+                        </ul>
+                    } @else {
+                        <p class="muted">No hay ejercicios asignados para hoy.</p>
+                    }
+                } @else {
+                    <p class="muted">Tu rutina activa no tiene un día configurado para hoy.</p>
+                }
+                <a class="link link--neutro" [routerLink]="['/rutinas', activa.id]">Ver rutina completa <span class="flecha">›</span></a>
+            } @else {
+                <p class="muted">Elegí una rutina de tu lista para ver el entrenamiento de hoy.</p>
+            }
+        </section>
+    }
+
     @if (errorMsg()) {
         <p class="error">{{ errorMsg() }}</p>
+    }
+    @if (mensaje()) {
+        <p class="exito" role="status">{{ mensaje() }}</p>
     }
 
     @if (cargando()) {

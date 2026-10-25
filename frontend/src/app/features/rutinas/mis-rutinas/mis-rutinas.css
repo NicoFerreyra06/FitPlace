@@ -48,6 +48,67 @@ h1 {
   color: var(--text-muted);
 }
 
+.hoy {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.hoy-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sobrelinea {
+  margin: 0 0 4px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.hoy h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.ejercicios-hoy {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ejercicios-hoy li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 11px 12px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.ejercicios-hoy li span {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.exito {
+  margin: 0;
+  color: var(--success);
+  font-size: 13.5px;
+}
+
 .error {
   margin: 0;
   font-size: 13.5px;
@@ -101,7 +162,7 @@ h1 {
   font-size: 12px;
   color: var(--text-muted);
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 }
 
 .badge.activa {
