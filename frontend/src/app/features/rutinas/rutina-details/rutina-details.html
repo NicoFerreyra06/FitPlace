@@ -65,9 +65,10 @@
                 }
             </div>
         }
-
-        <div class="acciones-pie">
-            <a class="btn btn--contorno" [routerLink]="['/rutinas', r.id, 'editar']">Editar rutina</a>
-        </div>
+        @if (esDuenio()){
+            <div class="acciones-pie">
+                <a class="btn btn--contorno" [routerLink]="['/rutinas', r.id, 'editar']">Editar rutina</a>
+            </div>
+        }
     }
 </main>

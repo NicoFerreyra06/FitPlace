@@ -5,6 +5,8 @@ import { DiaRutinaResponse, DIAS_SEMANA, etiquetaDia, RutinaResponse } from '../
 import { Ejercicio } from '../../../model/ejercicio';
 import { EjercicioDetails } from '../../components/ejercicios/ejercicio-details/ejercicio-details';
 import { EjercicioService } from '../../../core/services/ejercicio-service';
+import { Usuario } from '../../../core/usuario/usuario';
+import { rxResource } from '@angular/core/rxjs-interop';
 
 @Component({
   imports: [RouterLink, EjercicioDetails],
@@ -16,12 +18,23 @@ export class RutinaDetails implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly rutinasService = inject(Rutinas);
   private readonly ejercicioService = inject(EjercicioService);
+  private readonly usuarioService = inject(Usuario);
 
   protected readonly cargando = signal(true);
   protected readonly rutina = signal<RutinaResponse | null>(null);
   protected readonly errorMsg = signal<string | null>(null);
   protected readonly diasAbiertos = signal<Set<number>>(new Set());
   protected readonly ejercicioSeleccionado = signal<Ejercicio | null>(null);
+
+  protected readonly perfil = rxResource({
+    stream: () => this.usuarioService.getMiPerfil(),
+  });
+
+  protected readonly esDuenio = computed(() => {
+    const r = this.rutina();
+    const p = this.perfil.value();
+    return Boolean(r && p && r.creadorId === p.id);
+  })
 
   protected readonly diasOrdenados = computed( () => {
     const r = this.rutina();
