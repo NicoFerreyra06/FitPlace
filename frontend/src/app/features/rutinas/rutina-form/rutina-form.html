@@ -71,7 +71,7 @@
                 }
             </div>
 
-            @if (dias.length === 0) {
+            @if (form.controls.dias.hasError('required') && form.controls.dias.dirty) {
                 <span class="field-error">Agregá al menos un día</span>
             }
 
