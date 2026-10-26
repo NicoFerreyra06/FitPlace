@@ -1,0 +1,127 @@
+<main class="amigos">
+  <header class="topbar">
+    <h1>Mis amigos</h1>
+    <span class="contador" aria-live="polite">
+      {{ totalAmigos() }} {{ totalAmigos() === 1 ? 'amigo' : 'amigos' }}
+    </span>
+  </header>
+
+  @if (mensajeExito()) {
+    <div class="alerta alerta--exito" role="status">
+      <span>{{ mensajeExito() }}</span>
+      <button type="button" class="btn-cerrar" (click)="mensajeExito.set(null)" aria-label="Cerrar">
+        ✕
+      </button>
+    </div>
+  }
+
+  @if (errorMsg()) {
+    <div class="alerta alerta--error" role="alert">
+      <span>{{ errorMsg() }}</span>
+      <button type="button" class="btn-cerrar" (click)="errorMsg.set(null)" aria-label="Cerrar">
+        ✕
+      </button>
+    </div>
+  }
+
+  <section class="card tarjeta-codigo" for="titulo-codigo">
+    <div class="card-texto">
+      <h2 id="titulo-codigo">Tu código de amigo</h2>
+      <p class="muted">Compartilo para que puedan agregarte a su grupo.</p>
+    </div>
+
+    @if (miCodigo()) {
+      <div class="codigo-fila">
+        <code class="codigo">{{ miCodigo() }}</code>
+        <button class="btn btn--contorno btn--sm" type="button" (click)="copiarCodigo()">
+          Copiar
+        </button>
+      </div>
+    } @else {
+      <p class="muted">Cargando tu código…</p>
+    }
+  </section>
+
+  <section class="card formulario-alta" for="titulo-agregar">
+    <h2 id="titulo-agregar">Agregar amigo</h2>
+
+    <form [formGroup]="formulario" (ngSubmit)="agregar()" novalidate>
+      <div class="campo-codigo">
+        <label for="codigoAmigo">Código de tu amigo</label>
+        <input
+          id="codigoAmigo"
+          type="text"
+          formControlName="codigoAmigo"
+          placeholder="Pegá el código que te compartió"
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+
+      <button class="btn" type="submit" [disabled]="formulario.invalid || agregando()">
+        {{ agregando() ? 'Agregando…' : 'Agregar' }}
+      </button>
+    </form>
+
+    @if (
+      formulario.controls.codigoAmigo.touched &&
+      formulario.controls.codigoAmigo.hasError('required')
+    ) {
+      <span class="field-error">Ingresá el código de tu amigo.</span>
+    } @else if (
+      formulario.controls.codigoAmigo.touched &&
+      formulario.controls.codigoAmigo.hasError('maxlength')
+    ) {
+      <span class="field-error">El código es demasiado largo.</span>
+    }
+  </section>
+
+  <section for="titulo-amigos" class="seccion-lista">
+    <h2 id="titulo-amigos">Amigos</h2>
+
+    @if (cargando()) {
+      <p class="muted" role="status">Cargando tu grupo…</p>
+    } @else if (amigos().length === 0) {
+      <div class="vacio card">
+        <p><strong>Todavía no tenés amigos en tu grupo.</strong></p>
+        <p class="muted">
+          Compartí tu código o pedile a un amigo el suyo para empezar a entrenar juntos.
+        </p>
+      </div>
+    } @else {
+      <ul class="lista">
+        @for (amigo of amigos(); track amigo.id) {
+          <li class="item">
+            <div class="avatar" aria-hidden="true">
+              {{ amigo.username.charAt(0).toUpperCase() }}
+            </div>
+
+            <div class="info">
+              <div class="titulo">
+                <strong>{{ amigo.username }}</strong>
+                <span class="badge">{{ etiquetaRol(amigo.rol) }}</span>
+              </div>
+              <span class="muted">
+                @if (amigo.rachaActualDias) {
+                  🔥 {{ amigo.rachaActualDias }}
+                  {{ amigo.rachaActualDias === 1 ? 'día' : 'días' }} de racha
+                } @else {
+                  Sin racha activa
+                }
+              </span>
+            </div>
+
+            <button
+              class="link link--peligro"
+              type="button"
+              [disabled]="eliminandoId() === amigo.id"
+              (click)="eliminar(amigo)"
+            >
+              {{ eliminandoId() === amigo.id ? 'Eliminando…' : 'Eliminar' }}
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+</main>

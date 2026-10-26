@@ -13,6 +13,7 @@ import { RutinaDetails } from './features/rutinas/rutina-details/rutina-details'
 import { EntrenamientoHoy } from './features/entrenamientos/entrenamiento-hoy/entrenamiento-hoy';
 import { MisRecords } from './features/records/mis-records/mis-records';
 import { RutinasPublicas } from './features/rutinas/rutinas-publicas/rutinas-publicas';
+import { MisAmigos } from './features/amigos/mis-amigos/mis-amigos';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -33,6 +34,7 @@ export const routes: Routes = [
       { path: 'rutinas/:id', component: RutinaDetails, canActivate: [authGuard] },
       { path: 'rutinas/:id/editar', component: RutinaForm, canActivate: [authGuard] },
       { path: 'records', component: MisRecords, canActivate: [authGuard] },
+      { path: 'amigos', component: MisAmigos, canActivate: [authGuard] },
     ],
   },
   { path: '**', redirectTo: 'login' },

@@ -6,7 +6,7 @@ import { Usuario, UsuarioPerfil } from '../../core/usuario/usuario';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
-  imports: [DecimalPipe, ReactiveFormsModule],
+  imports: [DecimalPipe, ReactiveFormsModule, RouterLink],
   selector: 'app-perfil',
   styleUrl: './perfil.css',
   templateUrl: './perfil.html',
