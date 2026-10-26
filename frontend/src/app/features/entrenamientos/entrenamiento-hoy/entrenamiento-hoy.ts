@@ -48,10 +48,11 @@ export class EntrenamientoHoy {
 
   constructor() {
     effect(() => {
+
+      if (!this.diaDeRutina.hasValue()) {
+        return;
+      }
       const dia = this.diaDeRutina.value();
-
-      if (!dia) return;
-
       this.marcas.clear();
 
       for (const d of dia.ejercicioRutinas) {
