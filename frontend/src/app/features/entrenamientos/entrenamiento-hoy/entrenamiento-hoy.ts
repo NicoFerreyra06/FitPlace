@@ -12,7 +12,7 @@ import {
 } from '@angular/forms';
 import { EjercicioRutinaResponse } from '../../../core/rutinas/rutinas.model';
 import { Entrenamiento, EntrenamientoLogRequest } from '../../../core/entrenamiento/entrenamiento';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 type MarcaForm = FormGroup<{
   ejercicioRutinaId: FormControl<number>;
@@ -21,7 +21,7 @@ type MarcaForm = FormGroup<{
 }>;
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   selector: 'app-entrenamiento-hoy',
   styleUrl: './entrenamiento-hoy.css',
   templateUrl: './entrenamiento-hoy.html',
