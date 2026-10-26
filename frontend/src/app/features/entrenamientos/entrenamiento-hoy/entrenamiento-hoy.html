@@ -7,10 +7,16 @@
     @if (diaDeRutina.isLoading()) {
         <p class="estado-msg">Cargando…</p>
     } @else if (diaDeRutina.error()) {
-        <p class="estado-msg">
-            No tenés ejercicios para hoy. Revisá que tengas una rutina activa con este día cargado.
-        </p>
+        <div class="contenedor-error">
+            <p class="estado-msg">No tenés ejercicios para hoy. Revisá que tengas una rutina activa con este día cargado.</p>
+            <a class="btn btn--sm btn--vidrio" routerLink="/rutinas">Mis rutinas</a>
+        </div>
     } @else if (diaDeRutina.hasValue()) {
+        @let dia = diaDeRutina.value();
+
+        @if (dia.ejercicioRutinas.length === 0) {
+            <p class="estado-msg"> No tenés ejercicios asignados para el día de hoy en tu rutina activa.</p>
+    } @else {
         <form class="card form-hoy" [formGroup]="formMarcas" (ngSubmit)="guardar()">
         <div formArrayName="marcas" class="marcas">
             @for (marca of marcas.controls; track $index) {
@@ -40,5 +46,6 @@
             Guardar entrenamiento
         </button>
         </form>
+        }
     }
 </main>

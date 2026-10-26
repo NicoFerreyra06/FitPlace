@@ -106,6 +106,14 @@ input.ng-invalid.ng-touched {
   border-bottom: 0;
 }
 
+.contenedor-error{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .nombre-ejercicio {
   display: flex;
   flex-direction: column;

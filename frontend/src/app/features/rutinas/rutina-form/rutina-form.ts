@@ -62,7 +62,7 @@ export class RutinaForm implements OnInit {
   protected readonly form = this.fb.group({
     nombre: ['', Validators.required],
     esPublica: [false],
-    dias: this.fb.array<DiaForm>([], Validators.minLength(1)),
+    dias: this.fb.array<DiaForm>([], Validators.required),
   });
 
   protected get dias() {
@@ -131,6 +131,8 @@ export class RutinaForm implements OnInit {
   }
 
   protected quitarDia(indice: number) {
+    this.form.controls.dias.markAsDirty();
+    
     this.dias.removeAt(indice);
   }
 
