@@ -11,8 +11,8 @@ import { MisRutinas } from './features/rutinas/mis-rutinas/mis-rutinas';
 import { RutinaForm } from './features/rutinas/rutina-form/rutina-form';
 import { RutinaDetails } from './features/rutinas/rutina-details/rutina-details';
 import { EntrenamientoHoy } from './features/entrenamientos/entrenamiento-hoy/entrenamiento-hoy';
-import { RutinasPublicas } from './features/rutinas/rutinas-publicas/rutinas-publicas';
 import { MisRecords } from './features/records/mis-records/mis-records';
+import { RutinasPublicas } from './features/rutinas/rutinas-publicas/rutinas-publicas';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -27,8 +27,8 @@ export const routes: Routes = [
       { path: 'perfil', component: Perfil, canActivate: [authGuard] },
       { path: 'entrenamientos', component: Historial, canActivate: [authGuard] },
       { path: 'entrenamientos/hoy', component: EntrenamientoHoy, canActivate: [authGuard] },
-      { path: 'rutinas', component: RutinasPublicas, canActivate: [authGuard] },
-      { path: 'rutinas/me', component: MisRutinas, canActivate: [authGuard] },
+      { path: 'rutinas', component: MisRutinas, canActivate: [authGuard] },
+      { path: 'rutinas/publicas', component: RutinasPublicas, canActivate: [authGuard] },
       { path: 'rutinas/nueva', component: RutinaForm, canActivate: [authGuard] },
       { path: 'rutinas/:id', component: RutinaDetails, canActivate: [authGuard] },
       { path: 'rutinas/:id/editar', component: RutinaForm, canActivate: [authGuard] },
