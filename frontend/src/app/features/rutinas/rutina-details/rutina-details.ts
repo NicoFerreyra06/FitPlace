@@ -32,8 +32,12 @@ export class RutinaDetails implements OnInit {
 
   protected readonly esDuenio = computed(() => {
     const r = this.rutina();
+
+    if(!this.perfil.hasValue()){
+      return false;
+    }
     const p = this.perfil.value();
-    return Boolean(r && p && r.creadorId === p.id);
+    return Boolean(r && r.creadorId === p.id);
   })
 
   protected readonly diasOrdenados = computed( () => {
