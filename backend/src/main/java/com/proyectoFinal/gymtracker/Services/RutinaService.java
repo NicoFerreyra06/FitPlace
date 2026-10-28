@@ -18,7 +18,6 @@ import com.proyectoFinal.gymtracker.Repositories.RutinaRepository;
 import com.proyectoFinal.gymtracker.Repositories.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -80,7 +79,7 @@ public class RutinaService {
 
     @Transactional
     public RutinaResponse updateRutina(Usuario usuario, RutinaRequest rutinaRequest, Long idRutina){
-        Rutina rutinaExistente = rutinaRepository.findById(idRutina)
+        Rutina rutinaExistente = rutinaRepository.findByIdAndActivaTrue(idRutina)
                 .orElseThrow(()-> new ResourceNotFoundException("Rutina no encontrada"));
 
         if(!rutinaExistente.getCreador().getId().equals(usuario.getId())) {
@@ -173,16 +172,12 @@ public class RutinaService {
             }
         }
 
-        try {
-            Rutina rutinaSaved = rutinaRepository.save(rutinaExistente);
-            return mapRutinaResponse(rutinaSaved);
-        } catch (DataIntegrityViolationException e) {
-            throw new BusinessLogicException("No se pueden eliminar ejercicios que ya tienen un historial de entrenamiento registrado.");
-        }
+        Rutina rutinaSaved = rutinaRepository.save(rutinaExistente);
+        return mapRutinaResponse(rutinaSaved);
     }
 
     public RutinaResponse getRutinaById(Long idRutina, Usuario usuario) {
-        Rutina rutinaSaved = rutinaRepository.findById(idRutina)
+        Rutina rutinaSaved = rutinaRepository.findByIdAndActivaTrue(idRutina)
                 .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
 
         if (!rutinaSaved.isEsPublica()) {
@@ -200,7 +195,7 @@ public class RutinaService {
     }
 
     public Page<RutinaResponse> getAllRutinas(Pageable pageable) {
-        return rutinaRepository.findByEsPublicaTrue(pageable).map(this::mapRutinaResponse);
+        return rutinaRepository.findByEsPublicaTrueAndActivaTrue(pageable).map(this::mapRutinaResponse);
     }
 
     //para ver la rutina de hoy
@@ -209,7 +204,7 @@ public class RutinaService {
         if (usuario.getRutinaActiva() == null) throw new BusinessLogicException("No tiene rutina activa");
         DayOfWeek hoy = LocalDate.now().getDayOfWeek();
         DiaRutina dia = diaRutinaRepository
-                .findByRutinaIdAndDiaDeLaSemana(usuario.getRutinaActiva().getId(), hoy)
+                .findByRutinaIdAndDiaDeLaSemanaAndActivoTrue(usuario.getRutinaActiva().getId(), hoy)
                 .orElseThrow(() -> new BusinessLogicException("La rutina no tiene día configurado para hoy"));
         return mapToDiaRutinaResponse(dia);
     }
@@ -217,33 +212,22 @@ public class RutinaService {
     @Transactional
     public void deleteRutina(Usuario usuario, Long idRutina) {
 
-        Rutina rutina = rutinaRepository.findById(idRutina)
+        Rutina rutina = rutinaRepository.findByIdAndActivaTrue(idRutina)
                 .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
 
         if (!rutina.getCreador().getId().equals(usuario.getId()) && usuario.getRol() != Rol.ADMIN) {
             throw new ForbiddenAccessException("No tenés permiso para eliminar esta rutina");
         }
 
-        if (usuario.getRutinaActiva() != null && usuario.getRutinaActiva().getId().equals(idRutina)) {
-            usuario.setRutinaActiva(null);
-            usuarioRepository.save(usuario);
-        }
-
-        try {
-            rutinaRepository.delete(rutina);
-            // Fuerza el DELETE acá: con @Transactional se ejecutaría recién en el commit,
-            // fuera de este try, y el error de FK terminaría como un 500 genérico.
-            rutinaRepository.flush();
-        } catch (DataIntegrityViolationException e) {
-            throw new BusinessLogicException("No se puede eliminar la rutina porque actualmente está asignada a un usuario o existe en un historial de entrenamiento.");
-        }
+        usuarioRepository.quitarRutinaActiva(idRutina);
+        rutinaRepository.delete(rutina);
     }
 
     public Page<RutinaResponse> getRutinasMe(Long idUsuario, Pageable pageable) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
-        Page<Rutina> misRutinas = rutinaRepository.findByCreadorId(usuario.getId(), pageable);
+        Page<Rutina> misRutinas = rutinaRepository.findByCreadorIdAndActivaTrue(usuario.getId(), pageable);
 
         return misRutinas.map(this::mapRutinaResponse);
     }
@@ -264,7 +248,7 @@ public class RutinaService {
             throw new ForbiddenAccessException("Este alumno no está a su cargo");
         }
 
-        Page<Rutina> rutinasDelAlumno = rutinaRepository.findByCreadorId(alumno.getId(), pageable);
+        Page<Rutina> rutinasDelAlumno = rutinaRepository.findByCreadorIdAndActivaTrue(alumno.getId(), pageable);
 
         return rutinasDelAlumno.map(this::mapRutinaResponse);
     }

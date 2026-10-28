@@ -3,6 +3,7 @@ package com.proyectoFinal.gymtracker.Modelo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Getter
@@ -10,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@SQLDelete(sql = "UPDATE ejercicio_rutina SET activo = false WHERE id = ?")
 public class EjercicioRutina {
 
     @Id
@@ -27,4 +29,8 @@ public class EjercicioRutina {
 
     private Integer series;
     private Integer repeticiones;
+
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    @Builder.Default
+    private boolean activo = true;
 }

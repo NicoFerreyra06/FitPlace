@@ -137,14 +137,14 @@ public class EntrenamientoLogServiceTest {
                 .build();
 
         when(usuarioRepository.save(usuario)).thenReturn(usuario);
-        when(rutinaRepository.findById(1L)).thenReturn(Optional.of(rutina));
+        when(rutinaRepository.findByIdAndActivaTrue(1L)).thenReturn(Optional.of(rutina));
         when(ejercicioRutinaRepository.findById(1L)).thenReturn(Optional.of(ejercicioRutina));
         when(entrenamientoLogRepository.save(any(EntrenamientoLog.class))).thenReturn(logSimulado);
 
         var response = entrenamientoLogService.addEntrenamientoLog(entrenamientoLogRequest,  usuario);
 
         assertNotNull(response);
-        verify(rutinaRepository, times(1)).findById(1L);
+        verify(rutinaRepository, times(1)).findByIdAndActivaTrue(1L);
         verify(ejercicioRutinaRepository, times(1)).findById(1L);
         verify(recordPersonalService, times(1)).recalcularRecord(eq(usuario), any(Ejercicio.class));
         verify(entrenamientoLogRepository, times(1)).save(any(EntrenamientoLog.class));
@@ -155,7 +155,7 @@ public class EntrenamientoLogServiceTest {
     void shouldThrowExceptionWhenRutinaPrivadaAjenaOnAdd() {
         Usuario ajeno = crearUsuarioAjeno();
 
-        when(rutinaRepository.findById(1L)).thenReturn(Optional.of(rutina));
+        when(rutinaRepository.findByIdAndActivaTrue(1L)).thenReturn(Optional.of(rutina));
 
         ForbiddenAccessException exception = assertThrows(ForbiddenAccessException.class,
                 () -> entrenamientoLogService.addEntrenamientoLog(entrenamientoLogRequest, ajeno));
@@ -176,7 +176,7 @@ public class EntrenamientoLogServiceTest {
                 .build();
 
         when(entrenamientoLogRepository.findById(1L)).thenReturn(Optional.of(entrenamientoPropio));
-        when(rutinaRepository.findById(1L)).thenReturn(Optional.of(rutina));
+        when(rutinaRepository.findByIdAndActivaTrue(1L)).thenReturn(Optional.of(rutina));
 
         ForbiddenAccessException exception = assertThrows(ForbiddenAccessException.class,
                 () -> entrenamientoLogService.updateEntrenamiento(entrenamientoLogRequest, 1L, ajeno));
@@ -200,14 +200,14 @@ public class EntrenamientoLogServiceTest {
     @Test
     @DisplayName("Deberia lanzar excepcion porque no encuentra la rutina")
     void shouldThrowExceptionWhenRutineNotFound() {
-        when(rutinaRepository.findById(1L)).thenReturn(Optional.empty());
+        when(rutinaRepository.findByIdAndActivaTrue(1L)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
                 () -> entrenamientoLogService.addEntrenamientoLog(entrenamientoLogRequest,  usuario));
 
         assertNotNull(exception);
         assertEquals("Rutina no encontrada", exception.getMessage());
-        verify(rutinaRepository, times(1)).findById(1L);
+        verify(rutinaRepository, times(1)).findByIdAndActivaTrue(1L);
         verify(entrenamientoLogRepository, never()).save(any(EntrenamientoLog.class));
     }
 
@@ -215,7 +215,7 @@ public class EntrenamientoLogServiceTest {
     @DisplayName("Deberia lanzar excepcion porque no encuentra el ejercicio")
     void shouldThrowExceptionWhenEjercicioNotFound() {
         usuario.setRachaActualDias(0);
-        when(rutinaRepository.findById(1L)).thenReturn(Optional.of(rutina));
+        when(rutinaRepository.findByIdAndActivaTrue(1L)).thenReturn(Optional.of(rutina));
         when(ejercicioRutinaRepository.findById(1L)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
@@ -223,7 +223,7 @@ public class EntrenamientoLogServiceTest {
 
         assertNotNull(exception);
         assertEquals("Ejercicio no encontrado", exception.getMessage());
-        verify(rutinaRepository, times(1)).findById(1L);
+        verify(rutinaRepository, times(1)).findByIdAndActivaTrue(1L);
         verify(ejercicioRutinaRepository, times(1)).findById(1L);
         verify(entrenamientoLogRepository, never()).save(any(EntrenamientoLog.class));
     }
@@ -249,7 +249,7 @@ public class EntrenamientoLogServiceTest {
 
         when(entrenamientoLogRepository.findById(1L)).thenReturn(Optional.of(entrenamientoLogViejo));
         when(ejercicioRutinaRepository.findById(1L)).thenReturn(Optional.of(ejercicioRutina));
-        when(rutinaRepository.findById(1L)).thenReturn(Optional.of(rutina));
+        when(rutinaRepository.findByIdAndActivaTrue(1L)).thenReturn(Optional.of(rutina));
         when(entrenamientoLogRepository.save(any(EntrenamientoLog.class))).thenReturn(entrenamientoLogUpdate);
 
         var response = entrenamientoLogService.updateEntrenamiento(entrenamientoLogRequest, 1L, usuario);
@@ -257,7 +257,7 @@ public class EntrenamientoLogServiceTest {
         assertNotNull(response);
         verify(ejercicioRutinaRepository, times(1)).findById(1L);
         verify(entrenamientoLogRepository, times(1)).findById(1L);
-        verify(rutinaRepository, times(1)).findById(1L);
+        verify(rutinaRepository, times(1)).findByIdAndActivaTrue(1L);
         verify(entrenamientoLogRepository, times(1)).save(any(EntrenamientoLog.class));
         assertEquals("Test_rutina", response.getNombreRutina());
     }
@@ -372,7 +372,7 @@ public class EntrenamientoLogServiceTest {
                 .build();
 
         when(entrenamientoLogRepository.findById(1L)).thenReturn(Optional.of(entrenamientoViejo));
-        when(rutinaRepository.findById(1L)).thenReturn(Optional.of(rutina));
+        when(rutinaRepository.findByIdAndActivaTrue(1L)).thenReturn(Optional.of(rutina));
         when(ejercicioRutinaRepository.findById(1L)).thenReturn(Optional.of(crearEjercicioRutinaSimulado()));
         when(entrenamientoLogRepository.save(any(EntrenamientoLog.class))).thenReturn(entrenamientoViejo);
         when(entrenamientoLogRepository.findFechasByUsuarioId(1L)).thenReturn(List.of(

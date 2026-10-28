@@ -65,7 +65,7 @@ public class TutoriaService {
             throw new ForbiddenAccessException("No tienes permiso para asignarle rutinas a este alumno");
         }
 
-        Rutina rutina = rutinaRepository.findById(idRutina).orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
+        Rutina rutina = rutinaRepository.findByIdAndActivaTrue(idRutina).orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
 
         alumno.setRutinaActiva(rutina);
         alumno.setRutinaActivaDesde(LocalDate.now());

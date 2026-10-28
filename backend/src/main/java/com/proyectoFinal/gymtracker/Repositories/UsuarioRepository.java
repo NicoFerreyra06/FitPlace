@@ -3,7 +3,9 @@ package com.proyectoFinal.gymtracker.Repositories;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,4 +29,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario,Long> {
     List<Usuario> findAllFriendByUserId(Long userId);
 
     List<Usuario> findByRol(Rol rol);
+
+    @Modifying
+    @Query("UPDATE Usuario u SET u.rutinaActiva = null WHERE u.rutinaActiva.id = :idRutina")
+    void quitarRutinaActiva(@Param("idRutina") Long idRutina);
 }

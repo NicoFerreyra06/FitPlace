@@ -49,7 +49,7 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioResponse activarRutina(Usuario usuario, Long idRutina) {
-        Rutina rutina = rutinaRepository.findById(idRutina).orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
+        Rutina rutina = rutinaRepository.findByIdAndActivaTrue(idRutina).orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
 
         if (!rutina.isEsPublica()) {
             boolean esCreador = rutina.getCreador().getId().equals(usuario.getId());
