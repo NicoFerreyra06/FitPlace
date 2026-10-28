@@ -2,6 +2,8 @@ package com.proyectoFinal.gymtracker.Modelo;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@SQLDelete(sql = "UPDATE rutina SET activa = false WHERE id = ?")
 public class Rutina {
 
     @Id
@@ -32,7 +35,12 @@ public class Rutina {
     @Builder.Default
     private boolean esPublica = false; 
 
+    @Column(nullable = false, columnDefinition = "boolean default true")
     @Builder.Default
+    private boolean activa = true;
+
+    @Builder.Default
+    @SQLRestriction("activo = true")
     @OneToMany(mappedBy = "rutina", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DiaRutina> dias = new ArrayList<>();
 }

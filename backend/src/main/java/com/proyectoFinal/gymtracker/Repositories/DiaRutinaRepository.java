@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface DiaRutinaRepository extends JpaRepository<DiaRutina,Long> {
 
-    Optional<DiaRutina> findByRutinaIdAndDiaDeLaSemana(Long rutinaId, DayOfWeek diaDeLaSemana);
+    Optional<DiaRutina> findByRutinaIdAndDiaDeLaSemanaAndActivoTrue(Long rutinaId, DayOfWeek diaDeLaSemana);
 
 }

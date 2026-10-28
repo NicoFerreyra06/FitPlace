@@ -10,11 +10,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RutinaRepository extends JpaRepository<Rutina,Long> {
 
-    Page<Rutina> findByEsPublicaTrue(Pageable pageable);
+    Optional<Rutina> findByIdAndActivaTrue(Long id);
+
+    Page<Rutina> findByEsPublicaTrueAndActivaTrue(Pageable pageable);
     
-    Page<Rutina> findByCreadorId(Long creadorId, Pageable pageable);
+    Page<Rutina> findByCreadorIdAndActivaTrue(Long creadorId, Pageable pageable);
 }

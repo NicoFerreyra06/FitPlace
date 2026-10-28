@@ -38,7 +38,7 @@ public class EntrenamientoLogService {
     public EntrenamientoLogResponse addEntrenamientoLog (EntrenamientoLogRequest entrenamientoLogRequest,
                                                          Usuario usuarioLogueado) {
 
-        Rutina rutina = rutinaRepository.findById(entrenamientoLogRequest.getIdRutina())
+        Rutina rutina = rutinaRepository.findByIdAndActivaTrue(entrenamientoLogRequest.getIdRutina())
                 .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
         validarAccesoRutina(rutina, usuarioLogueado);
 
@@ -86,7 +86,7 @@ public class EntrenamientoLogService {
             throw new BusinessLogicException("Solo podés editar entrenamientos de hace una semana maximo");
         }
 
-        Rutina rutina = rutinaRepository.findById(entrenamientoLogRequest.getIdRutina())
+        Rutina rutina = rutinaRepository.findByIdAndActivaTrue(entrenamientoLogRequest.getIdRutina())
                         .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
         validarAccesoRutina(rutina, usuarioLogueado);
 
