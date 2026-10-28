@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RecordPersonalRepository extends JpaRepository<RecordPersonal, Long> {
@@ -15,4 +16,6 @@ public interface RecordPersonalRepository extends JpaRepository<RecordPersonal, 
     List<RecordPersonal> findRecordPersonalByUsuarioId(Long usuarioId);
 
     Page<RecordPersonal> findByEjercicioIdOrderByPesoMaximoDesc(Pageable pageable, Long ejercicioId);
+
+    Optional<RecordPersonal> findFirstByUsuarioIdOrderByFechaLogroDesc(Long usuarioId);
 }

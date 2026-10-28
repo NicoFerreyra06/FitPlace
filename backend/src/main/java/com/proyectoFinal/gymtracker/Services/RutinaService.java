@@ -286,6 +286,7 @@ public class RutinaService {
     private DiaRutinaResponse mapToDiaRutinaResponse(DiaRutina diaRutina){
         return DiaRutinaResponse.builder()
                 .id(diaRutina.getId())
+                .nombreRutina(diaRutina.getRutina().getNombre())
                 .diaDeLaSemana(diaRutina.getDiaDeLaSemana())
                 .ejercicioRutinas(diaRutina.getEjercicios() != null ? diaRutina.getEjercicios().stream()
                         .map(this::mapToEjercicioRutinaResponse).toList() : List.of())

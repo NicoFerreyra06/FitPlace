@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class DiaRutinaResponse {
     private Long id;
+    private String nombreRutina;
     private DayOfWeek diaDeLaSemana;
     private List<EjercicioRutinaResponse> ejercicioRutinas;
 }

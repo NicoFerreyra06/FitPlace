@@ -33,6 +33,7 @@ export interface EjercicioRutinaResponse {
 
 export interface DiaRutinaResponse {
   id: number;
+  nombreRutina: string,
   diaDeLaSemana: DiaSemana;
   ejercicioRutinas: EjercicioRutinaResponse[];
 }

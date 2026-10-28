@@ -49,6 +49,13 @@ public class RecordPersonalService {
         return toResponse(record);
     }
 
+    public RecordPersonalResponse getUltimoRecord(Usuario usuario) {
+
+        Optional<RecordPersonal> record = recordPersonalRepository.findFirstByUsuarioIdOrderByFechaLogroDesc(usuario.getId());
+
+        return toResponse(record.orElseThrow(()-> new ResourceNotFoundException("No tenes records")));
+    }
+
     // Muestra los record personales en todos los ejercicios de 1 usuario.
     public List<RecordPersonalResponse> getRecordsPersonalesByUsuarioId(Long usuarioId, Usuario authUser) {
         if (!authUser.getId().equals(usuarioId) && authUser.getRol() != Rol.ADMIN) {
