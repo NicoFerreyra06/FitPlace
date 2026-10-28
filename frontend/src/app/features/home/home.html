@@ -1,1 +1,97 @@
-<p>Hola esto es el home</p>
+<div class="home">
+    <section class="principal" [attr.aria-busy]="estado() === 'cargando'">
+        @let nombrePerfil = perfil.hasValue() ? perfil.value().username.toLowerCase() : '' ;
+        <header>
+            @switch (franjaHoraria()) {
+            @case ('madrugada') {
+                <p class="nota">¿Entrenando a esta hora <span class="nombre-destacado">{{nombrePerfil}}</span>?</p>
+            }
+            @case ('mañana') {
+                <p class="nota">Buen día <span class="nombre-destacado">{{nombrePerfil}}</span></p>
+            }
+            @case ('tarde') {
+                <p class="nota">Buenas tardes <span class="nombre-destacado">{{nombrePerfil}}</span></p>
+            }
+            @case ('noche') {
+                <p class="nota">Buenas noches <span class="nombre-destacado">{{nombrePerfil}}</span></p>
+            }
+            }
+        </header>
+
+        @switch (estado()) {
+        @case ('cargando') {
+            <div class="titular placeholder placeholder--titular" aria-hidden="true"></div>
+            <div class="bajada placeholder placeholder--bajada" aria-hidden="true"></div>
+            <div class="accion placeholder placeholder--boton" aria-hidden="true"></div>
+        }
+        @case ('sinRutina') {
+            <h1 class="titular">{{ titularSinRutina }}<span class="punto">.</span></h1>
+            <p class="bajada">Activá una rutina para empezar!</p>
+            <a class="btn btn--lg accion" routerLink="/rutinas">
+            Ir a mis rutinas <span aria-hidden="true">→</span>
+            </a>
+        }
+        @case ('descanso') {
+            <h1 class="titular">{{ titularDescanso }}<span class="punto">.</span></h1>
+            <p class="bajada">Tu rutina no tiene ejercicios para hoy. Recuperá energía para mañana.</p>
+        }
+        @case ('entrenar') {
+            <h1 class="titular">
+            Hoy toca {{ nombreRutina() ?? 'tu rutina' }}<span class="punto">.</span>
+            </h1>
+            <p class="bajada">{{ primerEjercicio() }} y {{ ejerciciosDeHoy().length - 1 }} {{ ejerciciosDeHoy().length - 1 === 1 ? 'ejercicio' : 'ejercicios' }} más.</p>
+            <a class="btn btn--lg accion" routerLink="/entrenamientos/hoy">
+            Empezar entrenamiento <span aria-hidden="true">→</span>
+            </a>
+        }
+        @case ('error') {
+            <h1 class="titular">No pudimos cargar tu día<span class="punto">.</span></h1>
+            <p class="bajada">Probá de nuevo en un rato.</p>
+        }
+        }
+
+        @if (!perfil.error()) {
+        <dl class="datos">
+            <div class="dato">
+            <dt>Racha</dt>
+            <dd>
+                @if (perfil.hasValue()) {
+                {{ racha() }} {{ racha() === 1 ? 'día' : 'días' }}
+                } @else {
+                <span class="placeholder placeholder--valor" aria-hidden="true"></span>
+                }
+            </dd>
+            </div>
+
+            @if (!entrenosMes.error()) {
+            <div class="dato">
+                <dt>Este mes</dt>
+                <dd>
+                @if (entrenosMes.hasValue()) {
+                    {{ entrenosMes.value().totalElements }}
+                    {{ entrenosMes.value().totalElements === 1 ? 'entrenamiento' : 'entrenamientos' }}
+                } @else {
+                    <span class="placeholder placeholder--valor" aria-hidden="true"></span>
+                }
+                </dd>
+            </div>
+            }
+
+            @if (!ultimoRecord.error() || sinRecords()) {
+            <div class="dato">
+                <dt>Último récord</dt>
+                <dd>
+                @if (ultimoRecord.hasValue()) {
+                    {{ ultimoRecord.value().nombreEjercicio }} {{ ultimoRecord.value().pesoMaximo }} kg
+                } @else if (sinRecords()) {
+                    Todavía no hay récords
+                } @else {
+                    <span class="placeholder placeholder--valor" aria-hidden="true"></span>
+                }
+                </dd>
+            </div>
+            }
+        </dl>
+        }
+    </section>
+</div>

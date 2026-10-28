@@ -19,4 +19,8 @@ export class Records {
   getMisRecords(idUsuario: number): Observable<RecordPersonalResponse[]> {
     return this.http.get<RecordPersonalResponse[]>(`${this.API_URL}/usuario/${idUsuario}`);
   }
+
+  getUltimoRecord(): Observable<RecordPersonalResponse> {
+    return this.http.get<RecordPersonalResponse>(`${this.API_URL}/me/ultimo`);
+  }
 }

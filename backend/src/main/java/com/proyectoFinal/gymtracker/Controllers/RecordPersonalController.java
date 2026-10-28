@@ -43,6 +43,11 @@ public class RecordPersonalController {
                 recordPersonalService.getRecordsPersonalesByUsuarioId(id, authUser));
     }
 
+    @GetMapping("/me/ultimo")
+    public ResponseEntity<RecordPersonalResponse> getUltimoRecord(@AuthenticationPrincipal Usuario usuarioAutenticado) {
+        return ResponseEntity.ok(recordPersonalService.getUltimoRecord(usuarioAutenticado));
+    }
+
     //ver ranking de records de todos los usuarios en x ejercicio
     @GetMapping("/ranking/{ejercicioId}")
     public ResponseEntity<Page<RecordPersonalResponse>> getRankingRecordsPersonalesByEjercicioId(@PageableDefault (size = 10) Pageable pageable, @PathVariable Long ejercicioId) {
