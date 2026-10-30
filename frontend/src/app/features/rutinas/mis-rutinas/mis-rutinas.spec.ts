@@ -15,7 +15,7 @@ describe('MisRutinas', () => {
       providers: [
         provideRouter([]),
         { provide: Rutinas, useValue: { getMisRutinas: () => of({ content: [] }) } },
-        { provide: Usuario, useValue: { getMiPerfil: () => of({ rutinaActivaId: null }) } },
+        { provide: Usuario, useValue: { getPerfilGuardado: () => of({ rutinaActivaId: null }) } },
       ],
     })
       .compileComponents();

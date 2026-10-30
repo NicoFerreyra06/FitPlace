@@ -50,7 +50,7 @@ export class RutinasPublicas implements OnInit {
     this.cargando.set(true);
     forkJoin({
       rutinas: this.rutinasService.getRutinasPublicas(),
-      usuario: this.usuarioService.getMiPerfil(),
+      usuario: this.usuarioService.getPerfilGuardado(),
     }).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
       next: ({ rutinas, usuario }) => {

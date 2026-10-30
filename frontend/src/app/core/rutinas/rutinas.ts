@@ -1,13 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { DiaRutinaResponse, RutinaRequest, RutinaResponse } from './rutinas.model';
 import { Page } from '../../model/page';
+import { Usuario } from '../usuario/usuario';
 
 @Service()
 export class Rutinas {
   private readonly http = inject(HttpClient);
   private readonly URL = 'http://localhost:8080/rutinas';
+  private readonly usuarioService = inject(Usuario);
 
   getMisRutinas(): Observable<Page<RutinaResponse>> {
     return this.http.get<Page<RutinaResponse>>(`${this.URL}/me`, { params: { size: 50 } });
@@ -34,6 +36,8 @@ export class Rutinas {
   }
 
   eliminar(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.URL}/${id}`);
+    return this.http
+      .delete<void>(`${this.URL}/${id}`)
+      .pipe(tap(() => this.usuarioService.limpiarPerfil()));
   }
 }

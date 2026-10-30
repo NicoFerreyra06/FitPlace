@@ -40,7 +40,7 @@ export class MisAmigos implements OnInit {
 
     forkJoin({
       amigos: this.amigosService.getAmigos(),
-      perfil: this.usuarioService.getMiPerfil(),
+      perfil: this.usuarioService.getPerfilGuardado(),
     })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({

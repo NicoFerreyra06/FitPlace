@@ -1,7 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { Page } from '../../model/page';
+import { Usuario } from '../usuario/usuario';
 
 export interface MarcaEjercicio {
   id: number;
@@ -35,6 +36,7 @@ export interface EntrenamientoLogRequest {
 export class Entrenamiento {
   private readonly http = inject(HttpClient);
   private readonly API_URL = 'http://localhost:8080/entrenamientos';
+  private readonly usuarioService = inject(Usuario);
 
   getHistorial(
     idUsuario: number,
@@ -54,16 +56,21 @@ export class Entrenamiento {
     return this.http.get<EntrenamientoLog>(`${this.API_URL}/${id}`);
   }
 
-  /** Registrar el entrenamiento del día (lo usa la pantalla de SCRUM-324). */
   registrar(request: EntrenamientoLogRequest): Observable<EntrenamientoLog> {
-    return this.http.post<EntrenamientoLog>(this.API_URL, request);
+    return this.http
+      .post<EntrenamientoLog>(this.API_URL, request)
+      .pipe(tap(() => this.usuarioService.limpiarPerfil()));
   }
 
   actualizar(id: number, request: EntrenamientoLogRequest): Observable<EntrenamientoLog> {
-    return this.http.put<EntrenamientoLog>(`${this.API_URL}/${id}`, request);
+    return this.http
+      .put<EntrenamientoLog>(`${this.API_URL}/${id}`, request)
+      .pipe(tap(() => this.usuarioService.limpiarPerfil()));
   }
 
   eliminar(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.API_URL}/${id}`);
+    return this.http
+      .delete<void>(`${this.API_URL}/${id}`)
+      .pipe(tap(() => this.usuarioService.limpiarPerfil()));
   }
 }

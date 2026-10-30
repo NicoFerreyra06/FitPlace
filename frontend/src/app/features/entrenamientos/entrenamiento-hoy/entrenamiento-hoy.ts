@@ -37,7 +37,7 @@ export class EntrenamientoHoy {
   protected readonly errorMsg = signal<string | null>(null);
 
   private readonly perfil = rxResource({
-    stream: () => this.usuarioService.getMiPerfil(),
+    stream: () => this.usuarioService.getPerfilGuardado(),
   });
 
   protected readonly diaDeRutina = rxResource({

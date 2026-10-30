@@ -24,7 +24,7 @@ export class Perfil {
   });
 
   protected readonly perfil = rxResource({
-    stream: () => this.usuarioService.getMiPerfil(),
+    stream: () => this.usuarioService.getPerfilGuardado(),
   });
 
   editar(p: UsuarioPerfil) {
