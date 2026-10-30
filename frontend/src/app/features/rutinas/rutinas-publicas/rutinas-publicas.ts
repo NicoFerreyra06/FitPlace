@@ -93,4 +93,21 @@ export class RutinasPublicas implements OnInit {
       },
     });
   }
+
+  desactivar(rutina: RutinaResponse) {
+    this.activandoId.set(rutina.id);
+    this.errorMsg.set(null);
+    this.mensajeExito.set(null);
+
+    this.usuarioService.desactivarRutina().subscribe({
+      next: () => {
+        this.rutinaActivaId.set(null);
+        this.activandoId.set(null);
+      },
+      error: (err) => {
+        this.activandoId.set(null);
+        this.errorMsg.set(err.error?.message ?? 'No se pudo desactivar la rutina');
+      },
+    });
+  }
 }

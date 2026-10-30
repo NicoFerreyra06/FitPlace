@@ -98,6 +98,14 @@
                   </svg>
                   Rutina activa
                 </span>
+                <button
+                  type="button"
+                  class="btn btn--sm btn--contorno"
+                  [disabled]="activandoId() === rutina.id"
+                  (click)="desactivar(rutina)"
+                >
+                  {{ activandoId() === rutina.id ? 'Desactivando…' : 'Desactivar' }}
+                </button>
               } @else {
                 <button
                   type="button"

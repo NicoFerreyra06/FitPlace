@@ -40,4 +40,8 @@ export class Usuario {
       null,
     );
   }
+
+  desactivarRutina(): Observable<UsuarioPerfil> {
+    return this.http.delete<UsuarioPerfil>('http://localhost:8080/usuarios/me/rutina-activa');
+  }
 }

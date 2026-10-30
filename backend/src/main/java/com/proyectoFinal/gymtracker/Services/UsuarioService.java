@@ -5,7 +5,6 @@ import com.proyectoFinal.gymtracker.DTO.Response.AmigoResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.GananciaGimnasioProjection;
 import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
-import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
 import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
@@ -62,6 +61,14 @@ public class UsuarioService {
 
         usuario.setRutinaActiva(rutina);
         usuario.setRutinaActivaDesde(LocalDate.now());
+        return toResponse(usuarioRepository.save(usuario));
+    }
+
+    @Transactional
+    public UsuarioResponse desactivarRutina(Usuario usuario) {
+        usuario.setRutinaActiva(null);
+        usuario.setRutinaActivaDesde(null);
+
         return toResponse(usuarioRepository.save(usuario));
     }
 
