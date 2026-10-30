@@ -46,6 +46,15 @@ export class MisRutinas implements OnInit {
     });
   }
 
+  desactivar() {
+    this.errorMsg.set(null);
+    this.usuarioService.desactivarRutina().subscribe({
+      next: () => this.rutinaActivaId.set(null),
+      error: (err) =>
+        this.errorMsg.set(err.error?.message ?? 'No se pudo desactivar la rutina'),
+    });
+  }
+
   eliminar(rutina: RutinaResponse) {
     if (!confirm(`¿Seguro que querés eliminar la rutina "${rutina.nombre}"?`)) {
       return;

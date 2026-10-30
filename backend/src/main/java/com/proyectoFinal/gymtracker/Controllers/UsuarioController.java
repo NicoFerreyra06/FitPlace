@@ -57,6 +57,11 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.activarRutina(usuario, idRutina));
     }
 
+    @DeleteMapping("/me/rutina-activa")
+    public ResponseEntity<UsuarioResponse> desactivarRutina(@AuthenticationPrincipal Usuario usuario) {
+        return ResponseEntity.ok(usuarioService.desactivarRutina(usuario));
+    }
+
     @GetMapping("/entrenadores")
     public ResponseEntity<List<UsuarioResponse>> getEntrenadores() {
         return ResponseEntity.ok(usuarioService.getEntrenadores());
