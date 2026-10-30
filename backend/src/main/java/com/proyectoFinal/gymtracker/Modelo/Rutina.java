@@ -2,6 +2,7 @@ package com.proyectoFinal.gymtracker.Modelo;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -42,5 +43,6 @@ public class Rutina {
     @Builder.Default
     @SQLRestriction("activo = true")
     @OneToMany(mappedBy = "rutina", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 10)
     private List<DiaRutina> dias = new ArrayList<>();
 }

@@ -3,6 +3,7 @@ package com.proyectoFinal.gymtracker.Modelo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -37,5 +38,6 @@ public class DiaRutina {
 
     @SQLRestriction("activo = true")
     @OneToMany(mappedBy = "dia", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 70)
     private List<EjercicioRutina> ejercicios;
 }
