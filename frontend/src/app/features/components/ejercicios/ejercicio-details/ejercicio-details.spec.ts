@@ -12,6 +12,13 @@ describe('EjercicioDetails', () => {
 
     fixture = TestBed.createComponent(EjercicioDetails);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('ejercicio', {
+      id: 1,
+      nombre: 'Press de banca',
+      descripcion: 'Ejercicio de empuje',
+      musculosPrincipales: [],
+      musculosSecundarios: [],
+    });
     await fixture.whenStable();
   });
 
