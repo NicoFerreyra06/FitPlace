@@ -47,7 +47,7 @@ export class Historial {
   protected readonly limiteEdicion = Historial.haceDias(DIAS_EDITABLES);
 
   private readonly perfil = rxResource({
-    stream: () => this.usuarioService.getMiPerfil(),
+    stream: () => this.usuarioService.getPerfilGuardado(),
   });
 
   protected readonly historial = rxResource({

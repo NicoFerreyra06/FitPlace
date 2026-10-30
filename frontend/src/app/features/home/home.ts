@@ -33,7 +33,7 @@ export class Home {
   protected readonly titularDescanso = this.titularesDescanso[Math.floor(Math.random() * this.titularesDescanso.length)];
 
   protected readonly perfil = rxResource({
-    stream: () => this.usuarioService.getMiPerfil(),
+    stream: () => this.usuarioService.getPerfilGuardado(),
   });
 
   protected readonly rutina = rxResource({

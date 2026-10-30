@@ -18,7 +18,7 @@ export class MisRecords {
   protected readonly busqueda = signal<string>('');
 
   protected readonly perfil = rxResource({
-    stream: () => this.usuarioService.getMiPerfil(),
+    stream: () => this.usuarioService.getPerfilGuardado(),
   });
 
   protected readonly records = rxResource({

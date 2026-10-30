@@ -27,7 +27,7 @@ export class RutinaDetails implements OnInit {
   protected readonly ejercicioSeleccionado = signal<Ejercicio | null>(null);
 
   protected readonly perfil = rxResource({
-    stream: () => this.usuarioService.getMiPerfil(),
+    stream: () => this.usuarioService.getPerfilGuardado(),
   });
 
   protected readonly esDuenio = computed(() => {

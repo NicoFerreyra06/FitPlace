@@ -23,7 +23,7 @@ export class MisRutinas implements OnInit {
   ngOnInit() {
     forkJoin({
       rutinas: this.rutinasService.getMisRutinas(),
-      usuario: this.usuarioService.getMiPerfil(),
+      usuario: this.usuarioService.getPerfilGuardado(),
     }).subscribe({
       next: ({ rutinas, usuario }) => {
         this.rutinas.set(rutinas.content);
