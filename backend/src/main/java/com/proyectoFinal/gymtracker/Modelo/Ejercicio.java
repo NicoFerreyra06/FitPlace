@@ -2,6 +2,7 @@ package com.proyectoFinal.gymtracker.Modelo;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class Ejercicio {
             }
 
     )
+    @BatchSize(size = 50)
     private List<Musculo> musculosPrincipales;
 
     @ManyToMany
@@ -44,5 +46,6 @@ public class Ejercicio {
                     @Index(name = "idx_ems_musculo_id", columnList = "musculo_id")
             }
     )
+    @BatchSize(size = 50)
     private List<Musculo> musculosSecundarios;
 }
