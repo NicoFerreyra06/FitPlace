@@ -13,6 +13,8 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
+
+        config.setMaxAge(3600L);
         config.setAllowCredentials(true);
 
         // url donde corre React
@@ -30,6 +32,7 @@ public class CorsConfig {
 
         // Aplicar esta regla a todos los endpoints (/**)
         source.registerCorsConfiguration("/**", config);
+
         return new CorsFilter(source);
     }
 }
