@@ -137,8 +137,9 @@ export class MisAmigos implements OnInit {
       case 'ENTRENADOR':
         return 'Entrenador';
       case 'ADMIN':
-      case 'ADMIN_GIMNASIO':
         return 'Administrador';
+      case 'ADMIN_GIMNASIO':
+        return 'Admin de gimnasio';
       default:
         return 'Usuario';
     }

@@ -101,6 +101,23 @@ export class Home {
     this.perfil.hasValue() ? (this.perfil.value().rachaActualDias ?? 0) : 0,
   );
 
+  protected readonly etiquetaRol = computed(() => {
+    if (!this.perfil.hasValue()) {
+      return '';
+    }
+
+    switch (this.perfil.value().rol) {
+      case 'ENTRENADOR':
+        return 'Entrenador';
+      case 'ADMIN':
+        return 'Admin';
+      case 'ADMIN_GIMNASIO':
+        return 'Dueño gimnasio';
+      default:
+        return 'Usuario';
+    }
+  });
+
   protected readonly sinRecords = computed(
     () => (this.ultimoRecord.error() as HttpErrorResponse | undefined)?.status === 404,
   );
