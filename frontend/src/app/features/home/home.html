@@ -53,6 +53,17 @@
         @if (!perfil.error()) {
         <dl class="datos">
             <div class="dato">
+                <dt>Cuenta</dt>
+                <dd>
+                @if (perfil.hasValue()) {
+                    {{ etiquetaRol() }}
+                } @else {
+                    <span class="placeholder placeholder--valor" aria-hidden="true"></span>
+                }
+                </dd>
+            </div>
+            
+            <div class="dato">
             <dt>Racha</dt>
             <dd>
                 @if (perfil.hasValue()) {
