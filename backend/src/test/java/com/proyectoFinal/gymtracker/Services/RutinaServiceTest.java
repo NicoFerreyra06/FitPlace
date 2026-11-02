@@ -165,17 +165,17 @@ public class RutinaServiceTest {
     }
 
     @Test
-    @DisplayName("Deberia guardar el nombre del dia sin espacios y dejarlo en null si viene vacio")
-    void shouldNormalizeNombreDiaOnCreate() {
+    @DisplayName("Deberia guardar el nombre de cada dia sin los espacios de los costados")
+    void shouldTrimNombreDiaOnCreate() {
         rutinaRequest.setDias(List.of(
                 diaRequest(DayOfWeek.MONDAY, "  Push A  "),
-                diaRequest(DayOfWeek.WEDNESDAY, "   ")));
+                diaRequest(DayOfWeek.WEDNESDAY, "Piernas")));
         when(rutinaRepository.save(any(Rutina.class))).thenAnswer(inv -> inv.getArgument(0));
 
         RutinaResponse response = rutinaService.createRutina(rutinaRequest, usuario);
 
         assertEquals("Push A", response.getDiaRutinas().get(0).getNombre());
-        assertNull(response.getDiaRutinas().get(1).getNombre());
+        assertEquals("Piernas", response.getDiaRutinas().get(1).getNombre());
     }
 
     @Test
@@ -203,31 +203,5 @@ public class RutinaServiceTest {
 
         assertEquals("Push A", response.getDiaRutinas().get(0).getNombre());
         assertEquals(100L, response.getDiaRutinas().get(0).getId());
-    }
-
-    @Test
-    @DisplayName("Deberia borrar el nombre de un dia existente si al editar viene vacio")
-    void shouldClearNombreDiaWhenBlank() {
-        Rutina rutinaExistente = Rutina.builder()
-                .id(10L)
-                .nombre("Fuerza 4 dias")
-                .creador(usuario)
-                .build();
-        DiaRutina lunes = DiaRutina.builder()
-                .id(100L)
-                .diaDeLaSemana(DayOfWeek.MONDAY)
-                .nombre("Pecho")
-                .rutina(rutinaExistente)
-                .ejercicios(new ArrayList<>())
-                .build();
-        rutinaExistente.setDias(new ArrayList<>(List.of(lunes)));
-
-        rutinaRequest.setDias(List.of(diaRequest(DayOfWeek.MONDAY, "")));
-        when(rutinaRepository.findByIdAndActivaTrue(10L)).thenReturn(Optional.of(rutinaExistente));
-        when(rutinaRepository.save(any(Rutina.class))).thenAnswer(inv -> inv.getArgument(0));
-
-        RutinaResponse response = rutinaService.updateRutina(usuario, rutinaRequest, 10L);
-
-        assertNull(response.getDiaRutinas().get(0).getNombre());
     }
 }

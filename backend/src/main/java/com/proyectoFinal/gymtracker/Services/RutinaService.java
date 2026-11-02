@@ -258,9 +258,9 @@ public class RutinaService {
 
     // === Metodos auxiliares ===
 
-    // Un nombre vacío o con solo espacios se guarda como null: el front muestra el nombre de la rutina en su lugar
+    // El @NotBlank del request garantiza que el nombre llega con texto; acá solo se recortan los espacios
     private String normalizarNombreDia(String nombre) {
-        return nombre == null || nombre.isBlank() ? null : nombre.trim();
+        return nombre == null ? null : nombre.trim();
     }
 
     private RutinaResponse mapRutinaResponse(Rutina rutina){

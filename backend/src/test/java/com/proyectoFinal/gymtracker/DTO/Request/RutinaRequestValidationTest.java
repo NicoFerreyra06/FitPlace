@@ -8,6 +8,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.DayOfWeek;
 import java.util.List;
@@ -49,20 +52,35 @@ public class RutinaRequestValidationTest {
                 .build();
     }
 
+    private ConstraintViolation<RutinaRequest> unicoError(RutinaRequest request) {
+        Set<ConstraintViolation<RutinaRequest>> errores = validator.validate(request);
+        assertEquals(1, errores.size());
+        return errores.iterator().next();
+    }
+
     @Test
-    @DisplayName("Deberia aceptar un dia sin nombre o con hasta 40 caracteres")
-    void acceptsNombreDiaOptionalAndUpTo40() {
-        assertTrue(validator.validate(rutinaConDia(null)).isEmpty());
+    @DisplayName("Deberia aceptar un nombre de dia de hasta 40 caracteres")
+    void acceptsNombreDiaUpTo40() {
+        assertTrue(validator.validate(rutinaConDia("Push A")).isEmpty());
         assertTrue(validator.validate(rutinaConDia("a".repeat(40))).isEmpty());
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"", "   "})
+    @DisplayName("Deberia exigir el nombre del dia")
+    void rejectsMissingNombreDia(String nombreDia) {
+        ConstraintViolation<RutinaRequest> error = unicoError(rutinaConDia(nombreDia));
+
+        assertEquals("dias[0].nombre", error.getPropertyPath().toString());
+        assertEquals("Cada día de la rutina necesita un nombre", error.getMessage());
     }
 
     @Test
     @DisplayName("Deberia rechazar un nombre de dia de mas de 40 caracteres")
     void rejectsNombreDiaLongerThan40() {
-        Set<ConstraintViolation<RutinaRequest>> errores = validator.validate(rutinaConDia("a".repeat(41)));
+        ConstraintViolation<RutinaRequest> error = unicoError(rutinaConDia("a".repeat(41)));
 
-        assertEquals(1, errores.size());
-        ConstraintViolation<RutinaRequest> error = errores.iterator().next();
         assertEquals("dias[0].nombre", error.getPropertyPath().toString());
         assertEquals("El nombre del día no puede superar los 40 caracteres", error.getMessage());
     }
@@ -73,9 +91,6 @@ public class RutinaRequestValidationTest {
         RutinaRequest request = rutinaConDia("Push A");
         request.getDias().get(0).setEjercicios(List.of());
 
-        Set<ConstraintViolation<RutinaRequest>> errores = validator.validate(request);
-
-        assertEquals(1, errores.size());
-        assertEquals("dias[0].ejercicios", errores.iterator().next().getPropertyPath().toString());
+        assertEquals("dias[0].ejercicios", unicoError(request).getPropertyPath().toString());
     }
 }
