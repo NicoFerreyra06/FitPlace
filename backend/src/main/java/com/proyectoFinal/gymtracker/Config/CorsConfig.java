@@ -17,13 +17,10 @@ public class CorsConfig {
         config.setMaxAge(3600L);
         config.setAllowCredentials(true);
 
-        // url donde corre React
-        config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedOrigin("http://localhost:4200");
 
         // permitir todos los headers (Authorization, Content-Type, etc.)
         config.addAllowedHeader("*");
-
-        // permitir los métodos HTTP que vas a usar
         config.addAllowedMethod("GET");
         config.addAllowedMethod("POST");
         config.addAllowedMethod("PUT");
