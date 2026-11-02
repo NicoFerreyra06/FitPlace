@@ -59,7 +59,7 @@ npm install
 npm start
 ```
 
-Queda corriendo en `http://localhost:5173` (el puerto que el backend tiene habilitado en CORS).
+Queda corriendo en `http://localhost:4200` (el puerto que el backend tiene habilitado en CORS).
 
 <details>
 <summary><b>Variables de entorno</b></summary>
@@ -74,7 +74,7 @@ Queda corriendo en `http://localhost:5173` (el puerto que el backend tiene habil
 | `MERCADOPAGO_CLIENT_SECRET` | Client secret de Mercado Pago *(pagos)* |
 | `MERCADOPAGO_WEBHOOK_SECRET` | Secret de los webhooks *(pagos)* |
 | `MERCADOPAGO_NOTIFICATION` | URL pública para notificaciones *(pagos)* |
-| `MERCADOPAGO_URL_RETURN` | URL del front post-pago (default `http://localhost:5173`) |
+| `MERCADOPAGO_URL_RETURN` | URL del front post-pago (default `http://localhost:4200`) |
 
 </details>
 
