@@ -3,7 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Usuario } from '../../core/usuario/usuario';
 import { Rutinas } from '../../core/rutinas/rutinas';
-import { DIAS_SEMANA } from '../../core/rutinas/rutinas.model';
+import { DIAS_SEMANA, etiquetaDia } from '../../core/rutinas/rutinas.model';
 import { Entrenamiento } from '../../core/entrenamiento/entrenamiento';
 import { Records } from '../../core/records/records';
 import { RouterLink } from '@angular/router';
@@ -24,6 +24,7 @@ export class Home {
   private readonly hoy = new Date();
 
   private readonly diaDeHoy = DIAS_SEMANA[(this.hoy.getDay() + 6) % 7].valor;
+  protected readonly etiquetaDiaDeHoy = etiquetaDia(this.diaDeHoy);
   private readonly inicioDeMes = formatDate(this.hoy, 'yyyy-MM-01', 'en');
 
   private readonly titularesSinRutina = ['Elegí una rutina', 'Armá tu plan', 'Empezá hoy', 'Tu primera rutina te espera'];
@@ -88,12 +89,16 @@ export class Home {
     this.rutina.hasValue() ? this.rutina.value().nombre : null,
   );
 
-  protected readonly ejerciciosDeHoy = computed(() =>
+  private readonly diaRutinaDeHoy = computed(() =>
     this.rutina.hasValue()
-      ? (this.rutina.value().diaRutinas.find((d) => d.diaDeLaSemana === this.diaDeHoy)
-          ?.ejercicioRutinas ?? [])
-      : [],
+      ? this.rutina.value().diaRutinas.find((d) => d.diaDeLaSemana === this.diaDeHoy)
+      : undefined,
   );
+
+  protected readonly ejerciciosDeHoy = computed(() => this.diaRutinaDeHoy()?.ejercicioRutinas ?? []);
+
+  /** Nombre que el usuario le puso al día de hoy ("Push A"); null si no le puso ninguno. */
+  protected readonly nombreDiaDeHoy = computed(() => this.diaRutinaDeHoy()?.nombre ?? null);
 
   protected readonly primerEjercicio = computed(() => this.ejerciciosDeHoy()[0]?.nombreEjercicio);
 
