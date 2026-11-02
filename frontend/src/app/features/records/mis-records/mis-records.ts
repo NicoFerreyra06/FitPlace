@@ -1,12 +1,13 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Usuario } from '../../../core/usuario/usuario';
 import { Records } from '../../../core/records/records';
 
 @Component({
-  imports: [DatePipe, FormsModule],
+  imports: [DatePipe, FormsModule, RouterLink],
   selector: 'app-mis-records',
   styleUrl: './mis-records.css',
   templateUrl: './mis-records.html',
