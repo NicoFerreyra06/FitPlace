@@ -158,10 +158,6 @@ select.ng-invalid.ng-touched {
   gap: 8px;
 }
 
-.opcional {
-  font-weight: 400;
-}
-
 .contador {
   font-size: 12px;
   font-variant-numeric: tabular-nums;

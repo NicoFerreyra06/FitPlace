@@ -30,8 +30,13 @@ function crearDiaForm(
 ) {
   return fb.group({
     diaDeLaSemana: fb.control<DiaSemana>(dia, Validators.required),
-    // Opcional: "Push A", "Piernas"... Vacío significa que el día no tiene nombre
-    nombre: fb.control(nombre, Validators.maxLength(NOMBRE_DIA_MAX)),
+    // Obligatorio: es el título del día en el Home ("Hoy toca Push A").
+    // El pattern exige al menos un caracter que no sea espacio.
+    nombre: fb.control(nombre, [
+      Validators.required,
+      Validators.pattern(/\S/),
+      Validators.maxLength(NOMBRE_DIA_MAX),
+    ]),
     ejercicios: fb.array(
       ejercicios.map((ej) => crearEjercicioForm(fb, ej)),
       Validators.minLength(1),
@@ -174,8 +179,7 @@ export class RutinaForm implements OnInit {
     const valor = this.form.getRawValue();
     const request: RutinaRequest = {
       ...valor,
-      // Un nombre con solo espacios cuenta como "sin nombre"
-      dias: valor.dias.map((dia) => ({ ...dia, nombre: dia.nombre.trim() || null })),
+      dias: valor.dias.map((dia) => ({ ...dia, nombre: dia.nombre.trim() })),
     };
     const peticion =
       this.idRutina !== null

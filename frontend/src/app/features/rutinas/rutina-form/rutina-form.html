@@ -38,9 +38,7 @@
                             </div>
                             <div class="field campo-nombre-dia">
                                 <div class="label-fila">
-                                    <label [for]="'nombre-dia-' + i">
-                                        Nombre del día <span class="opcional">(opcional)</span>
-                                    </label>
+                                    <label [for]="'nombre-dia-' + i">Nombre del día</label>
                                     <span class="contador">{{ dia.controls.nombre.value.length }}/{{ nombreDiaMax }}</span>
                                 </div>
                                 <input type="text" [id]="'nombre-dia-' + i" formControlName="nombre"
@@ -50,9 +48,11 @@
                             <button type="button" class="link link--peligro quitar-dia" (click)="quitarDia(i)">Quitar día</button>
                         </header>
                         <p class="ayuda" [id]="'ayuda-nombre-dia-' + i">
-                            Se muestra en el Home y en el detalle de la rutina. Si lo dejás vacío, se usa el nombre de la rutina.
+                            Es el título del día en el Home ("Hoy toca Push A") y en el detalle de la rutina.
                         </p>
-                        @if (dia.controls.nombre.hasError('maxlength')) {
+                        @if (dia.controls.nombre.touched && (dia.controls.nombre.hasError('required') || dia.controls.nombre.hasError('pattern'))) {
+                            <span class="field-error">Poné un nombre para este día</span>
+                        } @else if (dia.controls.nombre.hasError('maxlength')) {
                             <span class="field-error">El nombre del día puede tener hasta {{ nombreDiaMax }} caracteres</span>
                         }
 

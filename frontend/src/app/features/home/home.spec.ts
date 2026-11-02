@@ -86,7 +86,7 @@ describe('Home: titular del día', () => {
     expect(texto).toContain('Rutina Fuerza 4 días');
   });
 
-  it('sin nombre de día muestra el nombre de la rutina, como antes', async () => {
+  it('en un día creado antes de que el nombre fuera obligatorio muestra el nombre de la rutina', async () => {
     const texto = await renderizarCon(null);
 
     expect(texto).toContain('Hoy toca Fuerza 4 días');

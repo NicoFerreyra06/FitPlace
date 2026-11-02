@@ -48,44 +48,51 @@ describe('RutinaForm', () => {
     await fixture.whenStable();
   }
 
+  /** Arma una rutina válida de un día con el nombre indicado. */
+  function completarRutinaDeUnDia(nombreDia: string) {
+    component['form'].controls.nombre.setValue('Fuerza 4 días');
+    component['agregarDia']();
+    const dia = component['dias'].at(0);
+    dia.controls.ejercicios.at(0).controls.ejercicioId.setValue(1);
+    dia.controls.nombre.setValue(nombreDia);
+    return dia;
+  }
+
   it('should create', async () => {
     await crearComponente(null);
     expect(component).toBeTruthy();
   });
 
-  it('manda el nombre del día recortado y null cuando el día no tiene nombre', async () => {
+  it('manda el nombre de cada día sin los espacios de los costados', async () => {
     await crearComponente(null);
-
-    component['form'].controls.nombre.setValue('Fuerza 4 días');
-    component['agregarDia']();
-    component['agregarDia']();
-    const [lunes, martes] = component['dias'].controls;
-    lunes.controls.nombre.setValue('  Push A  ');
-    lunes.controls.ejercicios.at(0).controls.ejercicioId.setValue(1);
-    martes.controls.nombre.setValue('   ');
-    martes.controls.ejercicios.at(0).controls.ejercicioId.setValue(1);
+    completarRutinaDeUnDia('  Push A  ');
 
     component['guardar']();
 
-    expect(enviado?.dias.map((d) => d.nombre)).toEqual(['Push A', null]);
+    expect(enviado?.dias.map((d) => d.nombre)).toEqual(['Push A']);
+  });
+
+  it.each(['', '   '])('no deja guardar un día sin nombre (%j)', async (nombre) => {
+    await crearComponente(null);
+    const dia = completarRutinaDeUnDia(nombre);
+
+    component['guardar']();
+
+    expect(dia.controls.nombre.invalid).toBe(true);
+    expect(enviado).toBeUndefined();
   });
 
   it('no deja guardar un nombre de día de más de 40 caracteres', async () => {
     await crearComponente(null);
-
-    component['form'].controls.nombre.setValue('Fuerza 4 días');
-    component['agregarDia']();
-    const [lunes] = component['dias'].controls;
-    lunes.controls.ejercicios.at(0).controls.ejercicioId.setValue(1);
-    lunes.controls.nombre.setValue('a'.repeat(41));
+    const dia = completarRutinaDeUnDia('a'.repeat(41));
 
     component['guardar']();
 
-    expect(lunes.controls.nombre.hasError('maxlength')).toBe(true);
+    expect(dia.controls.nombre.hasError('maxlength')).toBe(true);
     expect(enviado).toBeUndefined();
   });
 
-  it('carga el nombre de cada día al editar una rutina', async () => {
+  it('al editar carga el nombre de cada día y pide completar los que no tenían', async () => {
     await crearComponente('7', {
       id: 7,
       creadorId: 1,
@@ -103,6 +110,7 @@ describe('RutinaForm', () => {
           ],
         },
         {
+          // Día creado antes de que el nombre fuera obligatorio
           id: 71,
           nombreRutina: 'Fuerza 4 días',
           diaDeLaSemana: 'WEDNESDAY',
@@ -114,7 +122,9 @@ describe('RutinaForm', () => {
       ],
     });
 
-    const nombres = component['dias'].controls.map((d) => d.controls.nombre.value);
-    expect(nombres).toEqual(['Pull B', '']);
+    const [lunes, miercoles] = component['dias'].controls;
+    expect(lunes.controls.nombre.value).toBe('Pull B');
+    expect(miercoles.controls.nombre.value).toBe('');
+    expect(miercoles.controls.nombre.hasError('required')).toBe(true);
   });
 });

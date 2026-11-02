@@ -97,7 +97,7 @@ export class Home {
 
   protected readonly ejerciciosDeHoy = computed(() => this.diaRutinaDeHoy()?.ejercicioRutinas ?? []);
 
-  /** Nombre que el usuario le puso al día de hoy ("Push A"); null si no le puso ninguno. */
+  /** Nombre del día de hoy ("Push A"); null solo en días creados antes de que el nombre fuera obligatorio. */
   protected readonly nombreDiaDeHoy = computed(() => this.diaRutinaDeHoy()?.nombre ?? null);
 
   protected readonly primerEjercicio = computed(() => this.ejerciciosDeHoy()[0]?.nombreEjercicio);
