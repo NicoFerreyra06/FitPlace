@@ -16,5 +16,6 @@ public class DiaRutinaResponse {
     private Long id;
     private String nombreRutina;
     private DayOfWeek diaDeLaSemana;
+    private String nombre;
     private List<EjercicioRutinaResponse> ejercicioRutinas;
 }

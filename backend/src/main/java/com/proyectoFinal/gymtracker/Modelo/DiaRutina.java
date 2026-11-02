@@ -27,6 +27,10 @@ public class DiaRutina {
     @Column(nullable = false)
     private DayOfWeek diaDeLaSemana;
 
+    // Nombre opcional que el usuario le da al día ("Push A", "Pecho / Hombro / Tríceps")
+    @Column(length = 40)
+    private String nombre;
+
     @ManyToOne
     @JoinColumn(name = "rutina_id", nullable = false)
     @JsonIgnore
