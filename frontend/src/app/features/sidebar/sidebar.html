@@ -102,6 +102,21 @@
     </a>
     <a
       class="item"
+      routerLink="/entrenadores"
+      routerLinkActive="activo"
+      ariaCurrentWhenActive="page"
+      (click)="cerrarMenu()"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M10 2h4" />
+        <circle cx="12" cy="14" r="8" />
+        <path d="M12 14V10" />
+        <path d="M18.5 7.5l1.5-1.5" />
+      </svg>
+      Entrenadores
+    </a>
+    <a
+      class="item"
       routerLink="/amigos"
       routerLinkActive="activo"
       ariaCurrentWhenActive="page"
