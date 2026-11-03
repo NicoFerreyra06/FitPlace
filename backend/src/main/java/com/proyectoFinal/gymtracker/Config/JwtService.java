@@ -32,6 +32,25 @@ public class JwtService {
                 .compact();
     }
 
+    public String generarStateMp(Long idGimnasio) {
+        return Jwts.builder()
+                .setSubject("mp-vinculacion")
+                .claim("gimnasioId", idGimnasio)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5)) // 5 minutos
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public Long extraerGimnasioIdDeState(String state) {
+        return extractClaim(state, claims -> {
+            if (!claims.getSubject().equals("mp-vinculacion")) {
+                throw new RuntimeException("No se puede realizar esta vinculacion");
+            }
+            return claims.get("gimnasioId", Long.class);
+        });
+    }
+
     //obtiene el email del usuario almacenado en el campo subject del token JWT
     public String extraerUsername(String token) {
         return extractClaim(token, Claims::getSubject);

@@ -1,5 +1,6 @@
 package com.proyectoFinal.gymtracker.Services;
 
+import com.proyectoFinal.gymtracker.Config.JwtService;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
 import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
@@ -24,6 +25,7 @@ import java.util.Map;
 public class MercadoPagoAuthService {
 
     private final GimnasioRepository gimnasioRepository;
+    private final JwtService jwtService;
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Value("${mp.client.id:}")
@@ -35,6 +37,9 @@ public class MercadoPagoAuthService {
     @Value("${mp.redirect.uri:}")
     private String redirectUri;
 
+    @Value("${app.front.url:http://localhost:4200}")
+    private String urlFront;
+
     public String getVinculacion(Long idGimnasio, Usuario usuario) {
         Gimnasio gimnasio = gimnasioRepository.findById(idGimnasio)
                 .orElseThrow(() -> new ResourceNotFoundException("Gimnasio no encontrado"));
@@ -44,35 +49,40 @@ public class MercadoPagoAuthService {
         }
 
         return String.format("https://auth.mercadopago.com/authorization?client_id=%s&response_type=code&platform_id=mp&state=%s&redirect_uri=%s",
-                clientId, idGimnasio, redirectUri);
+                clientId, jwtService.generarStateMp(idGimnasio), redirectUri);
     }
 
     public String mercadoPagoCallback(String code, String state) {
-        Gimnasio gimnasio = gimnasioRepository.findById(Long.parseLong(state))
-                .orElseThrow(() -> new ResourceNotFoundException("Gimnasio no encontrado"));
+        try {
+            Gimnasio gimnasio = gimnasioRepository.findById(jwtService.extraerGimnasioIdDeState(state))
+                    .orElseThrow(() -> new ResourceNotFoundException("Gimnasio no encontrado"));
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("client_secret", clientSecret);
-        map.add("client_id", clientId);
-        map.add("grant_type", "authorization_code");
-        map.add("code", code);
-        map.add("redirect_uri", redirectUri);
+            MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+            map.add("client_secret", clientSecret);
+            map.add("client_id", clientId);
+            map.add("grant_type", "authorization_code");
+            map.add("code", code);
+            map.add("redirect_uri", redirectUri);
 
-        Map response = restTemplate.postForObject("https://api.mercadopago.com/oauth/token", new HttpEntity<>(map, headers), Map.class);
+            Map response = restTemplate.postForObject("https://api.mercadopago.com/oauth/token", new HttpEntity<>(map, headers), Map.class);
 
-        if (response == null || !response.containsKey("access_token")) {
-            throw new BusinessLogicException("Error al vincular con Mercado Pago");
+            if (response == null || !response.containsKey("access_token")) {
+                throw new BusinessLogicException("Error al vincular con Mercado Pago");
+            }
+
+            gimnasio.setMpAccessToken((String) response.get("access_token"));
+            if (response.containsKey("user_id")) {
+                gimnasio.setMpUserId(String.valueOf(response.get("user_id")));
+            }
+            gimnasioRepository.save(gimnasio);
+
+            return urlFront + "/gimnasios?mp=ok";
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            return urlFront + "/gimnasios?mp=error";
         }
-
-        gimnasio.setMpAccessToken((String) response.get("access_token"));
-        if (response.containsKey("user_id")) {
-            gimnasio.setMpUserId(String.valueOf(response.get("user_id")));
-        }
-        gimnasioRepository.save(gimnasio);
-
-        return "Vinculación exitosa. Puedes cerrar esta ventana.";
     }
 }
