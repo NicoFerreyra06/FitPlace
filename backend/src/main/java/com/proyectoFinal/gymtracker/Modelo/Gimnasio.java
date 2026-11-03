@@ -60,6 +60,8 @@ public class Gimnasio {
     @Enumerated(EnumType.STRING)
     private List<DayOfWeek> diasAbierto = new ArrayList<>();
 
+    private String fotoUrl;
+
     @Column(name = "mp_access_token")
     private String mpAccessToken;
 

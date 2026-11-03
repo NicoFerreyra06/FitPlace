@@ -30,6 +30,9 @@ public class GimnasioRequest {
     @DecimalMin(value = "0.1", message = "El precio de la cuota debe ser mayor a 0.1")
     private Double precioCuota;
 
+    @Size(max = 255, message = "La URL de la foto no puede superar los 255 caracteres")
+    private String fotoUrl;
+
     @NotNull(message = "El ID del administrador del gimnasio es obligatorio.")
     private Long adminId;
 

@@ -1,5 +1,6 @@
 package com.proyectoFinal.gymtracker.DTO.Response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +25,8 @@ public class GimnasioResponse {
     private List<DayOfWeek> diasDeApertura;
     private LocalTime horarioApertura;
     private LocalTime horarioCierre;
-    @com.fasterxml.jackson.annotation.JsonProperty("isMercadoPagoVinculado")
+    private String fotoUrl;
+
+    @JsonProperty("isMercadoPagoVinculado")
     private Boolean isMercadoPagoVinculado;
 }

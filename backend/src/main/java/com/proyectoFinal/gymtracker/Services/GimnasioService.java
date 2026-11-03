@@ -48,6 +48,7 @@ public class GimnasioService {
                  .horarioApertura(request.getHorarioApertura())
                  .horarioCierre(request.getHorarioCierre())
                  .diasAbierto(request.getDiasAbierto())
+                 .fotoUrl(request.getFotoUrl())
                  .build();
 
          return gimnasioToResponse(gimnasioRepository.save(gimnasio));
@@ -78,6 +79,7 @@ public class GimnasioService {
         gimnasio.setHorarioApertura(request.getHorarioApertura());
         gimnasio.setHorarioCierre(request.getHorarioCierre());
         gimnasio.setDiasAbierto(request.getDiasAbierto());
+        if (request.getFotoUrl() != null) gimnasio.setFotoUrl(request.getFotoUrl());
 
         return gimnasioToResponse(gimnasioRepository.save(gimnasio));
     }
@@ -138,6 +140,7 @@ public class GimnasioService {
                 .nombreAdmin(gimnasio.getAdmin().getNombreUsuario())
                 .horarioApertura(gimnasio.getHorarioApertura())
                 .horarioCierre(gimnasio.getHorarioCierre())
+                .fotoUrl(gimnasio.getFotoUrl())
                 .diasDeApertura(gimnasio.getDiasAbierto())
                 .isMercadoPagoVinculado(gimnasio.getMpAccessToken() != null && !gimnasio.getMpAccessToken().isEmpty())
                 .build();

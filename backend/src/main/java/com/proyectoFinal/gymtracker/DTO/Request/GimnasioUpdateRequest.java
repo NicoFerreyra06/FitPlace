@@ -30,6 +30,9 @@ public class GimnasioUpdateRequest {
     @DecimalMin(value = "0.1", message = "El precio de la cuota debe ser mayor a 0.1")
     private Double precioCuota;
 
+    @Size(max = 255, message = "La URL de la foto no puede superar los 255 caracteres")
+    private String fotoUrl;
+
     @AssertTrue(message = "El horario de apertura debe ser posterior al horario de cierre")
     private boolean esValidoHorario(){
         if (horarioApertura == null || horarioCierre == null){
