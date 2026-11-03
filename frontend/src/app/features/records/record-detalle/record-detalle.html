@@ -1,0 +1,129 @@
+<main class="detalle">
+  <header class="topbar">
+    <a class="back" routerLink="/records">&leftarrow; Volver a mis récords</a>
+  </header>
+
+  @if (ejercicio.isLoading()) {
+    <p class="estado-msg" role="status">Cargando ejercicio…</p>
+  } @else if (ejercicio.error()) {
+    <div class="estado-error" role="alert">
+      <p class="error-msg">No se pudo cargar el ejercicio.</p>
+      <button type="button" class="btn btn--sm" (click)="ejercicio.reload()">Reintentar</button>
+    </div>
+  } @else if (ejercicio.value(); as ej) {
+    <h1>{{ ej.nombre }}</h1>
+
+    <section class="seccion" aria-labelledby="titulo-mi-record">
+      <h2 id="titulo-mi-record">Tu récord</h2>
+
+      @if (miRecord.isLoading()) {
+        <p class="muted" role="status">Cargando tu récord…</p>
+      } @else if (miRecord.error()) {
+        <div class="fila-error" role="alert">
+          <span class="error-msg">No se pudo cargar tu récord.</span>
+          <button type="button" class="btn btn--sm" (click)="miRecord.reload()">Reintentar</button>
+        </div>
+      } @else if (miRecord.value(); as record) {
+        <div class="mi-record">
+          <div class="mi-record-peso">
+            <span class="peso-valor">{{ record.pesoMaximo }} kg</span>
+            <span class="muted">
+              Logrado el
+              <time [attr.datetime]="record.fechaLogro">{{
+                record.fechaLogro | date: 'dd/MM/yyyy'
+              }}</time>
+            </span>
+          </div>
+          @if (miPosicion()) {
+            <span class="puesto">Puesto #{{ miPosicion() }} de {{ totalRanking() }}</span>
+          }
+        </div>
+      } @else {
+        <div class="sin-record">
+          <p class="muted">Todavía no tenés récord en este ejercicio.</p>
+          <a class="link" routerLink="/entrenamientos/hoy">
+            Registrar entrenamiento <span class="flecha" aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+      }
+    </section>
+
+    <section class="seccion" aria-labelledby="titulo-ranking">
+      <h2 id="titulo-ranking">Ranking</h2>
+
+      @if (filasRanking().length === 0) {
+        @if (paginaRanking.isLoading()) {
+          <p class="muted" role="status">Cargando ranking…</p>
+        } @else if (paginaRanking.error()) {
+          <div class="fila-error" role="alert">
+            <span class="error-msg">No se pudo cargar el ranking.</span>
+            <button type="button" class="btn btn--sm" (click)="paginaRanking.reload()">
+              Reintentar
+            </button>
+          </div>
+        } @else {
+          <p class="muted">Nadie registró este ejercicio todavía.</p>
+        }
+      } @else {
+        <table class="tabla-ranking">
+          <caption class="sr-only">
+            Ranking de récords en {{ ej.nombre }}
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col" class="col-posicion">#</th>
+              <th scope="col">Usuario</th>
+              <th scope="col" class="col-peso">Peso</th>
+              <th scope="col" class="col-fecha">Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (fila of filasRanking(); track fila.id; let i = $index) {
+              @let propia = esPropia(fila);
+              <tr [class.propia]="propia" [class.podio]="i < 3">
+                <td class="col-posicion">{{ i + 1 }}</td>
+                <td>
+                  {{ fila.nombreUsuario }}
+                  @if (propia) {
+                    <span class="badge-vos">Vos</span>
+                  }
+                </td>
+                <td class="col-peso">{{ fila.pesoMaximo }} kg</td>
+                <td class="col-fecha">
+                  <time [attr.datetime]="fila.fechaLogro">{{
+                    fila.fechaLogro | date: 'dd/MM/yyyy'
+                  }}</time>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        @if (errorAlCargarMas()) {
+          <div class="fila-error" role="alert">
+            <span class="error-msg">No se pudieron cargar más posiciones.</span>
+            <button type="button" class="btn btn--sm" (click)="paginaRanking.reload()">
+              Reintentar
+            </button>
+          </div>
+        } @else if (hayMas() || cargandoMas()) {
+          <button
+            type="button"
+            class="btn btn--contorno btn--sm ver-mas"
+            [disabled]="cargandoMas()"
+            (click)="verMas()"
+          >
+            {{ cargandoMas() ? 'Cargando…' : 'Ver más' }}
+          </button>
+        }
+      }
+    </section>
+  } @else {
+    <div class="estado-error">
+      <p class="error-msg">No encontramos este ejercicio.</p>
+      <a class="link" routerLink="/records">
+        Ir a mis récords <span class="flecha" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+  }
+</main>

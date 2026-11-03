@@ -100,6 +100,38 @@
   transform: translateY(-2px);
 }
 
+.card-link {
+  display: flex;
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+}
+
+.card-link > .card {
+  flex: 1;
+}
+
+.card-link:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.ver-ranking {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  color: var(--primary);
+}
+
+.ver-ranking .flecha {
+  transition: transform 0.2s var(--ease);
+}
+
+.card-link:hover .ver-ranking .flecha {
+  transform: translateX(3px);
+}
+
 .card-header {
   display: flex;
   align-items: flex-start;
@@ -192,11 +224,13 @@
 @media (prefers-reduced-motion: reduce) {
   .card,
   .search-input,
-  .search-clear {
+  .search-clear,
+  .ver-ranking .flecha {
     transition: none;
   }
 
-  .card:hover {
+  .card:hover,
+  .card-link:hover .ver-ranking .flecha {
     transform: none;
   }
 }

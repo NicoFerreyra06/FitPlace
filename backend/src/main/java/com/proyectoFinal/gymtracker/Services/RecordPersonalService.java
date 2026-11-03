@@ -69,7 +69,7 @@ public class RecordPersonalService {
 
     // Muestra el ranking de records personales de todos los usuarios.
     public Page<RecordPersonalResponse> getRankingRecordsPersonalesByEjercicioId(Pageable pageable, Long ejercicioId) {
-        return recordPersonalRepository.findByEjercicioIdOrderByPesoMaximoDesc(pageable,ejercicioId)
+        return recordPersonalRepository.findRankingByEjercicioId(ejercicioId, pageable)
                 .map(this::toResponse);
     }
 
