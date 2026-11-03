@@ -47,6 +47,7 @@
     } @else {
         <section class="cards-grid" aria-label="Lista de récords personales">
         @for (record of recordsFiltrados(); track record.id) {
+            <a class="card-link" [routerLink]="['/records', record.ejercicioId]">
             <article class="card">
             <header class="card-header">
                 <h3>{{ record.nombreEjercicio }}</h3>
@@ -59,12 +60,16 @@
             </div>
 
             <footer class="card-footer">
+                <span>
                 <span class="fecha-label">Logrado el</span>
                 <time [attr.datetime]="record.fechaLogro">{{
                 record.fechaLogro | date: 'dd/MM/yyyy'
                 }}</time>
+                </span>
+                <span class="ver-ranking">Ver ranking <span class="flecha" aria-hidden="true">&rarr;</span></span>
             </footer>
             </article>
+            </a>
         } @empty {
             @if (busqueda()) {
             <p class="empty-state">No se encontraron récords para "{{ busqueda() }}".</p>

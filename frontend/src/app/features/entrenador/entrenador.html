@@ -1,0 +1,136 @@
+<main class="entrenadores-page">
+
+  @if (cargando()) {
+    <p class="muted" role="status">Cargando información de entrenadores…</p>
+  } @else {
+
+    <section class="seccion-actual">
+      <div class="topbar">
+        <h1>Mi entrenador actual</h1>
+      </div>
+
+      @if (miEntrenador()) {
+        <div class="card tarjeta-entrenador">
+          <div class="card-encabezado">
+            <div class="avatar avatar--destacado" aria-hidden="true">
+              {{ miEntrenador()!.username.charAt(0).toUpperCase() }}
+            </div>
+            <div class="info">
+              <div class="titulo-con-badge">
+                <strong>{{ miEntrenador()!.username }}</strong>
+                <span class="badge badge--activo">Asignado</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-acciones">
+            @if (confirmandoDesvinculacion()) {
+              <span class="muted">¿Desvincular a {{ miEntrenador()!.username }} como tu entrenador?</span>
+              <button
+                class="btn btn--sm btn--peligro"
+                type="button"
+                [disabled]="desvinculando()"
+                (click)="desvincular()"
+              >
+                {{ desvinculando() ? 'Desvinculando…' : 'Sí, desvincular' }}
+              </button>
+              <button
+                class="link link--neutro"
+                type="button"
+                [disabled]="desvinculando()"
+                (click)="cancelarDesvinculacion()"
+              >
+                No
+              </button>
+            } @else {
+              <button
+                class="link link--peligro"
+                type="button"
+                (click)="pedirDesvinculacion()"
+              >
+                Desvincular entrenador
+              </button>
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="card tarjeta-vacia">
+          <h2>No tenés ningún entrenador asignado.</h2>
+          <p class="muted">
+            Elegí un entrenador de la lista de abajo para comenzar a recibir rutinas personalizadas y seguimiento.
+          </p>
+        </div>
+      }
+    </section>
+
+    @if (mensajeExito()) {
+    <div class="alerta alerta--exito" role="status">
+      <span>{{ mensajeExito() }}</span>
+      <button type="button" class="btn-cerrar" (click)="mensajeExito.set(null)" aria-label="Cerrar">✕</button>
+    </div>
+  }
+
+  @if (errorMsg()) {
+    <div class="alerta alerta--error" role="alert">
+      <span>{{ errorMsg() }}</span>
+      <button type="button" class="btn-cerrar" (click)="errorMsg.set(null)" aria-label="Cerrar">✕</button>
+    </div>
+  }
+
+    <section class="seccion-lista">
+      <div class="seccion-header">
+        <h1>Entrenadores disponibles</h1>
+        <p class="muted">
+          {{ miEntrenador() ? 'Podés cambiarte de entrenador en cualquier momento seleccionando otro:' : 'Seleccioná el entrenador que prefieras para comenzar:' }}
+        </p>
+      </div>
+
+      @if (entrenadores().length === 0) {
+        <div class="vacio card">
+          <p><strong>No hay entrenadores registrados por el momento.</strong></p>
+          <p class="muted">Por favor, volvé a intentarlo más tarde.</p>
+        </div>
+      } @else {
+        <ul class="lista">
+          @for (entrenador of entrenadores(); track entrenador.id) {
+            <li class="item" [class.item--actual]="miEntrenador()?.id === entrenador.id">
+              <div class="avatar" aria-hidden="true">
+                {{ entrenador.username.charAt(0).toUpperCase() }}
+              </div>
+
+              <div class="info">
+                <div class="titulo-con-badge">
+                  <strong>{{ entrenador.username }}</strong>
+                  @if (miEntrenador()?.id === entrenador.id) {
+                    <span class="badge badge--activo">Tu entrenador actual</span>
+                  }
+                </div>
+              </div>
+
+              <div class="acciones-item">
+                @if (miEntrenador()?.id === entrenador.id) {
+                  <span class="badge badge--asignado">Asignado</span>
+                } @else {
+                  <button
+                    class="btn btn--sm"
+                    type="button"
+                    [disabled]="asignando() === entrenador.id"
+                    (click)="asignar(entrenador)"
+                  >
+                    @if (asignando() === entrenador.id) {
+                      Asignando…
+                    } @else if (miEntrenador()) {
+                      Cambiar a este
+                    } @else {
+                      Asignarme
+                    }
+                  </button>
+                }
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  }
+</main>

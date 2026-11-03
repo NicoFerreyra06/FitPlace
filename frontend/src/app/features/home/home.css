@@ -22,10 +22,26 @@
   font-weight: 600;
   letter-spacing: -0.055em;
   line-height: 0.95;
+  /* Un nombre de día largo sin espacios no debe desbordar en mobile */
+  overflow-wrap: anywhere;
 }
 
 .punto {
   color: var(--primary);
+}
+
+/* "Martes · Rutina Fuerza 4 días" arriba del titular cuando el día tiene nombre */
+.contexto {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.contexto-rutina {
+  color: var(--text);
 }
 
 .bajada {

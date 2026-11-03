@@ -25,7 +25,13 @@
                 @for (dia of diasOrdenados(); track dia.id) {
                     <section class="dia" [class.abierto]="estaAbierto(dia)">
                         <button type="button" class="dia-toggle" (click)="toggleDia(dia)">
-                            <span class="dia-nombre">{{ etiquetaDia(dia.diaDeLaSemana) }}</span>
+                            <span class="dia-nombre">
+                                <span class="dia-semana" [class.secundario]="dia.nombre">{{ etiquetaDia(dia.diaDeLaSemana) }}</span>
+                                @if (dia.nombre) {
+                                    <span class="dia-separador" aria-hidden="true">·</span>
+                                    <span>{{ dia.nombre }}</span>
+                                }
+                            </span>
                             <span class="dia-resumen">{{ dia.ejercicioRutinas.length }} ejercicios</span>
                             <span class="flecha" [class.rotada]="estaAbierto(dia)">▸</span>
                         </button>

@@ -111,6 +111,15 @@ h1 {
 
 .dia-nombre {
   flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Si el día tiene nombre ("Lunes · Push A"), el día de la semana pasa a segundo plano */
+.dia-semana.secundario,
+.dia-separador {
+  font-weight: 500;
+  color: var(--text-muted);
 }
 
 .dia-resumen {

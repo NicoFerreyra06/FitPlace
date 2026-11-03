@@ -1,0 +1,260 @@
+.entrenadores-page {
+  min-height: 100dvh;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.muted {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.alerta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+}
+
+.alerta--exito {
+  color: var(--success);
+  background: rgb(45 212 191 / 0.12);
+  border: 1px solid var(--success);
+}
+
+.alerta--error {
+  color: var(--danger);
+  background: rgb(248 113 113 / 0.12);
+  border: 1px solid var(--danger);
+}
+
+.btn-cerrar {
+  padding: 2px 4px;
+  font-size: 16px;
+  line-height: 1;
+  color: currentColor;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.btn-cerrar:hover {
+  opacity: 1;
+}
+
+.seccion-actual,
+.seccion-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.seccion-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.tarjeta-entrenador {
+  border-color: rgb(200 241 105 / 0.35);
+  background: linear-gradient(135deg, rgb(200 241 105 / 0.1), rgb(200 241 105 / 0.02));
+}
+
+.tarjeta-vacia {
+  border-style: dashed;
+  background: transparent;
+}
+
+.tarjeta-vacia p strong {
+  color: var(--text);
+}
+
+.card-encabezado {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: default;
+}
+
+.card-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  padding-top: 10px;
+  border-top: 1px solid rgb(255 255 255 / 0.06);
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
+}
+
+.item:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+}
+
+.item--actual {
+  border-color: rgb(200 241 105 / 0.25);
+  background: rgb(200 241 105 / 0.04);
+}
+
+.avatar {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--primary);
+  background: rgb(200 241 105 / 0.1);
+  border: 1px solid rgb(200 241 105 / 0.3);
+  border-radius: 50%;
+  cursor: default;
+}
+
+.avatar--destacado {
+  width: 50px;
+  height: 50px;
+  font-size: 20px;
+}
+
+.info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  cursor: default;
+}
+
+.titulo-con-badge {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.titulo-con-badge strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.badge--activo {
+  color: var(--primary);
+  background: rgb(200 241 105 / 0.1);
+  border-color: rgb(200 241 105 / 0.4);
+}
+
+.badge--asignado {
+  color: var(--text-muted);
+  background: rgb(255 255 255 / 0.04);
+  border-color: var(--border);
+  cursor: default;
+}
+
+.acciones-item {
+  flex-shrink: 0;
+}
+
+/* Vacio */
+.vacio {
+  text-align: center;
+}
+
+.vacio p strong {
+  color: var(--text);
+}
+
+.link--peligro:disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+@media (max-width: 520px) {
+  .item {
+    flex-wrap: wrap;
+  }
+
+  .acciones-item {
+    margin-left: 56px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item {
+    transition: none;
+  }
+}

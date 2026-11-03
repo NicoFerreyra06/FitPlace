@@ -21,6 +21,9 @@ export function etiquetaDia(dia: DiaSemana): string {
   return DIAS_SEMANA.find((d) => d.valor === dia)?.etiqueta ?? dia;
 }
 
+/** Largo máximo del nombre de un día (el backend valida lo mismo). */
+export const NOMBRE_DIA_MAX = 40;
+
 // ===== Respuestas del backend =====
 
 export interface EjercicioRutinaResponse {
@@ -35,6 +38,8 @@ export interface DiaRutinaResponse {
   id: number;
   nombreRutina: string,
   diaDeLaSemana: DiaSemana;
+  /** Nombre del día ("Push A"). Es obligatorio, pero llega null en días creados antes de que existiera. */
+  nombre: string | null;
   ejercicioRutinas: EjercicioRutinaResponse[];
 }
 
@@ -57,6 +62,7 @@ export interface EjercicioRutinaRequest {
 
 export interface DiaRutinaRequest {
   diaDeLaSemana: DiaSemana;
+  nombre: string;
   ejercicios: EjercicioRutinaRequest[];
 }
 
