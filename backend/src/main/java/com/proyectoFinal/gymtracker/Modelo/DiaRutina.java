@@ -27,6 +27,12 @@ public class DiaRutina {
     @Column(nullable = false)
     private DayOfWeek diaDeLaSemana;
 
+    // Nombre que el usuario le da al día ("Push A", "Pecho / Hombro / Tríceps").
+    // La API lo exige (@NotBlank en DiaRutinaRequest), pero la columna admite null
+    // por los días que se crearon antes de que existiera el campo.
+    @Column(length = 40)
+    private String nombre;
+
     @ManyToOne
     @JoinColumn(name = "rutina_id", nullable = false)
     @JsonIgnore

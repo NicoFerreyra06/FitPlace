@@ -1,10 +1,12 @@
 package com.proyectoFinal.gymtracker.Services;
 
+import com.proyectoFinal.gymtracker.DTO.Request.DiaRutinaRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.RutinaRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.RutinaResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
+import com.proyectoFinal.gymtracker.Modelo.DiaRutina;
 import com.proyectoFinal.gymtracker.Modelo.Rutina;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Repositories.EjercicioRepository;
@@ -18,7 +20,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -150,5 +154,54 @@ public class RutinaServiceTest {
         assertNotNull(response);
         verify(rutinaRepository, never()).delete(any(Rutina.class));
         assertEquals("No tenés permiso para eliminar esta rutina", response.getMessage());
+    }
+
+    private DiaRutinaRequest diaRequest(DayOfWeek dia, String nombre) {
+        DiaRutinaRequest request = new DiaRutinaRequest();
+        request.setDiaDeLaSemana(dia);
+        request.setNombre(nombre);
+        request.setEjercicios(new ArrayList<>());
+        return request;
+    }
+
+    @Test
+    @DisplayName("Deberia guardar el nombre de cada dia sin los espacios de los costados")
+    void shouldTrimNombreDiaOnCreate() {
+        rutinaRequest.setDias(List.of(
+                diaRequest(DayOfWeek.MONDAY, "  Push A  "),
+                diaRequest(DayOfWeek.WEDNESDAY, "Piernas")));
+        when(rutinaRepository.save(any(Rutina.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        RutinaResponse response = rutinaService.createRutina(rutinaRequest, usuario);
+
+        assertEquals("Push A", response.getDiaRutinas().get(0).getNombre());
+        assertEquals("Piernas", response.getDiaRutinas().get(1).getNombre());
+    }
+
+    @Test
+    @DisplayName("Deberia actualizar el nombre de un dia que ya existia al editar la rutina")
+    void shouldUpdateNombreDiaExistente() {
+        Rutina rutinaExistente = Rutina.builder()
+                .id(10L)
+                .nombre("Fuerza 4 dias")
+                .creador(usuario)
+                .build();
+        DiaRutina lunes = DiaRutina.builder()
+                .id(100L)
+                .diaDeLaSemana(DayOfWeek.MONDAY)
+                .nombre("Pecho")
+                .rutina(rutinaExistente)
+                .ejercicios(new ArrayList<>())
+                .build();
+        rutinaExistente.setDias(new ArrayList<>(List.of(lunes)));
+
+        rutinaRequest.setDias(List.of(diaRequest(DayOfWeek.MONDAY, "Push A")));
+        when(rutinaRepository.findByIdAndActivaTrue(10L)).thenReturn(Optional.of(rutinaExistente));
+        when(rutinaRepository.save(any(Rutina.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        RutinaResponse response = rutinaService.updateRutina(usuario, rutinaRequest, 10L);
+
+        assertEquals("Push A", response.getDiaRutinas().get(0).getNombre());
+        assertEquals(100L, response.getDiaRutinas().get(0).getId());
     }
 }

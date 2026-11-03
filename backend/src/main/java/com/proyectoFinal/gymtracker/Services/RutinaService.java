@@ -52,6 +52,7 @@ public class RutinaService {
                     .map(diaDto -> {
                         DiaRutina dia = DiaRutina.builder() // Cada diaRequest se transforma en la entidad DiaRutina
                                 .diaDeLaSemana(diaDto.getDiaDeLaSemana())
+                                .nombre(normalizarNombreDia(diaDto.getNombre()))
                                 .rutina(rutina).build();
 
                         if (diaDto.getEjercicios() != null) {
@@ -109,6 +110,7 @@ public class RutinaService {
                 // Es un día nuevo
                 DiaRutina nuevoDia = DiaRutina.builder()
                         .diaDeLaSemana(diaReq.getDiaDeLaSemana())
+                        .nombre(normalizarNombreDia(diaReq.getNombre()))
                         .rutina(rutinaExistente)
                         .ejercicios(new ArrayList<>())
                         .build();
@@ -127,7 +129,8 @@ public class RutinaService {
                 }
                 diasActuales.add(nuevoDia);
             } else {
-                // El día ya existe, actualizar sus ejercicios
+                // El día ya existe, actualizar su nombre y sus ejercicios
+                diaActual.setNombre(normalizarNombreDia(diaReq.getNombre()));
                 List<EjercicioRutina> ejerciciosActuales = diaActual.getEjercicios();
                 if (ejerciciosActuales == null) {
                     ejerciciosActuales = new ArrayList<>();
@@ -255,6 +258,11 @@ public class RutinaService {
 
     // === Metodos auxiliares ===
 
+    // El @NotBlank del request garantiza que el nombre llega con texto; acá solo se recortan los espacios
+    private String normalizarNombreDia(String nombre) {
+        return nombre == null ? null : nombre.trim();
+    }
+
     private RutinaResponse mapRutinaResponse(Rutina rutina){
         return RutinaResponse.builder()
                 .id(rutina.getId())
@@ -272,6 +280,7 @@ public class RutinaService {
                 .id(diaRutina.getId())
                 .nombreRutina(diaRutina.getRutina().getNombre())
                 .diaDeLaSemana(diaRutina.getDiaDeLaSemana())
+                .nombre(diaRutina.getNombre())
                 .ejercicioRutinas(diaRutina.getEjercicios() != null ? diaRutina.getEjercicios().stream()
                         .map(this::mapToEjercicioRutinaResponse).toList() : List.of())
                 .build();

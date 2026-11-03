@@ -28,13 +28,33 @@
                 @for (dia of dias.controls; track $index; let i = $index) {
                     <section class="dia" [formGroupName]="i">
                         <header class="dia-header">
-                            <select formControlName="diaDeLaSemana" aria-label="Día de la semana">
-                                @for (d of diasLibres(i); track d.valor) {
-                                    <option [value]="d.valor">{{ d.etiqueta }}</option>
-                                }
-                            </select>
-                            <button type="button" class="link link--peligro" (click)="quitarDia(i)">Quitar día</button>
+                            <div class="field campo-dia">
+                                <label [for]="'dia-' + i">Día</label>
+                                <select [id]="'dia-' + i" formControlName="diaDeLaSemana">
+                                    @for (d of diasLibres(i); track d.valor) {
+                                        <option [value]="d.valor">{{ d.etiqueta }}</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="field campo-nombre-dia">
+                                <div class="label-fila">
+                                    <label [for]="'nombre-dia-' + i">Nombre del día</label>
+                                    <span class="contador">{{ dia.controls.nombre.value.length }}/{{ nombreDiaMax }}</span>
+                                </div>
+                                <input type="text" [id]="'nombre-dia-' + i" formControlName="nombre"
+                                       [attr.maxlength]="nombreDiaMax" [attr.aria-describedby]="'ayuda-nombre-dia-' + i"
+                                       placeholder="Ej: Push A, Piernas, Pecho / Hombro / Tríceps" autocomplete="off" />
+                            </div>
+                            <button type="button" class="link link--peligro quitar-dia" (click)="quitarDia(i)">Quitar día</button>
                         </header>
+                        <p class="ayuda" [id]="'ayuda-nombre-dia-' + i">
+                            Es el título del día en el Home ("Hoy toca Push A") y en el detalle de la rutina.
+                        </p>
+                        @if (dia.controls.nombre.touched && (dia.controls.nombre.hasError('required') || dia.controls.nombre.hasError('pattern'))) {
+                            <span class="field-error">Poné un nombre para este día</span>
+                        } @else if (dia.controls.nombre.hasError('maxlength')) {
+                            <span class="field-error">El nombre del día puede tener hasta {{ nombreDiaMax }} caracteres</span>
+                        }
 
                         <div class="cabecera-ejercicios" aria-hidden="true">
                             <span>Ejercicio</span>

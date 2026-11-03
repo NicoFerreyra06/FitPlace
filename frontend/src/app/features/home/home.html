@@ -36,9 +36,18 @@
             <p class="bajada">Tu rutina no tiene ejercicios para hoy. Recuperá energía para mañana.</p>
         }
         @case ('entrenar') {
-            <h1 class="titular">
-            Hoy toca {{ nombreRutina() ?? 'tu rutina' }}<span class="punto">.</span>
-            </h1>
+            @if (nombreDiaDeHoy(); as nombreDia) {
+                <p class="contexto">
+                    {{ etiquetaDiaDeHoy }} · Rutina <span class="contexto-rutina">{{ nombreRutina() }}</span>
+                </p>
+                <h1 class="titular">
+                Hoy toca {{ nombreDia }}<span class="punto">.</span>
+                </h1>
+            } @else {
+                <h1 class="titular">
+                Hoy toca {{ nombreRutina() ?? 'tu rutina' }}<span class="punto">.</span>
+                </h1>
+            }
             <p class="bajada">{{ primerEjercicio() }} y {{ ejerciciosDeHoy().length - 1 }} {{ ejerciciosDeHoy().length - 1 === 1 ? 'ejercicio' : 'ejercicios' }} más.</p>
             <a class="btn btn--lg accion" routerLink="/entrenamientos/hoy">
             Empezar entrenamiento <span aria-hidden="true">→</span>

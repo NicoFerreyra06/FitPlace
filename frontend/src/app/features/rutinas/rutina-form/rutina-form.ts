@@ -8,6 +8,7 @@ import {
   DIAS_SEMANA,
   DiaSemana,
   EjercicioRutinaRequest,
+  NOMBRE_DIA_MAX,
   RutinaRequest,
   RutinaResponse,
 } from '../../../core/rutinas/rutinas.model';
@@ -25,9 +26,17 @@ function crearDiaForm(
   fb: NonNullableFormBuilder,
   dia: DiaSemana,
   ejercicios: Partial<EjercicioRutinaRequest>[] = [],
+  nombre = '',
 ) {
   return fb.group({
     diaDeLaSemana: fb.control<DiaSemana>(dia, Validators.required),
+    // Obligatorio: es el título del día en el Home ("Hoy toca Push A").
+    // El pattern exige al menos un caracter que no sea espacio.
+    nombre: fb.control(nombre, [
+      Validators.required,
+      Validators.pattern(/\S/),
+      Validators.maxLength(NOMBRE_DIA_MAX),
+    ]),
     ejercicios: fb.array(
       ejercicios.map((ej) => crearEjercicioForm(fb, ej)),
       Validators.minLength(1),
@@ -58,6 +67,7 @@ export class RutinaForm implements OnInit {
   protected readonly guardando = signal(false);
   protected readonly errorMsg = signal<string | null>(null);
   protected readonly ejercicios = signal<Ejercicio[]>([]);
+  protected readonly nombreDiaMax = NOMBRE_DIA_MAX;
 
   protected readonly form = this.fb.group({
     nombre: ['', Validators.required],
@@ -104,6 +114,7 @@ export class RutinaForm implements OnInit {
               series: e.series,
               repeticiones: e.repeticiones,
             })),
+            dia.nombre ?? '',
           ),
         ),
       );
@@ -165,7 +176,11 @@ export class RutinaForm implements OnInit {
     this.guardando.set(true);
     this.errorMsg.set(null);
 
-    const request: RutinaRequest = this.form.getRawValue();
+    const valor = this.form.getRawValue();
+    const request: RutinaRequest = {
+      ...valor,
+      dias: valor.dias.map((dia) => ({ ...dia, nombre: dia.nombre.trim() })),
+    };
     const peticion =
       this.idRutina !== null
         ? this.rutinasService.actualizar(this.idRutina, request)

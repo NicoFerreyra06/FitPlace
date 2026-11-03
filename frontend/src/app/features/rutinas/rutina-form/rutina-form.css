@@ -132,14 +132,46 @@ select.ng-invalid.ng-touched {
 
 .dia-header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: flex-end;
   gap: 12px;
 }
 
-.dia-header select {
-  max-width: 200px;
+.campo-dia {
+  flex: 0 0 170px;
+}
+
+.campo-nombre-dia {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.dia-header select,
+.campo-nombre-dia input {
   font-weight: 600;
+}
+
+.label-fila {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.contador {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.quitar-dia {
+  padding: 10px 0;
+}
+
+.ayuda {
+  margin: -4px 0 0;
+  font-size: 12.5px;
+  color: var(--text-muted);
 }
 
 .cabecera-ejercicios,
