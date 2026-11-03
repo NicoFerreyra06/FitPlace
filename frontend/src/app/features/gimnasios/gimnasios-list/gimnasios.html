@@ -1,0 +1,89 @@
+<main class="container">
+  <header class="header">
+    <h1>Gimnasios</h1>
+  </header>
+
+  @if (resultadoMp === 'ok') {
+    <p class="aviso aviso--ok" role="status">Mercado Pago se vinculó correctamente.</p>
+  } @else if (resultadoMp === 'error') {
+    <p class="aviso aviso--error" role="alert">No se pudo vincular Mercado Pago. Intentá de nuevo.</p>
+  }
+
+  @if (errorVinculacion()) {
+    <p class="aviso aviso--error" role="alert">No se pudo iniciar la vinculación con Mercado Pago. Intentá de nuevo.</p>
+  }
+
+  @if (tieneGimnasiosPropios()) {
+    <section class="mis-gimnasios" aria-labelledby="mis-gimnasios-titulo">
+      <h2 id="mis-gimnasios-titulo" class="seccion-titulo">Mis gimnasios</h2>
+      <div class="cards-grid">
+        @for (gimnasio of misGimnasios.value(); track gimnasio.id) {
+          <article class="card" (click)="verDetalle(gimnasio)">
+            <div class="card-info">
+              <h3>{{ gimnasio.nombre }}</h3>
+              <span class="direccion">{{ gimnasio.direccion }}</span>
+              <span class="cuota">Cuota: $ {{ gimnasio.precioCuota }}</span>
+            </div>
+
+            @if (gimnasio.isMercadoPagoVinculado) {
+              <span class="estado-mp estado-mp--ok">Mercado Pago vinculado</span>
+            } @else {
+              <span class="estado-mp estado-mp--pendiente">Mercado Pago sin vincular</span>
+              <button type="button" class="btn btn--sm" (click)="vincular(gimnasio.id); $event.stopPropagation()">
+                Vincular Mercado Pago
+              </button>
+            }
+          </article>
+        }
+      </div>
+    </section>
+
+    <h2 class="seccion-titulo">Todos los gimnasios</h2>
+  }
+
+  @if (cargando) {
+    <p class="estado-msg" role="status">Cargando gimnasios…</p>
+  } @else if (hayError) {
+    <div class="estado-error" role="alert">
+      <p class="error-msg">No se pudieron cargar los gimnasios.</p>
+      <button type="button" class="btn btn--sm" (click)="reintentar()">Reintentar</button>
+    </div>
+  } @else {
+    <section class="cards-grid" aria-label="Lista de gimnasios">
+      @for (gimnasio of gimnasios.value()?.content; track gimnasio.id) {
+        <article class="card" (click)="verDetalle(gimnasio)">
+          @if (gimnasio.fotoUrl) {
+            <img class="card-foto" [src]="gimnasio.fotoUrl" [alt]="'Foto de ' + gimnasio.nombre" loading="lazy" />
+          } @else {
+            <div class="card-foto card-foto--vacia" aria-hidden="true"></div>
+          }
+
+          <div class="card-info">
+            <h3>{{ gimnasio.nombre }}</h3>
+            <span class="direccion">{{ gimnasio.direccion }}</span>
+          </div>
+        </article>
+      } @empty {
+        <p class="empty-state">Todavía no hay gimnasios registrados.</p>
+      }
+    </section>
+
+    @if (gimnasios.value(); as datos) {
+      @if (datos.totalPages > 1) {
+        <nav class="paginacion" aria-label="Paginación">
+          <button type="button" class="btn btn--sm btn--vidrio" [disabled]="datos.first" (click)="cambiarPagina(-1)">
+            ← Anterior
+          </button>
+          <span class="paginacion-texto">Página {{ datos.number + 1 }} de {{ datos.totalPages }}</span>
+          <button type="button" class="btn btn--sm btn--vidrio" [disabled]="datos.last" (click)="cambiarPagina(1)">
+            Siguiente →
+          </button>
+        </nav>
+      }
+    }
+  }
+
+  @if (gimnasioSeleccionado(); as gimnasio) {
+    <app-gimnasio-details [gimnasio]="gimnasio" (cerrar)="cerrarDetalle()" (vincular)="vincular(gimnasio.id)" />
+  }
+</main>

@@ -1,0 +1,187 @@
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.aviso {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  font-size: 14px;
+  border-radius: var(--radius-md);
+}
+
+.aviso--ok {
+  color: var(--primary);
+  background: rgb(200 241 105 / 0.12);
+  border: 1px solid rgb(200 241 105 / 0.4);
+}
+
+.aviso--error {
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 700px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, transform 0.15s;
+}
+
+.card:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+}
+
+.card-foto {
+  display: block;
+  width: calc(100% + 40px);
+  margin: -20px -20px 0;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-bottom: 1px solid var(--border);
+}
+
+.card-foto--vacia {
+  background: linear-gradient(135deg, var(--surface-hover), var(--border));
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-info h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.direccion {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.mis-gimnasios {
+  margin-bottom: 40px;
+}
+
+.seccion-titulo {
+  margin: 0 0 16px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.cuota {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.estado-mp {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.estado-mp::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.estado-mp--ok {
+  color: var(--success);
+}
+
+.estado-mp--pendiente {
+  color: var(--warning);
+}
+
+.card .btn {
+  align-self: flex-start;
+}
+
+.paginacion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.paginacion-texto {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.estado-msg,
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-muted);
+  padding: 48px 0;
+}
+
+.estado-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 0;
+}
+
+.error-msg {
+  margin: 0;
+  color: var(--danger);
+  font-size: 15px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+
+  .card:hover {
+    transform: none;
+  }
+}
