@@ -1,8 +1,10 @@
 package com.proyectoFinal.gymtracker.Services;
 
 import com.proyectoFinal.gymtracker.DTO.Response.AmigoResponse;
+import com.proyectoFinal.gymtracker.DTO.Response.PerfilAmigoResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
 import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
+import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
@@ -57,14 +59,13 @@ public class SocialService {
                 .stream().map(usuarioService::toAmigoResponse).toList();
     }
 
-    public UsuarioResponse verPerfilAmigo(Usuario usuarioLog, Long amigoId) {
-        Usuario usuario = usuarioRepository.findById(usuarioLog.getId()).orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+    public PerfilAmigoResponse verPerfilAmigo(Usuario usuarioLog, Long amigoId) {
         Usuario amigo = usuarioRepository.findById(amigoId).orElseThrow(() -> new UserNotFoundException("Amigo no encontrado"));
 
-        if (!usuario.getAmigos().contains(amigo)) {
-            throw new BusinessLogicException("No tenés acceso al perfil de este usuario");
+        if (!usuarioRepository.existsByIdAndAmigos_Id(usuarioLog.getId(), amigoId)) {
+            throw new ForbiddenAccessException("No tenés acceso al perfil de este usuario");
         }
 
-        return usuarioService.toResponse(amigo);
+        return usuarioService.toPerfilAmigoResponse(amigo);
     }
 }

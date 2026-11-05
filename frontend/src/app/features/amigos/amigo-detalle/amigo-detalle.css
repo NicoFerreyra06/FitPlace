@@ -1,0 +1,194 @@
+.detalle {
+  min-height: 100dvh;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.back {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.back:hover {
+  color: var(--text);
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+h2 {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.muted {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.cabecera {
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  border-color: rgb(200 241 105 / 0.3);
+  background: linear-gradient(135deg, rgb(200 241 105 / 0.1), rgb(200 241 105 / 0.02));
+}
+
+.avatar {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--primary);
+  background: rgb(200 241 105 / 0.1);
+  border: 1px solid rgb(200 241 105 / 0.3);
+  border-radius: 50%;
+}
+
+.identidad {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.badge {
+  padding: 2px 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+}
+
+.seccion {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.records {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.record {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.record-cabecera {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  width: 100%;
+  padding: 12px 16px;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.record-cabecera:focus-visible {
+  outline: 2px solid var(--focus);
+}
+
+.record time,
+.accion {
+  font-size: 13px;
+}
+
+.accion {
+  color: var(--link);
+}
+
+.record-progresion {
+  padding: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.peso {
+  color: var(--primary);
+}
+
+.fila-error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.estado-msg {
+  padding: 48px 0;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.estado-error,
+.estado-vacio {
+  align-items: center;
+  text-align: center;
+}
+
+.estado-error {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 48px 0;
+}
+
+.estado-vacio p strong {
+  color: var(--text);
+}
+
+.error-msg {
+  color: var(--danger);
+}

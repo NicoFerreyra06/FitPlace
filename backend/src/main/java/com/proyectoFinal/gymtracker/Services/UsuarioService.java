@@ -3,6 +3,7 @@ package com.proyectoFinal.gymtracker.Services;
 import com.proyectoFinal.gymtracker.DTO.Request.PerfilUpdateRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.AmigoResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.GananciaGimnasioProjection;
+import com.proyectoFinal.gymtracker.DTO.Response.PerfilAmigoResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
@@ -105,6 +106,18 @@ public class UsuarioService {
 
     public AmigoResponse toAmigoResponse(Usuario usuario) {
         return AmigoResponse.builder().id(usuario.getId()).username(usuario.getNombreUsuario()).rol(usuario.getRol()).rachaActualDias(usuario.getRachaActualDias()).build();
+    }
+
+    public PerfilAmigoResponse toPerfilAmigoResponse(Usuario usuario) {
+        return PerfilAmigoResponse.builder()
+                .id(usuario.getId())
+                .username(usuario.getNombreUsuario())
+                .rol(usuario.getRol())
+                .peso(usuario.getPeso())
+                .altura(usuario.getAltura())
+                .rachaActualDias(usuario.getRachaActualDias())
+                .rachaMaximaDias(usuario.getRachaMaximaDias())
+                .build();
     }
 
     @PreAuthorize("hasRole('ADMIN')")

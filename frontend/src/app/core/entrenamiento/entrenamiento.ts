@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import { Page } from '../../model/page';
 import { Usuario } from '../usuario/usuario';
 
@@ -32,6 +32,13 @@ export interface EntrenamientoLogRequest {
   marcasEjercicio: MarcaEjercicioRequest[];
 }
 
+/** Peso máximo levantado en un ejercicio en un día de entrenamiento. */
+export interface PuntoProgresion {
+  /** Formato yyyy-MM-dd. */
+  fecha: string;
+  pesoMaximo: number;
+}
+
 @Service()
 export class Entrenamiento {
   private readonly http = inject(HttpClient);
@@ -50,6 +57,19 @@ export class Entrenamiento {
     return this.http.get<Page<EntrenamientoLog>>(`${this.API_URL}/usuario/${idUsuario}`, {
       params,
     });
+  }
+
+  /**
+   * Progresión de un usuario en un ejercicio, del entrenamiento más viejo al más nuevo.
+   * El backend la manda como { [nombreEjercicio]: puntos }; acá se desenvuelve para que
+   * los componentes reciban directamente la lista.
+   */
+  getProgresionEjercicio(idUsuario: number, idEjercicio: number): Observable<PuntoProgresion[]> {
+    return this.http
+      .get<Record<string, PuntoProgresion[]>>(
+        `${this.API_URL}/usuario/${idUsuario}/ejercicio/${idEjercicio}`,
+      )
+      .pipe(map((porEjercicio) => Object.values(porEjercicio)[0] ?? []));
   }
 
   getById(id: number): Observable<EntrenamientoLog> {

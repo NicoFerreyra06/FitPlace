@@ -92,24 +92,28 @@
       <ul class="lista">
         @for (amigo of amigos(); track amigo.id) {
           <li class="item">
-            <div class="avatar" aria-hidden="true">
-              {{ amigo.username.charAt(0).toUpperCase() }}
-            </div>
-
-            <div class="info">
-              <div class="titulo">
-                <strong>{{ amigo.username }}</strong>
-                <span class="badge">{{ etiquetaRol(amigo.rol) }}</span>
+            <a class="perfil-link" [routerLink]="['/amigos', amigo.id]">
+              <div class="avatar" aria-hidden="true">
+                {{ amigo.username.charAt(0).toUpperCase() }}
               </div>
-              <span class="muted">
-                @if (amigo.rachaActualDias) {
-                  🔥 {{ amigo.rachaActualDias }}
-                  {{ amigo.rachaActualDias === 1 ? 'día' : 'días' }} de racha
-                } @else {
-                  Sin racha activa
-                }
-              </span>
-            </div>
+
+              <div class="info">
+                <div class="titulo">
+                  <strong>{{ amigo.username }}</strong>
+                  <span class="badge">{{ etiquetaRol(amigo.rol) }}</span>
+                </div>
+                <span class="muted">
+                  @if (amigo.rachaActualDias) {
+                    🔥 {{ amigo.rachaActualDias }}
+                    {{ amigo.rachaActualDias === 1 ? 'día' : 'días' }} de racha
+                  } @else {
+                    Sin racha activa
+                  }
+                </span>
+              </div>
+
+              <span class="chevron" aria-hidden="true">›</span>
+            </a>
 
             <button
               class="link link--peligro"

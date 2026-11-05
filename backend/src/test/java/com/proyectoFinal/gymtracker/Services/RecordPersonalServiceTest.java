@@ -2,12 +2,14 @@ package com.proyectoFinal.gymtracker.Services;
 
 import com.proyectoFinal.gymtracker.DTO.Response.RecordPersonalResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
+import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Ejercicio;
 import com.proyectoFinal.gymtracker.Modelo.RecordPersonal;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Repositories.MarcaEjercicioRepository;
 import com.proyectoFinal.gymtracker.Repositories.RecordPersonalRepository;
+import com.proyectoFinal.gymtracker.Repositories.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,6 +26,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -35,6 +39,9 @@ public class RecordPersonalServiceTest {
 
     @Mock
     private MarcaEjercicioRepository marcaEjercicioRepository;
+
+    @Mock
+    private UsuarioRepository usuarioRepository;
 
     @InjectMocks
     private RecordPersonalService recordPersonalService;
@@ -134,5 +141,41 @@ public class RecordPersonalServiceTest {
 
         assertThrows(ResourceNotFoundException.class,
                 () -> recordPersonalService.getRecordPersonalByEjercicioId(1L, 1L));
+    }
+
+    @Test
+    @DisplayName("Deberia devolver los records propios sin consultar la amistad")
+    void recordsDeUsuarioPropios() {
+        when(recordPersonalRepository.findRecordPersonalByUsuarioId(1L)).thenReturn(List.of(recordNico));
+
+        List<RecordPersonalResponse> records =
+                recordPersonalService.getRecordsPersonalesByUsuarioId(1L, recordNico.getUsuario());
+
+        assertEquals(1, records.size());
+        verify(usuarioRepository, never()).existsByIdAndAmigos_Id(anyLong(), anyLong());
+    }
+
+    @Test
+    @DisplayName("Deberia devolver los records de un amigo")
+    void recordsDeUsuarioAmigo() {
+        Usuario nico = recordNico.getUsuario();
+        when(usuarioRepository.existsByIdAndAmigos_Id(1L, 2L)).thenReturn(true);
+        when(recordPersonalRepository.findRecordPersonalByUsuarioId(2L)).thenReturn(List.of(recordLucio));
+
+        List<RecordPersonalResponse> records = recordPersonalService.getRecordsPersonalesByUsuarioId(2L, nico);
+
+        assertEquals(1, records.size());
+        assertEquals("lucio_dev", records.get(0).getNombreUsuario());
+    }
+
+    @Test
+    @DisplayName("Deberia lanzar ForbiddenAccessException si no es el mismo usuario, ni admin, ni amigo")
+    void recordsDeUsuarioSinPermiso() {
+        Usuario nico = recordNico.getUsuario();
+        when(usuarioRepository.existsByIdAndAmigos_Id(1L, 2L)).thenReturn(false);
+
+        assertThrows(ForbiddenAccessException.class,
+                () -> recordPersonalService.getRecordsPersonalesByUsuarioId(2L, nico));
+        verify(recordPersonalRepository, never()).findRecordPersonalByUsuarioId(anyLong());
     }
 }

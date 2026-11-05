@@ -1,0 +1,46 @@
+:host {
+  display: contents;
+}
+
+.card {
+  flex: 1 1 180px;
+  min-height: var(--rachas-alto-min, auto);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
+}
+
+.card:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+}
+
+h3,
+p {
+  margin: 0;
+}
+
+h3,
+.etiqueta {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.numero {
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+}

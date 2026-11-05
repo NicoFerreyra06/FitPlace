@@ -10,6 +10,17 @@ export interface AmigoResponse {
   rachaActualDias: number | null;
 }
 
+/** Perfil de un amigo (PerfilAmigoResponse): sin email ni código de amigo, a propósito. */
+export interface PerfilAmigo {
+  id: number;
+  username: string;
+  rol: string;
+  peso: number | null;
+  altura: number | null;
+  rachaActualDias: number | null;
+  rachaMaximaDias: number | null;
+}
+
 @Service()
 export class Amigos {
   private readonly http = inject(HttpClient);
@@ -17,6 +28,11 @@ export class Amigos {
 
   getAmigos(): Observable<AmigoResponse[]> {
     return this.http.get<AmigoResponse[]>(this.API_URL);
+  }
+
+  /** Responde 404 si el usuario no existe y 403 si no está en el grupo de amigos. */
+  getPerfilAmigo(amigoId: number): Observable<PerfilAmigo> {
+    return this.http.get<PerfilAmigo>(`${this.API_URL}/${amigoId}/perfil`);
   }
 
   agregarAmigo(codigoAmigo: string): Observable<UsuarioPerfil> {

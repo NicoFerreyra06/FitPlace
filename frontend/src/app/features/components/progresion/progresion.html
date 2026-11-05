@@ -1,0 +1,79 @@
+@if (resumen(); as r) {
+  <dl class="resumen">
+    <div>
+      <dt>Primera marca</dt>
+      <dd>
+        {{ r.primero.pesoMaximo }} kg
+        <small>{{ r.primero.fecha | date: 'dd/MM/yyyy' }}</small>
+      </dd>
+    </div>
+    <div>
+      <dt>Última marca</dt>
+      <dd>
+        {{ r.ultimo.pesoMaximo }} kg
+        <small>{{ r.ultimo.fecha | date: 'dd/MM/yyyy' }}</small>
+      </dd>
+    </div>
+    <div>
+      <dt>Mejor marca</dt>
+      <dd class="mejor">
+        {{ r.mejor.pesoMaximo }} kg
+        <small>{{ r.mejor.fecha | date: 'dd/MM/yyyy' }}</small>
+      </dd>
+    </div>
+    <div>
+      <dt>Variación</dt>
+      <dd [class.sube]="r.variacion > 0" [class.baja]="r.variacion < 0">
+        {{ r.variacion > 0 ? '+' : '' }}{{ r.variacion | number: '1.0-1' }} kg
+        @if (r.porcentaje !== null) {
+          <small>{{ r.porcentaje > 0 ? '+' : '' }}{{ r.porcentaje | number: '1.0-0' }}% desde la primera</small>
+        }
+      </dd>
+    </div>
+  </dl>
+
+  @if (r.cantidad === 1) {
+    <p class="nota">Con un solo entrenamiento todavía no hay evolución para comparar.</p>
+  }
+}
+
+@if (grafico(); as g) {
+  <svg
+    class="grafico"
+    [attr.width]="ancho()"
+    [attr.height]="alto"
+    [attr.viewBox]="'0 0 ' + ancho() + ' ' + alto"
+    role="img"
+    [attr.aria-label]="descripcion()"
+  >
+    @for (marca of g.ejeY; track marca.valor) {
+      <line class="guia" [attr.x1]="g.x0" [attr.x2]="g.x1" [attr.y1]="marca.y" [attr.y2]="marca.y" />
+      <text class="etiqueta" [attr.x]="g.x0 - 8" [attr.y]="marca.y" text-anchor="end" dominant-baseline="middle">
+        {{ marca.valor }}
+      </text>
+    }
+
+    @for (marca of g.ejeX; track $index; let primera = $first, ultima = $last) {
+      <text class="etiqueta" [attr.x]="marca.x" [attr.y]="alto - 8" [attr.text-anchor]="anclaFecha(primera, ultima)">
+        {{ marca.fecha | date: g.formatoFecha }}
+      </text>
+    }
+
+    @if (g.area) {
+      <path class="area" [attr.d]="g.area" />
+    }
+    <path class="linea" [attr.d]="g.linea" />
+
+    @for (punto of g.marcas; track punto.fecha) {
+      <circle
+        class="punto"
+        [class.punto--mejor]="punto.esMejor"
+        [attr.cx]="punto.cx"
+        [attr.cy]="punto.cy"
+        [attr.r]="punto.esMejor ? 6 : 4"
+      >
+        <title>{{ punto.fecha | date: 'dd/MM/yyyy' }} · {{ punto.pesoMaximo }} kg</title>
+      </circle>
+    }
+  </svg>
+}

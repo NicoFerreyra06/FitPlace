@@ -170,7 +170,9 @@ public class EntrenamientoLogService {
             }
         }
 
-        if (!esElMismo && !esAdmin && !esSuEntrenador) {
+        // Si no es él, ni admin, ni su entrenador, todavía puede verla alguien de su grupo de amigos.
+        if (!esElMismo && !esAdmin && !esSuEntrenador
+                && !usuarioRepository.existsByIdAndAmigos_Id(actor.getId(), idUsuario)) {
             throw new ForbiddenAccessException("Sin permisos");
         }
         
