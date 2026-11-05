@@ -118,18 +118,41 @@ h2 {
 }
 
 .record {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 4px 12px;
-  padding: 12px 16px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
 }
 
-.record time {
-  grid-column: 1 / -1;
+.record-cabecera {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  width: 100%;
+  padding: 12px 16px;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.record-cabecera:focus-visible {
+  outline: 2px solid var(--focus);
+}
+
+.record time,
+.accion {
   font-size: 13px;
+}
+
+.accion {
+  color: var(--link);
+}
+
+.record-progresion {
+  padding: 16px;
+  border-top: 1px solid var(--border);
 }
 
 .peso {

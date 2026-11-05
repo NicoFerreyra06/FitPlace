@@ -51,12 +51,41 @@
       } @else {
         <ul class="records">
           @for (record of recordsRecientes(); track record.id) {
+            @let abierto = ejercicioAbierto() === record.ejercicioId;
             <li class="record">
-              <span>{{ record.nombreEjercicio }}</span>
-              <strong class="peso">{{ record.pesoMaximo }} kg</strong>
-              <time class="muted" [attr.datetime]="record.fechaLogro">
-                Logrado el {{ record.fechaLogro | date: 'dd/MM/yyyy' }}
-              </time>
+              <button
+                type="button"
+                class="record-cabecera"
+                [attr.aria-expanded]="abierto"
+                [attr.aria-controls]="'progresion-' + record.ejercicioId"
+                (click)="alternarProgresion(record.ejercicioId)"
+              >
+                <span>{{ record.nombreEjercicio }}</span>
+                <strong class="peso">{{ record.pesoMaximo }} kg</strong>
+                <time class="muted" [attr.datetime]="record.fechaLogro">
+                  Logrado el {{ record.fechaLogro | date: 'dd/MM/yyyy' }}
+                </time>
+                <span class="accion">{{ abierto ? 'Ocultar progresión' : 'Ver progresión' }}</span>
+              </button>
+
+              @if (abierto) {
+                <div class="record-progresion" [id]="'progresion-' + record.ejercicioId">
+                  @if (progresion.isLoading()) {
+                    <p class="muted" role="status">Cargando progresión…</p>
+                  } @else if (progresion.error()) {
+                    <div class="fila-error" role="alert">
+                      <span class="error-msg">No se pudo cargar su progresión.</span>
+                      <button type="button" class="btn btn--sm" (click)="progresion.reload()">
+                        Reintentar
+                      </button>
+                    </div>
+                  } @else if (puntosProgresion().length > 0) {
+                    <app-progresion [puntos]="puntosProgresion()" />
+                  } @else {
+                    <p class="muted">Todavía no tiene entrenamientos con este ejercicio.</p>
+                  }
+                </div>
+              }
             </li>
           } @empty {
             <li class="muted">Todavía no tiene récords personales.</li>
