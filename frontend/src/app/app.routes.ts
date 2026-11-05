@@ -15,6 +15,7 @@ import { MisRecords } from './features/records/mis-records/mis-records';
 import { RecordDetalle } from './features/records/record-detalle/record-detalle';
 import { RutinasPublicas } from './features/rutinas/rutinas-publicas/rutinas-publicas';
 import { MisAmigos } from './features/amigos/mis-amigos/mis-amigos';
+import { AmigoDetalle } from './features/amigos/amigo-detalle/amigo-detalle';
 import { GimnasioList } from './features/gimnasios/gimnasios-list/gimnasios';
 import { Entrenador } from './features/entrenador/entrenador';
 
@@ -39,6 +40,7 @@ export const routes: Routes = [
       { path: 'records', component: MisRecords },
       { path: 'records/:ejercicioId', component: RecordDetalle },
       { path: 'amigos', component: MisAmigos },
+      { path: 'amigos/:id', component: AmigoDetalle },
       { path: 'gimnasios', component: GimnasioList },
       { path: 'entrenadores', component: Entrenador },
     ],

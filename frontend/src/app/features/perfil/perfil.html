@@ -67,17 +67,7 @@
         }
       </article>
 
-      <article class="card">
-        <h3>Racha actual</h3>
-        <p class="numero">{{ p.rachaActualDias ? p.rachaActualDias : 0 }}</p>
-        <p class="etiqueta">{{ p.rachaActualDias === 1 ? 'día' : 'días' }} seguidos</p>
-      </article>
-
-      <article class="card">
-        <h3>Racha máxima</h3>
-        <p class="numero">{{ p.rachaMaximaDias ? p.rachaMaximaDias : 0 }}</p>
-        <p class="etiqueta">{{ p.rachaMaximaDias === 1 ? 'día' : 'días' }}</p>
-      </article>
+      <app-rachas [actual]="p.rachaActualDias" [maxima]="p.rachaMaximaDias" />
     </section>
   }
 </main>

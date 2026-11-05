@@ -1,12 +1,13 @@
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { Amigos, AmigoResponse } from '../../../core/amigos/amigos';
-import { Usuario } from '../../../core/usuario/usuario';
+import { etiquetaRol, Usuario } from '../../../core/usuario/usuario';
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   selector: 'app-mis-amigos',
   styleUrl: './mis-amigos.css',
   templateUrl: './mis-amigos.html',
@@ -132,18 +133,7 @@ export class MisAmigos implements OnInit {
     }
   }
 
-  protected etiquetaRol(rol: string): string {
-    switch (rol) {
-      case 'ENTRENADOR':
-        return 'Entrenador';
-      case 'ADMIN':
-        return 'Administrador';
-      case 'ADMIN_GIMNASIO':
-        return 'Admin de gimnasio';
-      default:
-        return 'Usuario';
-    }
-  }
+  protected readonly etiquetaRol = etiquetaRol;
 
   private refrescarAmigos() {
     this.amigosService

@@ -1,0 +1,68 @@
+<main class="detalle">
+  <header class="topbar">
+    <a class="back" routerLink="/amigos">&larr; Volver a mis amigos</a>
+  </header>
+
+  @if (motivoSinPerfil(); as motivo) {
+    <div class="card estado-vacio" role="status">
+      @if (motivo === 'sin-acceso') {
+        <p><strong>Este usuario no está en tu grupo de amigos.</strong></p>
+        <p class="muted">Solo podés ver el perfil de las personas que agregaste.</p>
+      } @else {
+        <p><strong>No encontramos a este usuario.</strong></p>
+        <p class="muted">Puede que el enlace esté mal o que la cuenta ya no exista.</p>
+      }
+      <a class="btn btn--sm" routerLink="/amigos">Ir a mis amigos</a>
+    </div>
+  } @else if (resultado.isLoading()) {
+    <p class="estado-msg" role="status">Cargando perfil…</p>
+  } @else if (resultado.error()) {
+    <div class="estado-error" role="alert">
+      <p class="error-msg">No se pudo cargar el perfil.</p>
+      <button type="button" class="btn btn--sm" (click)="resultado.reload()">Reintentar</button>
+    </div>
+  } @else if (amigo(); as a) {
+    <section class="card cabecera">
+      <div class="avatar" aria-hidden="true">{{ a.username.charAt(0).toUpperCase() }}</div>
+      <div class="identidad">
+        <h1>{{ a.username }}</h1>
+        <span class="badge">{{ etiquetaRol(a.rol) }}</span>
+        <p class="muted">{{ datosFisicos() ?? 'Sin peso ni altura cargados' }}</p>
+      </div>
+    </section>
+
+    <section class="seccion" aria-labelledby="titulo-constancia">
+      <h2 id="titulo-constancia">Constancia</h2>
+      <div class="grid">
+        <app-rachas [actual]="a.rachaActualDias" [maxima]="a.rachaMaximaDias" />
+      </div>
+    </section>
+
+    <section class="seccion" aria-labelledby="titulo-records">
+      <h2 id="titulo-records">Récords personales</h2>
+
+      @if (records.isLoading()) {
+        <p class="muted" role="status">Cargando récords…</p>
+      } @else if (records.error()) {
+        <div class="fila-error" role="alert">
+          <span class="error-msg">No se pudieron cargar sus récords.</span>
+          <button type="button" class="btn btn--sm" (click)="records.reload()">Reintentar</button>
+        </div>
+      } @else {
+        <ul class="records">
+          @for (record of recordsRecientes(); track record.id) {
+            <li class="record">
+              <span>{{ record.nombreEjercicio }}</span>
+              <strong class="peso">{{ record.pesoMaximo }} kg</strong>
+              <time class="muted" [attr.datetime]="record.fechaLogro">
+                Logrado el {{ record.fechaLogro | date: 'dd/MM/yyyy' }}
+              </time>
+            </li>
+          } @empty {
+            <li class="muted">Todavía no tiene récords personales.</li>
+          }
+        </ul>
+      }
+    </section>
+  }
+</main>
