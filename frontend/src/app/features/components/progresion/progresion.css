@@ -1,0 +1,90 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.resumen div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+dt {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+dd {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+dd small {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.mejor,
+.sube {
+  color: var(--primary);
+}
+
+.baja {
+  color: var(--danger);
+}
+
+.nota {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.grafico {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.guia {
+  stroke: var(--border);
+}
+
+.etiqueta {
+  fill: var(--text-muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.area {
+  fill: rgb(200 241 105 / 0.12);
+}
+
+.linea {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.punto {
+  fill: var(--bg);
+  stroke: var(--primary);
+  stroke-width: 2;
+}
+
+.punto--mejor {
+  fill: var(--primary);
+}

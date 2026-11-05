@@ -48,6 +48,23 @@
       }
     </section>
 
+    <section class="seccion" aria-labelledby="titulo-progresion">
+      <h2 id="titulo-progresion">Tu progresión</h2>
+
+      @if (progresionCargando()) {
+        <p class="muted" role="status">Cargando progresión…</p>
+      } @else if (progresionConError()) {
+        <div class="fila-error" role="alert">
+          <span class="error-msg">No se pudo cargar tu progresión.</span>
+          <button type="button" class="btn btn--sm" (click)="reintentarProgresion()">Reintentar</button>
+        </div>
+      } @else if (puntosProgresion().length > 0) {
+        <app-progresion [puntos]="puntosProgresion()" />
+      } @else {
+        <p class="muted">Todavía no registraste entrenamientos con este ejercicio.</p>
+      }
+    </section>
+
     <section class="seccion" aria-labelledby="titulo-ranking">
       <h2 id="titulo-ranking">Ranking</h2>
 

@@ -7,7 +7,9 @@ import { catchError, Observable, of, throwError } from 'rxjs';
 import { Usuario } from '../../../core/usuario/usuario';
 import { Records, RecordPersonalResponse } from '../../../core/records/records';
 import { EjercicioService } from '../../../core/services/ejercicio-service';
+import { Entrenamiento } from '../../../core/entrenamiento/entrenamiento';
 import { Page } from '../../../model/page';
+import { Progresion } from '../../components/progresion/progresion';
 
 /** Convierte las respuestas "no existe" del backend en null para mostrarlas como estado vacío y no como error. */
 function nullSiNoExiste<T>(estados: number[]) {
@@ -20,7 +22,7 @@ function nullSiNoExiste<T>(estados: number[]) {
 }
 
 @Component({
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, RouterLink, Progresion],
   selector: 'app-record-detalle',
   styleUrl: './record-detalle.css',
   templateUrl: './record-detalle.html',
@@ -30,6 +32,7 @@ export class RecordDetalle {
   private readonly usuarioService = inject(Usuario);
   private readonly recordsService = inject(Records);
   private readonly ejercicioService = inject(EjercicioService);
+  private readonly entrenamientoService = inject(Entrenamiento);
 
   protected readonly ejercicioId = Number(this.route.snapshot.paramMap.get('ejercicioId'));
 
@@ -45,6 +48,34 @@ export class RecordDetalle {
   private readonly perfil = rxResource({
     stream: () => this.usuarioService.getPerfilGuardado(),
   });
+
+  /** Peso máximo de cada entrenamiento en este ejercicio. Necesita el id del usuario logueado. */
+  protected readonly progresion = rxResource({
+    params: () => (this.perfil.hasValue() ? { idUsuario: this.perfil.value().id } : undefined),
+    stream: ({ params }) =>
+      this.entrenamientoService.getProgresionEjercicio(params.idUsuario, this.ejercicioId),
+  });
+
+  /** Mientras el perfil carga, la progresión todavía no se pidió: también cuenta como "cargando". */
+  protected readonly progresionCargando = computed(
+    () => this.perfil.isLoading() || this.progresion.isLoading(),
+  );
+
+  protected readonly progresionConError = computed(() =>
+    Boolean(this.perfil.error() || this.progresion.error()),
+  );
+
+  protected readonly puntosProgresion = computed(() =>
+    this.progresion.hasValue() ? this.progresion.value() : [],
+  );
+
+  protected reintentarProgresion(): void {
+    if (this.perfil.error()) {
+      this.perfil.reload();
+    } else {
+      this.progresion.reload();
+    }
+  }
 
   /** Sin récord en el ejercicio el backend responde 404: es un estado válido, no un error. */
   protected readonly miRecord = rxResource({
