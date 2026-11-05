@@ -13,6 +13,8 @@ public enum GrupoMuscular {
     CUADRICEPS,
     ISQUIOTIBIALES,
     ADUCTORES,
-    GEMELOS
+    GEMELOS,
+    GLUTEOS,
+    ANTEBRAZOS
 
 }

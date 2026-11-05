@@ -1,0 +1,264 @@
+{
+  "musculos": [
+    { "nombre": "Pectoral mayor", "grupoMuscular": "PECHO" },
+    { "nombre": "Dorsal ancho", "grupoMuscular": "DORSAL" },
+    { "nombre": "Romboides", "grupoMuscular": "DORSAL" },
+    { "nombre": "Trapecio", "grupoMuscular": "TRAPECIO" },
+    { "nombre": "Erectores espinales", "grupoMuscular": "CORE" },
+    { "nombre": "Bíceps braquial", "grupoMuscular": "BICEPS" },
+    { "nombre": "Braquial", "grupoMuscular": "BICEPS" },
+    { "nombre": "Braquiorradial", "grupoMuscular": "ANTEBRAZOS" },
+    { "nombre": "Tríceps braquial", "grupoMuscular": "TRICEPS" },
+    { "nombre": "Deltoides anterior", "grupoMuscular": "HOMBRO_ANTERIOR" },
+    { "nombre": "Deltoides lateral", "grupoMuscular": "HOMBRO_LATERAL" },
+    { "nombre": "Deltoides posterior", "grupoMuscular": "HOMBRO_POSTERIOR" },
+    { "nombre": "Cuádriceps", "grupoMuscular": "CUADRICEPS" },
+    { "nombre": "Isquiotibiales", "grupoMuscular": "ISQUIOTIBIALES" },
+    { "nombre": "Aductores", "grupoMuscular": "ADUCTORES" },
+    { "nombre": "Glúteo mayor", "grupoMuscular": "GLUTEOS" },
+    { "nombre": "Glúteo medio", "grupoMuscular": "GLUTEOS" },
+    { "nombre": "Gastrocnemio", "grupoMuscular": "GEMELOS" },
+    { "nombre": "Sóleo", "grupoMuscular": "GEMELOS" }
+  ],
+  "ejercicios": [
+    {
+      "nombre": "Press banca",
+      "descripcion": "Barra en banco plano",
+      "principales": ["Pectoral mayor"],
+      "secundarios": ["Tríceps braquial"]
+    },
+    {
+      "nombre": "Fondos en paralelas",
+      "descripcion": "Peso corporal",
+      "principales": ["Tríceps braquial"],
+      "secundarios": ["Pectoral mayor"]
+    },
+    {
+      "nombre": "Dominadas",
+      "descripcion": "Agarre prono",
+      "principales": ["Dorsal ancho"],
+      "secundarios": ["Bíceps braquial"]
+    },
+    {
+      "nombre": "Curl con barra",
+      "descripcion": "De pie",
+      "principales": ["Bíceps braquial"],
+      "secundarios": []
+    },
+    {
+      "nombre": "Sentadilla",
+      "descripcion": "Barra alta",
+      "principales": ["Cuádriceps"],
+      "secundarios": []
+    },
+
+    {
+      "nombre": "Press inclinado con barra",
+      "descripcion": "Banco a 30-45° y agarre algo más ancho que los hombros. Bajar la barra controlada hasta la parte alta del pecho y empujar hasta extender los codos, con las escápulas retraídas. Enfatiza la porción clavicular del pectoral.",
+      "principales": ["Pectoral mayor"],
+      "secundarios": ["Deltoides anterior", "Tríceps braquial"]
+    },
+    {
+      "nombre": "Press inclinado con mancuernas",
+      "descripcion": "Banco a 30-45°. Bajar las mancuernas hasta la parte alta del pecho con los codos a unos 45° del torso y empujar hasta casi juntarlas. Enfatiza la porción clavicular del pectoral con más recorrido que la barra.",
+      "principales": ["Pectoral mayor"],
+      "secundarios": ["Deltoides anterior", "Tríceps braquial"]
+    },
+    {
+      "nombre": "Press plano en máquina Smith",
+      "descripcion": "Banco plano bajo la barra guiada (multipower). Bajar hasta la mitad del pecho y empujar hasta extender los codos. La guía da más estabilidad que la barra libre y permite acercarse al fallo sin ayudante.",
+      "principales": ["Pectoral mayor"],
+      "secundarios": ["Deltoides anterior", "Tríceps braquial"]
+    },
+    {
+      "nombre": "Press inclinado en máquina Smith",
+      "descripcion": "Banco a 30-45° bajo la barra guiada (multipower). Bajar hasta la parte alta del pecho y empujar hasta extender los codos. Enfatiza la porción clavicular del pectoral con la estabilidad de la máquina.",
+      "principales": ["Pectoral mayor"],
+      "secundarios": ["Deltoides anterior", "Tríceps braquial"]
+    },
+    {
+      "nombre": "Aperturas en máquina (peck deck)",
+      "descripcion": "Sentado con la espalda apoyada y los brazos a la altura de los hombros. Juntar los brazos al frente con los codos levemente flexionados y abrir controlando hasta sentir el estiramiento del pecho.",
+      "principales": ["Pectoral mayor"],
+      "secundarios": ["Deltoides anterior"]
+    },
+    {
+      "nombre": "Cruce de poleas",
+      "descripcion": "De pie entre dos poleas altas, con un pie adelante. Llevar los agarres hacia el frente y abajo en arco hasta cruzarlos, con los codos levemente flexionados, y volver controlando.",
+      "principales": ["Pectoral mayor"],
+      "secundarios": ["Deltoides anterior"]
+    },
+
+    {
+      "nombre": "Remo con barra",
+      "descripcion": "Torso inclinado a unos 45° con la espalda neutra y las rodillas levemente flexionadas. Llevar la barra hacia el abdomen tirando con los codos y juntando las escápulas, y bajar controlando.",
+      "principales": ["Dorsal ancho", "Romboides"],
+      "secundarios": ["Trapecio", "Deltoides posterior", "Bíceps braquial", "Erectores espinales"]
+    },
+    {
+      "nombre": "Remo con mancuernas en banco inclinado",
+      "descripcion": "Pecho apoyado en un banco inclinado. Remar las dos mancuernas llevando los codos hacia atrás y juntando las escápulas. Al tener el pecho apoyado no se carga la zona lumbar ni se usa impulso.",
+      "principales": ["Dorsal ancho", "Romboides"],
+      "secundarios": ["Trapecio", "Deltoides posterior", "Bíceps braquial"]
+    },
+    {
+      "nombre": "Remo unilateral con mancuerna",
+      "descripcion": "Rodilla y mano del mismo lado apoyadas en un banco, con la espalda paralela al piso. Llevar la mancuerna hacia la cadera con el codo pegado al cuerpo y bajar estirando el dorsal.",
+      "principales": ["Dorsal ancho"],
+      "secundarios": ["Romboides", "Trapecio", "Deltoides posterior", "Bíceps braquial"]
+    },
+    {
+      "nombre": "Remo Gironda",
+      "descripcion": "Sentado en polea baja con agarre neutro cerrado (triángulo). Tirar hacia el abdomen con el torso erguido, juntando las escápulas, y volver estirando los brazos sin redondear la espalda.",
+      "principales": ["Dorsal ancho", "Romboides"],
+      "secundarios": ["Trapecio", "Deltoides posterior", "Bíceps braquial"]
+    },
+    {
+      "nombre": "Remo unilateral en polea baja",
+      "descripcion": "Frente a la polea baja con agarre a una mano. Llevar el codo hacia atrás, pegado al cuerpo, hasta la cadera y volver estirando el dorsal sin girar el torso.",
+      "principales": ["Dorsal ancho"],
+      "secundarios": ["Romboides", "Trapecio", "Deltoides posterior", "Bíceps braquial"]
+    },
+    {
+      "nombre": "Jalón unilateral en polea alta",
+      "descripcion": "Sentado o de rodillas frente a la polea alta, con agarre a una mano. Tirar llevando el codo hacia la cadera y volver estirando el dorsal por completo. Da más recorrido que el jalón con barra y permite corregir diferencias entre lados.",
+      "principales": ["Dorsal ancho"],
+      "secundarios": ["Bíceps braquial", "Romboides"]
+    },
+
+    {
+      "nombre": "Press militar con barra",
+      "descripcion": "De pie, con la barra apoyada a la altura de las clavículas. Empujar verticalmente hasta extender los codos sobre la cabeza, con abdomen y glúteos contraídos para no arquear la zona lumbar, y bajar controlando.",
+      "principales": ["Deltoides anterior"],
+      "secundarios": ["Deltoides lateral", "Tríceps braquial", "Trapecio"]
+    },
+    {
+      "nombre": "Press de hombros con mancuernas",
+      "descripcion": "Sentado con el respaldo vertical y las mancuernas a la altura de los hombros. Empujar hacia arriba hasta casi juntarlas y bajar hasta que los codos queden apenas por debajo de los hombros.",
+      "principales": ["Deltoides anterior"],
+      "secundarios": ["Deltoides lateral", "Tríceps braquial"]
+    },
+    {
+      "nombre": "Press de hombros en máquina",
+      "descripcion": "Sentado con la espalda apoyada y los agarres a la altura de los hombros. Empujar hacia arriba hasta extender los codos y bajar controlando. La trayectoria guiada permite concentrarse en el hombro.",
+      "principales": ["Deltoides anterior"],
+      "secundarios": ["Deltoides lateral", "Tríceps braquial"]
+    },
+    {
+      "nombre": "Elevaciones laterales con mancuernas",
+      "descripcion": "De pie, con los codos levemente flexionados. Elevar los brazos hacia los costados hasta la altura de los hombros, guiando con los codos, y bajar controlando sin balancear el torso.",
+      "principales": ["Deltoides lateral"],
+      "secundarios": ["Trapecio"]
+    },
+    {
+      "nombre": "Elevación lateral unilateral en polea baja",
+      "descripcion": "De costado a la polea baja, tomar el agarre con la mano del lado opuesto. Elevar el brazo hasta la altura del hombro y bajar controlando; la polea mantiene la tensión también al inicio del recorrido.",
+      "principales": ["Deltoides lateral"],
+      "secundarios": ["Trapecio"]
+    },
+    {
+      "nombre": "Vuelos posteriores con mancuernas",
+      "descripcion": "Torso inclinado hacia adelante con la espalda neutra. Abrir los brazos hacia los costados con los codos levemente flexionados, guiando con los codos, y bajar controlando.",
+      "principales": ["Deltoides posterior"],
+      "secundarios": ["Romboides", "Trapecio"]
+    },
+
+    {
+      "nombre": "Curl de bíceps con mancuernas",
+      "descripcion": "De pie o sentado, con las palmas hacia adelante. Flexionar los codos sin despegarlos del torso, subir hasta contraer el bíceps y bajar controlando. Se puede hacer alternado o con los dos brazos a la vez.",
+      "principales": ["Bíceps braquial"],
+      "secundarios": ["Braquial", "Braquiorradial"]
+    },
+    {
+      "nombre": "Curl martillo con mancuernas",
+      "descripcion": "Agarre neutro, con las palmas enfrentadas durante todo el movimiento. Flexionar los codos manteniéndolos al costado del torso, sin rotar las muñecas. Trabaja más el braquial y el braquiorradial que el curl con supinación.",
+      "principales": ["Braquial", "Braquiorradial"],
+      "secundarios": ["Bíceps braquial"]
+    },
+    {
+      "nombre": "Curl predicador",
+      "descripcion": "Brazos apoyados sobre el banco Scott, con barra Z o mancuerna. Flexionar los codos hasta contraer el bíceps y bajar hasta casi extender, sin despegar los brazos del apoyo. Elimina el impulso del torso.",
+      "principales": ["Bíceps braquial"],
+      "secundarios": ["Braquial"]
+    },
+    {
+      "nombre": "Extensión de tríceps en polea alta",
+      "descripcion": "Con barra o soga en polea alta y los codos pegados al torso. Extender los codos hasta abajo y volver hasta unos 90° sin despegar los brazos ni inclinar el cuerpo sobre la carga.",
+      "principales": ["Tríceps braquial"],
+      "secundarios": []
+    },
+    {
+      "nombre": "Extensión de tríceps unilateral en polea alta",
+      "descripcion": "Agarre a una mano en polea alta, con el codo fijo al costado del torso. Extender el codo hasta bloquear y volver hasta unos 90° sin mover el hombro. Permite corregir diferencias entre un brazo y otro.",
+      "principales": ["Tríceps braquial"],
+      "secundarios": []
+    },
+    {
+      "nombre": "Extensión de tríceps tras nuca",
+      "descripcion": "Con mancuerna, barra Z o polea, con los brazos por encima de la cabeza. Bajar el peso detrás de la nuca flexionando los codos y extender sin abrirlos. Estira y enfatiza la porción larga del tríceps.",
+      "principales": ["Tríceps braquial"],
+      "secundarios": []
+    },
+
+    {
+      "nombre": "Prensa de piernas",
+      "descripcion": "Espalda y cadera apoyadas en el respaldo, pies al ancho de los hombros. Bajar la plataforma flexionando las rodillas sin despegar la cadera y empujar sin bloquear las rodillas. Los pies más altos en la plataforma enfatizan glúteo e isquiotibiales.",
+      "principales": ["Cuádriceps"],
+      "secundarios": ["Glúteo mayor", "Aductores", "Isquiotibiales"]
+    },
+    {
+      "nombre": "Sentadilla hack",
+      "descripcion": "En la máquina hack, con espalda y hombros apoyados y los pies al ancho de los hombros. Bajar flexionando las rodillas hasta al menos 90° y subir empujando con toda la planta. Los pies más bajos en la plataforma enfatizan el cuádriceps.",
+      "principales": ["Cuádriceps"],
+      "secundarios": ["Glúteo mayor", "Aductores"]
+    },
+    {
+      "nombre": "Sentadilla péndulo",
+      "descripcion": "En la máquina péndulo, con espalda y hombros apoyados. Bajar profundo manteniendo el torso estable y subir empujando con los pies. El recorrido en arco enfatiza el cuádriceps con poca carga sobre la zona lumbar.",
+      "principales": ["Cuádriceps"],
+      "secundarios": ["Glúteo mayor", "Aductores"]
+    },
+    {
+      "nombre": "Sentadilla búlgara",
+      "descripcion": "Empeine del pie trasero apoyado sobre un banco. Bajar hasta que la rodilla de atrás casi toque el piso, con el torso estable, y subir empujando con la pierna de adelante. Se carga con mancuernas o barra; inclinar el torso hacia adelante enfatiza el glúteo.",
+      "principales": ["Cuádriceps", "Glúteo mayor"],
+      "secundarios": ["Aductores", "Glúteo medio"]
+    },
+    {
+      "nombre": "Extensión de cuádriceps en máquina",
+      "descripcion": "Sentado, con el eje de la máquina alineado con la rodilla y el rodillo sobre los tobillos. Extender las rodillas hasta casi bloquear, sostener un instante arriba y bajar controlando. Aísla el cuádriceps.",
+      "principales": ["Cuádriceps"],
+      "secundarios": []
+    },
+    {
+      "nombre": "Peso muerto rumano",
+      "descripcion": "Con barra o mancuernas, rodillas apenas flexionadas y espalda neutra. Bajar el peso pegado a las piernas llevando la cadera hacia atrás hasta sentir el estiramiento de los isquiotibiales, y volver extendiendo la cadera. La flexión de rodilla casi no cambia durante el movimiento.",
+      "principales": ["Isquiotibiales", "Glúteo mayor"],
+      "secundarios": ["Erectores espinales", "Aductores"]
+    },
+    {
+      "nombre": "Curl de isquiotibiales acostado en máquina",
+      "descripcion": "Boca abajo, con el rodillo apoyado justo encima de los talones. Flexionar las rodillas llevando los talones hacia los glúteos sin despegar la cadera del banco, y bajar controlando.",
+      "principales": ["Isquiotibiales"],
+      "secundarios": ["Gastrocnemio"]
+    },
+    {
+      "nombre": "Curl de isquiotibiales sentado en máquina",
+      "descripcion": "Sentado, con el rodillo detrás de los tobillos y el muslo trabado por el apoyo. Flexionar las rodillas llevando los talones hacia abajo y atrás, y volver controlando. Con la cadera flexionada, los isquiotibiales trabajan más estirados que en la versión acostada.",
+      "principales": ["Isquiotibiales"],
+      "secundarios": ["Gastrocnemio"]
+    },
+    {
+      "nombre": "Aducción de cadera en máquina",
+      "descripcion": "Sentado con la espalda apoyada y las piernas abiertas contra los apoyos. Cerrar las piernas hasta juntar los apoyos y volver controlando la apertura.",
+      "principales": ["Aductores"],
+      "secundarios": []
+    },
+    {
+      "nombre": "Elevación de talones de pie en máquina",
+      "descripcion": "De pie en la máquina, con la parte delantera del pie en el borde de la plataforma y las rodillas extendidas. Bajar los talones hasta el máximo estiramiento y subir lo más alto posible, con una pausa arriba.",
+      "principales": ["Gastrocnemio"],
+      "secundarios": ["Sóleo"]
+    }
+  ]
+}
