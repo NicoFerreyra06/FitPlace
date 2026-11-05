@@ -1,0 +1,41 @@
+{
+  "musculos": [
+    { "nombre": "Pectoral mayor", "grupoMuscular": "PECHO" },
+    { "nombre": "Triceps braquial", "grupoMuscular": "TRICEPS" },
+    { "nombre": "Dorsal ancho", "grupoMuscular": "DORSAL" },
+    { "nombre": "Biceps braquial", "grupoMuscular": "BICEPS" },
+    { "nombre": "Cuadriceps", "grupoMuscular": "CUADRICEPS" }
+  ],
+  "ejercicios": [
+    {
+      "nombre": "Press banca",
+      "descripcion": "Barra en banco plano",
+      "principales": ["Pectoral mayor"],
+      "secundarios": ["Triceps braquial"]
+    },
+    {
+      "nombre": "Fondos en paralelas",
+      "descripcion": "Peso corporal",
+      "principales": ["Triceps braquial"],
+      "secundarios": ["Pectoral mayor"]
+    },
+    {
+      "nombre": "Dominadas",
+      "descripcion": "Agarre prono",
+      "principales": ["Dorsal ancho"],
+      "secundarios": ["Biceps braquial"]
+    },
+    {
+      "nombre": "Curl con barra",
+      "descripcion": "De pie",
+      "principales": ["Biceps braquial"],
+      "secundarios": []
+    },
+    {
+      "nombre": "Sentadilla",
+      "descripcion": "Barra alta",
+      "principales": ["Cuadriceps"],
+      "secundarios": []
+    }
+  ]
+}
