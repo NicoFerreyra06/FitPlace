@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import tools.jackson.core.JacksonException;
@@ -18,10 +19,11 @@ import java.io.InputStream;
 
 /**
  * Al iniciar el back, carga los músculos y ejercicios de resources/catalogo/catalogo.json que falten.
- * Se desactiva con app.catalogo.precarga=false. Si el archivo no se puede leer, lo avisa en el log
- * y el back arranca igual.
+ * Se desactiva con app.catalogo.precarga=false. Si algo falla (archivo ilegible o error de base), lo avisa
+ * en el log, no guarda nada a medias (la carga es transaccional) y el back arranca igual.
  */
 @Slf4j
+@Order(2)
 @Component
 public class CatalogoInicialRunner implements ApplicationRunner {
 
@@ -48,6 +50,8 @@ public class CatalogoInicialRunner implements ApplicationRunner {
                     resultado.musculosCreados(), resultado.ejerciciosCreados(), resultado.ejerciciosSalteados());
         } catch (IOException | JacksonException e) {
             log.error("No se pudo leer {}; el back arranca sin precargar el catálogo", RUTA_CATALOGO, e);
+        } catch (RuntimeException e) {
+            log.error("No se pudo precargar el catálogo; el back arranca sin esos datos", e);
         }
     }
 }
