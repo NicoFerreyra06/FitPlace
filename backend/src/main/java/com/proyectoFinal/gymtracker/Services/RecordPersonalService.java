@@ -10,6 +10,7 @@ import com.proyectoFinal.gymtracker.Modelo.Ejercicio;
 import com.proyectoFinal.gymtracker.Modelo.RecordPersonal;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Repositories.RecordPersonalRepository;
+import com.proyectoFinal.gymtracker.Repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,7 @@ public class RecordPersonalService {
 
     private final RecordPersonalRepository recordPersonalRepository;
     private final MarcaEjercicioRepository marcaEjercicioRepository;
+    private final UsuarioRepository usuarioRepository;
 
     private RecordPersonalResponse toResponse(RecordPersonal record) {
         return RecordPersonalResponse.builder()
@@ -57,8 +59,13 @@ public class RecordPersonalService {
     }
 
     // Muestra los record personales en todos los ejercicios de 1 usuario.
+    // Los puede ver el mismo usuario, un admin o alguien de su grupo de amigos.
     public List<RecordPersonalResponse> getRecordsPersonalesByUsuarioId(Long usuarioId, Usuario authUser) {
-        if (!authUser.getId().equals(usuarioId) && authUser.getRol() != Rol.ADMIN) {
+        boolean puedeVer = authUser.getId().equals(usuarioId)
+                || authUser.getRol() == Rol.ADMIN
+                || usuarioRepository.existsByIdAndAmigos_Id(authUser.getId(), usuarioId);
+
+        if (!puedeVer) {
             throw new ForbiddenAccessException("No tienes permisos para ver estos records");
         }
         return recordPersonalRepository.findRecordPersonalByUsuarioId(usuarioId)
