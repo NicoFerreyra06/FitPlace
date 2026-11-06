@@ -13,6 +13,14 @@
     <p class="aviso aviso--error" role="alert">No se pudo iniciar la vinculación con Mercado Pago. Intentá de nuevo.</p>
   }
 
+  @if (avisoSuscripcion(); as texto) {
+    @if (errorSuscripcion()) {
+      <p class="aviso aviso--error" role="alert">{{ texto }}</p>
+    } @else {
+      <p class="aviso aviso--ok" role="status">{{ texto }}</p>
+    }
+  }
+
   @if (tieneGimnasiosPropios()) {
     <section class="mis-gimnasios" aria-labelledby="mis-gimnasios-titulo">
       <h2 id="mis-gimnasios-titulo" class="seccion-titulo">Mis gimnasios</h2>
@@ -84,6 +92,8 @@
   }
 
   @if (gimnasioSeleccionado(); as gimnasio) {
-    <app-gimnasio-details [gimnasio]="gimnasio" (cerrar)="cerrarDetalle()" (vincular)="vincular(gimnasio.id)" />
+    <app-gimnasio-details [gimnasio]="gimnasio" [suscripcion]="suscripcionActual()" [pagando]="pagandoMp()" [errorPago]="errorPagoMp()" (cerrar)="cerrarDetalle()"
+    (vincular)="vincular(gimnasio.id)"     
+    (suscribir)="suscribirse(gimnasio, $event)"/>
   }
 </main>

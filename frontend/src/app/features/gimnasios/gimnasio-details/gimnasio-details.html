@@ -1,57 +1,143 @@
-<div class="modal-backdrop" (click)="onCerrar()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="hero">
-      @if (gimnasio().fotoUrl) {
-        <img class="hero-foto" [src]="gimnasio().fotoUrl" [alt]="'Foto de ' + gimnasio().nombre" />
-      } @else {
-        <div class="hero-foto hero-foto--vacia" aria-hidden="true"></div>
-      }
-      <button type="button" class="close-btn" aria-label="Cerrar" (click)="onCerrar()">&times;</button>
-    </div>
+<div class="backdrop" (click)="onCerrar()">
+  <div
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="gimnasio-titulo"
+    (click)="$event.stopPropagation()"
+  >
+    @if (pendiente()) {
+      <p class="franja" role="status">
+        <svg class="icono" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 8v4M12 16h.01" />
+        </svg>
+        Tenés la cuota de {{ mes }} pendiente
+      </p>
+    }
 
-    <div class="modal-body">
-      <div class="titulo">
-        <h2>{{ gimnasio().nombre }}</h2>
-        @if (gimnasio().isMercadoPagoVinculado) {
-          <span class="badge primary">Mercado Pago</span>
+    <button
+      type="button"
+      class="cerrar"
+      [class.cerrar--franja]="pendiente()"
+      aria-label="Cerrar"
+      (click)="onCerrar()"
+    >
+      &times;
+    </button>
+
+    <div class="cuerpo">
+      <div class="gimnasio">
+        @if (gimnasio().fotoUrl) {
+          <img class="miniatura" [src]="gimnasio().fotoUrl" alt="" />
+        } @else {
+          <div class="miniatura miniatura--vacia" aria-hidden="true"></div>
         }
+
+        <div class="gimnasio-info" [class.gimnasio-info--sin-franja]="!pendiente()">
+          <h2 id="gimnasio-titulo">{{ gimnasio().nombre }}</h2>
+          <p class="linea">
+            <svg class="icono" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 6v6l4 2" />
+            </svg>
+            {{ dias() }} · {{ gimnasio().horarioApertura }} a {{ gimnasio().horarioCierre }}
+          </p>
+          <p class="linea">
+            <svg class="icono" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+            {{ gimnasio().direccion }}
+          </p>
+        </div>
       </div>
 
-      <div class="cuota-bloque">
-        <span class="cuota">$ {{ gimnasio().precioCuota }}</span>
-        <span class="cuota-etiqueta">Cuota</span>
+      <div class="cuota-fila">
+        <span class="cuota-etiqueta">
+          Cuota mensual
+          @if (alDia()) {
+            <span class="al-dia">Al día</span>
+          }
+        </span>
+        <span class="cuota">$ {{ precio() }}</span>
       </div>
-
-      <ul class="info">
-        <li>
-          <svg class="icono" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 6v6l4 2" />
-          </svg>
-          <span>{{ gimnasio().horarioApertura }} - {{ gimnasio().horarioCierre }}</span>
-        </li>
-        <li>
-          <svg class="icono" viewBox="0 0 24 24" aria-hidden="true">
-            <rect x="3" y="4" width="18" height="18" rx="2" />
-            <path d="M16 2v4M8 2v4M3 10h18" />
-          </svg>
-          <div class="tags">
-            @for (dia of gimnasio().diasDeApertura; track dia) {
-              <span class="chip">{{ dia.slice(0, 3) }}</span>
-            }
-          </div>
-        </li>
-        <li>
-          <svg class="icono" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-            <circle cx="12" cy="10" r="3" />
-          </svg>
-          <span>{{ gimnasio().direccion }}</span>
-        </li>
-      </ul>
 
       @if (puedeVincular()) {
-        <button type="button" class="btn" (click)="vincular.emit()">Vincular Mercado Pago</button>
+        <button type="button" class="btn btn--bloque" (click)="vincular.emit()">Vincular Mercado Pago</button>
+      }
+
+      @if (puedeSuscribir() && accionSuscripcion() === 'otro-gimnasio') {
+        <p class="aviso-otro">
+          Ya tenés una suscripción en {{ suscripcion()?.nombreGimnasio }}. Para anotarte acá, primero tenés que cancelarla.
+        </p>
+      }
+
+      @if (confirmandoGimnasio()) {
+        <div class="confirmar">
+          <p class="confirmar-texto">
+            Vas a quedar anotado en {{ gimnasio().nombre }}. Pagás la cuota en recepción y el gimnasio activa tu suscripción.
+          </p>
+          <div class="confirmar-botones">
+            <button type="button" class="btn btn--contorno" (click)="confirmandoGimnasio.set(false)">Volver</button>
+            <button type="button" class="btn" (click)="confirmandoGimnasio.set(false); suscribir.emit(false)">Confirmar</button>
+          </div>
+        </div>
+      } @else if (mostrarPago()) {
+        <div class="pago">
+          <p class="pago-titulo">¿Cómo querés pagar?</p>
+
+          <div class="metodos">
+            @if (gimnasio().isMercadoPagoVinculado) {
+              <button
+                type="button"
+                class="metodo metodo--mp"
+                aria-label="Pagar con Mercado Pago, tarjeta, débito o dinero en cuenta"
+                [disabled]="pagando()"
+                (click)="suscribir.emit(true)"
+              >
+                <span class="metodo-badge">Al instante</span>
+                <svg class="icono" width="26" height="26" viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="2" y="5" width="20" height="14" rx="2" />
+                  <path d="M2 10h20M6 15h4" />
+                </svg>
+                <span class="metodo-titulo">Mercado Pago</span>
+                <span class="metodo-desc">{{ pagando() ? 'Redirigiendo…' : 'Tarjeta, débito o dinero en cuenta' }}</span>
+              </button>
+            }
+
+            <button
+              type="button"
+              class="metodo"
+              aria-label="Pagar en el gimnasio, efectivo o transferencia en recepción"
+              [disabled]="pagando()"
+              (click)="confirmandoGimnasio.set(true)"
+            >
+              <svg class="icono" width="26" height="26" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 9l1.5-5h15L21 9" />
+                <path d="M4 9v11h16V9" />
+                <path d="M3 9h18" />
+                <path d="M9 20v-6h6v6" />
+              </svg>
+              <span class="metodo-titulo">En el gimnasio</span>
+              <span class="metodo-desc">Efectivo o transferencia en recepción</span>
+            </button>
+          </div>
+
+          @if (errorPago()) {
+            <p class="pago-error" role="alert">No se pudo iniciar el pago. Intentá de nuevo.</p>
+          }
+
+          @if (gimnasio().isMercadoPagoVinculado) {
+            <p class="nota">
+              <svg class="icono" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="5" y="11" width="14" height="10" rx="2" />
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+              </svg>
+              Los pagos online se procesan con Mercado Pago
+            </p>
+          }
+        </div>
       }
     </div>
   </div>
