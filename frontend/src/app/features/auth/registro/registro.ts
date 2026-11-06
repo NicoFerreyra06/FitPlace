@@ -17,7 +17,7 @@ export class Registro {
   private readonly router = inject(Router);
 
   formularioRegistro = this.fb.nonNullable.group({
-    username: ['', Validators.required],
+    username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
     peso: [0, [Validators.required, Validators.min(30), Validators.max(500)]],

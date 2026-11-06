@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 public class UsuarioRequest {
     @NotBlank(message = "Debe indicar su username")
+    @Size(min = 3, max = 30, message = "El username debe tener entre 3 y 30 caracteres")
     private String username;
     @Email
     @NotBlank(message = "Debe indicar su email")

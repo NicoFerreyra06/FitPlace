@@ -15,6 +15,14 @@
       ) {
         <span class="field-error">El usuario es obligatorio</span>
       }
+
+      @if (
+        (formularioRegistro.get('username')?.hasError('minlength') ||
+          formularioRegistro.get('username')?.hasError('maxlength')) &&
+        formularioRegistro.get('username')?.touched
+      ) {
+        <span class="field-error">El usuario debe tener entre 3 y 30 caracteres</span>
+      }
     </div>
 
     <div class="field">
