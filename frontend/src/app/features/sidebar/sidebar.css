@@ -111,11 +111,47 @@
   color: var(--primary);
 }
 
-.salir {
+.tarjeta-perfil {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
 }
 
-.salir:hover {
+.tarjeta-perfil a {
+  flex: 1;
+  min-width: 0;
+  padding: 8px;
+}
+
+.inicial-perfil {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary);
+  background: var(--surface-hover);
+  border-radius: 50%;
+}
+
+.nombre-perfil {
+  overflow: hidden;
+  color: var(--text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cerrar-sesion {
+  width: auto;
+  padding: 8px;
+}
+
+.cerrar-sesion:hover {
   color: var(--danger);
 }
 

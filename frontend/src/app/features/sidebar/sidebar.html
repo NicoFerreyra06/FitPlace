@@ -142,25 +142,33 @@
       </svg>
       Gimnasios
     </a>
+  </nav>
+
+  <div class="tarjeta-perfil">
     <a
       class="item"
       routerLink="/perfil"
-      routerLinkActive="activo"
-      ariaCurrentWhenActive="page"
       (click)="cerrarMenu()"
     >
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-        <circle cx="12" cy="7" r="4" />
-      </svg>
-      Mi perfil
-    </a>
-  </nav>
 
-  <button class="item salir" type="button" (click)="cerrarSesion()">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m16 17 5-5-5-5M21 12H9M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-    </svg>
-    Cerrar sesión
-  </button>
+    @if (perfil.hasValue()) {
+      <span aria-hidden="true" class="inicial-perfil">{{inicialPerfil()}}</span>
+    } 
+
+    <span class="nombre-perfil">
+      @if(perfil.hasValue()){
+      {{perfil.value().username}}
+      } @else {
+        Mi perfil
+      }
+    </span>
+    
+    </a>
+    <button class="item cerrar-sesion" type="button" (click)="cerrarSesion()" aria-label="Cerrar sesion">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m16 17 5-5-5-5M21 12H9M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+      </svg>
+    </button>
+  </div>
 </aside>
+

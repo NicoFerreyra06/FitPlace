@@ -1,6 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { Auth } from '../../core/auth/auth';
+import { Usuario } from '../../core/usuario/usuario';
+
 
 @Component({
   imports: [RouterLink, RouterLinkActive],
@@ -12,6 +15,16 @@ import { Auth } from '../../core/auth/auth';
 export class Sidebar {
   private readonly router = inject(Router);
   private readonly auth = inject(Auth);
+  private readonly usuarioService = inject(Usuario);
+
+  protected readonly perfil = rxResource({
+    stream: () => this.usuarioService.getPerfilGuardado(),
+  });
+
+  protected readonly inicialPerfil = computed(() => {
+      return this.perfil.hasValue() ? this.perfil.value().username[0].toUpperCase() : ''
+    }
+  )
 
   protected readonly menuAbierto = signal<boolean>(false);
 
