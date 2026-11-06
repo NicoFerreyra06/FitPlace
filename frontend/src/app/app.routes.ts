@@ -18,6 +18,8 @@ import { MisAmigos } from './features/amigos/mis-amigos/mis-amigos';
 import { AmigoDetalle } from './features/amigos/amigo-detalle/amigo-detalle';
 import { GimnasioList } from './features/gimnasios/gimnasios-list/gimnasios';
 import { Entrenador } from './features/entrenador/entrenador';
+import { rolGuard } from './core/auth/rol-guard';
+import { Alumnos } from './features/alumnos/alumnos';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -43,6 +45,7 @@ export const routes: Routes = [
       { path: 'amigos/:id', component: AmigoDetalle },
       { path: 'gimnasios', component: GimnasioList },
       { path: 'entrenadores', component: Entrenador },
+      { path: 'alumnos', component: Alumnos, canActivate: [rolGuard], data: {roles: ['ENTRENADOR', 'ADMIN']}}
     ],
     canActivate: [authGuard],
   },
