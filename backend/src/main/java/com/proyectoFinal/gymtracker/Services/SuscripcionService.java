@@ -6,6 +6,7 @@ import com.proyectoFinal.gymtracker.Enum.MetodoPago;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
 import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
+import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Gimnasio;
 import com.proyectoFinal.gymtracker.Modelo.SuscripcionGimnasio;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
@@ -92,7 +93,7 @@ public class SuscripcionService {
     public SuscripcionGimnasioResponse getSuscripcionGimnasio(Usuario usuario) {
         return suscripcionGimnasioToResponse(suscripcionGimnasioRepository.findFirstByUsuarioAndEstadoSuscripcionIn(usuario,
                         List.of(EstadoSuscripcion.ACTIVA, EstadoSuscripcion.PENDIENTE))
-                .orElseThrow(() -> new BusinessLogicException("Suscripción activa o pendiente no encontrada")));
+                .orElseThrow(() -> new ResourceNotFoundException("Suscripción activa o pendiente no encontrada")));
     }
 
     @Transactional
@@ -152,6 +153,7 @@ public class SuscripcionService {
         return SuscripcionGimnasioResponse.builder()
                 .id(suscripcion.getId())
                 .idGimnasio(suscripcion.getGimnasio().getId()).
+                nombreGimnasio(suscripcion.getGimnasio().getNombre()).
                 idUsuario(suscripcion.getUsuario().getId()).
                 nombreUsuario(suscripcion.getUsuario().getNombreUsuario()).
                 fechaInicio(suscripcion.getFechaInicio()).

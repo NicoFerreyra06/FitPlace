@@ -1,5 +1,6 @@
 package com.proyectoFinal.gymtracker.Controllers;
 
+import com.proyectoFinal.gymtracker.Enum.EstadoSuscripcion;
 import com.proyectoFinal.gymtracker.Modelo.SuscripcionGimnasio;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Interfaces.IPagoService;
@@ -26,7 +27,11 @@ public class PagoController {
 
         SuscripcionGimnasio suscripcion =
                 suscripcionService.getByIdAndUser(idSuscripcion, usuario);
-                
+
+        if (suscripcion.getEstadoSuscripcion() != EstadoSuscripcion.PENDIENTE) {
+            return ResponseEntity.badRequest().body("La suscripción no se encuentra pendiente de pago");
+        }
+
         if (suscripcion.getGimnasio().getMpAccessToken() == null || suscripcion.getGimnasio().getMpAccessToken().isEmpty()) {
             return ResponseEntity.badRequest().body("El gimnasio no está vinculado a Mercado Pago");
         }

@@ -14,6 +14,7 @@ import java.time.LocalDate;
 public class SuscripcionGimnasioResponse {
     private Long id;
     private Long idGimnasio;
+    private String nombreGimnasio;
     private Long idUsuario;
     private String nombreUsuario;
     private LocalDate fechaInicio;
