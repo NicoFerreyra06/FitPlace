@@ -2,10 +2,12 @@ package com.proyectoFinal.gymtracker.Services;
 
 import com.proyectoFinal.gymtracker.DTO.Request.EntrenamientoLogRequest;
 import com.proyectoFinal.gymtracker.DTO.Request.MarcaEjercicioRequest;
+import com.proyectoFinal.gymtracker.DTO.Response.HistorialEjercicioResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.*;
+import com.proyectoFinal.gymtracker.Repositories.EjercicioRepository;
 import com.proyectoFinal.gymtracker.Repositories.EjercicioRutinaRepository;
 import com.proyectoFinal.gymtracker.Repositories.EntrenamientoLogRepository;
 import com.proyectoFinal.gymtracker.Repositories.RutinaRepository;
@@ -47,6 +49,9 @@ public class EntrenamientoLogServiceTest {
 
     @Mock
     private RecordPersonalService recordPersonalService;
+
+    @Mock
+    private EjercicioRepository ejercicioRepository;
 
     @InjectMocks
     private EntrenamientoLogService entrenamientoLogService;
@@ -383,6 +388,45 @@ public class EntrenamientoLogServiceTest {
         verify(usuarioRepository, times(1)).save(usuario);
         assertEquals(3, usuario.getRachaActualDias());
         assertEquals(3, usuario.getRachaMaximaDias());
+    }
+
+    @Test
+    @DisplayName("Deberia devolver la progresion propia sin consultar la amistad")
+    void historialEjercicioPropio() {
+        when(ejercicioRepository.findById(1L)).thenReturn(Optional.of(ejercicio));
+        when(entrenamientoLogRepository.historialEjercicio(1L, 1L)).thenReturn(List.of());
+
+        var resultado = entrenamientoLogService.getHistorialEjercicio(1L, 1L, usuario);
+
+        assertTrue(resultado.get("Ejercicio").isEmpty());
+        verify(usuarioRepository, never()).existsByIdAndAmigos_Id(anyLong(), anyLong());
+    }
+
+    @Test
+    @DisplayName("Deberia devolver la progresion de un amigo")
+    void historialEjercicioDeUnAmigo() {
+        Usuario amigo = Usuario.builder().id(2L).username("lucio_dev").rol(Rol.USUARIO).build();
+        List<HistorialEjercicioResponse> puntos =
+                List.of(new HistorialEjercicioResponse(LocalDate.of(2026, 10, 1), 60.0));
+        when(ejercicioRepository.findById(1L)).thenReturn(Optional.of(ejercicio));
+        when(usuarioRepository.existsByIdAndAmigos_Id(2L, 1L)).thenReturn(true);
+        when(entrenamientoLogRepository.historialEjercicio(1L, 1L)).thenReturn(puntos);
+
+        var resultado = entrenamientoLogService.getHistorialEjercicio(1L, 1L, amigo);
+
+        assertEquals(puntos, resultado.get("Ejercicio"));
+    }
+
+    @Test
+    @DisplayName("Deberia lanzar ForbiddenAccessException si quien consulta no es su amigo")
+    void historialEjercicioSinPermiso() {
+        Usuario ajeno = Usuario.builder().id(3L).username("ajeno").rol(Rol.USUARIO).build();
+        when(ejercicioRepository.findById(1L)).thenReturn(Optional.of(ejercicio));
+        when(usuarioRepository.existsByIdAndAmigos_Id(3L, 1L)).thenReturn(false);
+
+        assertThrows(ForbiddenAccessException.class,
+                () -> entrenamientoLogService.getHistorialEjercicio(1L, 1L, ajeno));
+        verify(entrenamientoLogRepository, never()).historialEjercicio(anyLong(), anyLong());
     }
 
     private EjercicioRutina crearEjercicioRutinaSimulado() {

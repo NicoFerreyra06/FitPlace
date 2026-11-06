@@ -1,8 +1,11 @@
 package com.proyectoFinal.gymtracker.Services;
 
+import com.proyectoFinal.gymtracker.DTO.Response.PerfilAmigoResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
 import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
+import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
+import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Repositories.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +22,8 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -84,5 +89,36 @@ public class SocialServiceTest {
         });
 
         assertEquals("No podés agregarte a vos mismo como amigo", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Deberia devolver el perfil de amigo si son amigos")
+    void verPerfilAmigoOk() {
+        PerfilAmigoResponse perfil = PerfilAmigoResponse.builder().id(2L).username("lucio_dev").build();
+        when(usuarioRepository.findById(2L)).thenReturn(Optional.of(usuario2));
+        when(usuarioRepository.existsByIdAndAmigos_Id(1L, 2L)).thenReturn(true);
+        when(usuarioService.toPerfilAmigoResponse(usuario2)).thenReturn(perfil);
+
+        PerfilAmigoResponse resultado = socialService.verPerfilAmigo(usuario, 2L);
+
+        assertSame(perfil, resultado);
+    }
+
+    @Test
+    @DisplayName("Deberia lanzar ForbiddenAccessException si el usuario no es su amigo")
+    void verPerfilAmigoSinAmistad() {
+        when(usuarioRepository.findById(2L)).thenReturn(Optional.of(usuario2));
+        when(usuarioRepository.existsByIdAndAmigos_Id(1L, 2L)).thenReturn(false);
+
+        assertThrows(ForbiddenAccessException.class, () -> socialService.verPerfilAmigo(usuario, 2L));
+        verify(usuarioService, never()).toPerfilAmigoResponse(any(Usuario.class));
+    }
+
+    @Test
+    @DisplayName("Deberia lanzar UserNotFoundException si el amigo no existe")
+    void verPerfilAmigoInexistente() {
+        when(usuarioRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> socialService.verPerfilAmigo(usuario, 99L));
     }
 }

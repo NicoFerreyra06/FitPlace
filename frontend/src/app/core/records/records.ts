@@ -20,7 +20,8 @@ export class Records {
   private readonly http = inject(HttpClient);
   private readonly API_URL = 'http://localhost:8080/records';
 
-  getMisRecords(idUsuario: number): Observable<RecordPersonalResponse[]> {
+  /** Récords de un usuario: los propios o los de un amigo (si no es amigo, el backend responde 403). */
+  getRecordsDeUsuario(idUsuario: number): Observable<RecordPersonalResponse[]> {
     return this.http.get<RecordPersonalResponse[]>(`${this.API_URL}/usuario/${idUsuario}`);
   }
 

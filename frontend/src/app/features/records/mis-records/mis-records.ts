@@ -24,7 +24,7 @@ export class MisRecords {
 
   protected readonly records = rxResource({
     params: () => (this.perfil.hasValue() ? { idUsuario: this.perfil.value().id } : undefined),
-    stream: ({ params }) => this.recordsService.getMisRecords(params.idUsuario),
+    stream: ({ params }) => this.recordsService.getRecordsDeUsuario(params.idUsuario),
   });
 
   protected readonly recordsFiltrados = computed(() => {

@@ -4,9 +4,10 @@ import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Usuario, UsuarioPerfil } from '../../core/usuario/usuario';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Rachas } from '../components/rachas/rachas';
 
 @Component({
-  imports: [DecimalPipe, ReactiveFormsModule, RouterLink],
+  imports: [DecimalPipe, ReactiveFormsModule, RouterLink, Rachas],
   selector: 'app-perfil',
   styleUrl: './perfil.css',
   templateUrl: './perfil.html',

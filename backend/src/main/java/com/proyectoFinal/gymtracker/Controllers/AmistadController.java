@@ -1,6 +1,7 @@
 package com.proyectoFinal.gymtracker.Controllers;
 
 import com.proyectoFinal.gymtracker.DTO.Response.AmigoResponse;
+import com.proyectoFinal.gymtracker.DTO.Response.PerfilAmigoResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Services.SocialService;
@@ -36,7 +37,7 @@ public class AmistadController {
     }
 
     @GetMapping("/{amigoId}/perfil")
-    public ResponseEntity<UsuarioResponse> getPerfilAmigo(@AuthenticationPrincipal Usuario usuario,
+    public ResponseEntity<PerfilAmigoResponse> getPerfilAmigo(@AuthenticationPrincipal Usuario usuario,
                                                           @PathVariable Long amigoId) {
         return ResponseEntity.ok(socialService.verPerfilAmigo(usuario, amigoId));
     }

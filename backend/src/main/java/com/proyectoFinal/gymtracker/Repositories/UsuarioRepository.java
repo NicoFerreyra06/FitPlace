@@ -28,6 +28,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario,Long> {
     @Query("SELECT a from Usuario u  join u.amigos a where u.id = :userId")
     List<Usuario> findAllFriendByUserId(Long userId);
 
+    /** true si amigoId está en la lista de amigos de usuarioId. La amistad se guarda en los dos sentidos. */
+    boolean existsByIdAndAmigos_Id(Long usuarioId, Long amigoId);
+
     List<Usuario> findByRol(Rol rol);
 
     @Modifying

@@ -95,6 +95,7 @@ h3,
 }
 
 .grid {
+  --rachas-alto-min: 250px;
   display: flex;
   flex-wrap: wrap;
   gap: 12px;

@@ -17,6 +17,20 @@ export interface UsuarioPerfil {
   rutinaActivaId: number | null;
 }
 
+/** Nombre legible de un rol del backend (USUARIO, ENTRENADOR, ADMIN, ADMIN_GIMNASIO). */
+export function etiquetaRol(rol: string): string {
+  switch (rol) {
+    case 'ENTRENADOR':
+      return 'Entrenador';
+    case 'ADMIN':
+      return 'Administrador';
+    case 'ADMIN_GIMNASIO':
+      return 'Admin de gimnasio';
+    default:
+      return 'Usuario';
+  }
+}
+
 export interface PerfilUpdateRequest {
   altura: number;
   peso: number;
