@@ -1,0 +1,85 @@
+<main class="alumnos-page">
+  <header class="topbar">
+    <h1>Mis alumnos</h1>
+    <span class="contador" aria-live="polite">
+      {{ totalAlumnos() }} {{ totalAlumnos() === 1 ? 'alumno' : 'alumnos' }}
+    </span>
+  </header>
+
+  @if (mensajeExito()) {
+    <div class="alerta alerta--exito" role="status">
+      <span>{{ mensajeExito() }}</span>
+      <button type="button" class="btn-cerrar" (click)="mensajeExito.set(null)" aria-label="Cerrar">✕</button>
+    </div>
+  }
+
+  @if (errorMsg()) {
+    <div class="alerta alerta--error" role="alert">
+      <span>{{ errorMsg() }}</span>
+      <button type="button" class="btn-cerrar" (click)="errorMsg.set(null)" aria-label="Cerrar">✕</button>
+    </div>
+  }
+
+  @if (cargando()) {
+    <p class="muted" role="status">Cargando tus alumnos…</p>
+  } @else if (alumnos().length === 0) {
+    <div class="card tarjeta-vacia">
+      <h2>Todavía no tenés alumnos.</h2>
+      <p class="muted">Cuando un usuario te elija como entrenador, va a aparecer acá.</p>
+    </div>
+  } @else {
+    <ul class="lista">
+      @for (alumno of alumnos(); track alumno.id) {
+        <li class="item">
+          <div class="avatar" aria-hidden="true">
+            {{ alumno.username.charAt(0).toUpperCase() }}
+          </div>
+
+          <div class="info">
+            <div class="titulo">
+              <strong>{{ alumno.username }}</strong>
+              @if (alumno.rutinaActivaId) {
+                <span class="badge">Con rutina activa</span>
+              } @else {
+                <span class="badge">Sin rutina activa</span>
+              }
+            </div>
+            <span class="muted">
+              @if (alumno.rachaActualDias) {
+                🔥 {{ alumno.rachaActualDias }} {{ alumno.rachaActualDias === 1 ? 'día' : 'días' }} de racha
+              } @else {
+                Sin racha activa
+              }
+            </span>
+          </div>
+
+          <div class="acciones-item">
+            @if (confirmandoId() === alumno.id) {
+              <span class="muted">¿Dar de baja a {{ alumno.username }}?</span>
+              <button
+                class="btn btn--sm btn--peligro"
+                type="button"
+                [disabled]="eliminandoId() === alumno.id"
+                (click)="darDeBaja(alumno)"
+              >
+                {{ eliminandoId() === alumno.id ? 'Dando de baja…' : 'Sí, dar de baja' }}
+              </button>
+              <button
+                class="link link--neutro"
+                type="button"
+                [disabled]="eliminandoId() === alumno.id"
+                (click)="cancelarBaja()"
+              >
+                No
+              </button>
+            } @else {
+              <button class="link link--peligro" type="button" (click)="pedirBaja(alumno)">
+                Dar de baja
+              </button>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</main>

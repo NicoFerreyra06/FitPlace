@@ -115,6 +115,23 @@
       </svg>
       Entrenadores
     </a>
+    @if (esEntrenador() || esAdmin()) {
+      <a 
+        class="item"
+        routerLink="/alumnos"
+        routerLinkActive="activo"
+        ariaCurrentWhenActive="page"
+        (click)="cerrarMenu()"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M2 9l10-5 10 5-10 5L2 9z" />
+          <path d="M6 11.5V15c0 1.7 2.7 3 6 3s6-1.3 6-3v-3.5" />
+          <path d="M22 9v6" />
+        </svg>
+        Mis alumnos
+      </a>
+    }
+    
     <a
       class="item"
       routerLink="/amigos"
