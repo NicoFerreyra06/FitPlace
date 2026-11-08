@@ -21,6 +21,15 @@
     }
   }
 
+  @if (suscripcionActual(); as suscripcion) {
+    <section class="mi-suscripcion" aria-labelledby="mi-suscripcion-titulo">
+      <h2 id="mi-suscripcion-titulo" class="seccion-titulo">Mi suscripción</h2>
+      <app-mi-suscripcion [suscripcion]="suscripcion" [pagando]="pagandoMp()"
+        (cancelar)="cancelarSuscripcion(suscripcion.id)"
+        (completarPago)="completarPago(suscripcion.id)" />
+    </section>
+  }
+
   @if (tieneGimnasiosPropios()) {
     <section class="mis-gimnasios" aria-labelledby="mis-gimnasios-titulo">
       <h2 id="mis-gimnasios-titulo" class="seccion-titulo">Mis gimnasios</h2>

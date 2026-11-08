@@ -1,0 +1,108 @@
+.tarjeta {
+  max-width: 540px;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+}
+
+.icono {
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.franja {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--warning);
+  background: rgb(250 204 21 / 0.1);
+  border-bottom: 1px solid rgb(250 204 21 / 0.25);
+}
+
+.cuerpo {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+}
+
+.nombre {
+  margin: 0 0 4px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.linea {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.cuota-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.cuota-etiqueta {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.al-dia {
+  margin-left: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--success);
+}
+
+.cuota {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--primary);
+}
+
+.confirmar {
+  display: grid;
+  gap: 12px;
+}
+
+.confirmar-texto {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.confirmar-texto strong {
+  color: var(--text);
+}
+
+.botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn--cancelar {
+  color: var(--danger);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--danger);
+}
+
+.btn--cancelar:hover:not(:disabled) {
+  box-shadow:
+    inset 0 0 0 1px var(--danger),
+    var(--glow-danger);
+}

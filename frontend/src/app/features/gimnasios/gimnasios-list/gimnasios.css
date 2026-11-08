@@ -97,7 +97,8 @@
   color: var(--text-muted);
 }
 
-.mis-gimnasios {
+.mis-gimnasios,
+.mi-suscripcion {
   margin-bottom: 40px;
 }
 
