@@ -159,7 +159,9 @@ public class SuscripcionService {
                 fechaInicio(suscripcion.getFechaInicio()).
                 fechaFin(suscripcion.getFechaFin()).
                 metodoPago(suscripcion.getMetodoPago()).
-                estadoSuscripcion(suscripcion.getEstadoSuscripcion()).build();
+                estadoSuscripcion(suscripcion.getEstadoSuscripcion()).
+                costo(suscripcion.getCosto()).
+                isMercadoPagoVinculado(suscripcion.getGimnasio().getMpAccessToken() != null && !suscripcion.getGimnasio().getMpAccessToken().isEmpty()).build();
     }
 
     @Scheduled(cron = "0 0 0 * * ?")

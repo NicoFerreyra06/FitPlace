@@ -1,5 +1,6 @@
 package com.proyectoFinal.gymtracker.DTO.Response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.proyectoFinal.gymtracker.Enum.EstadoSuscripcion;
 import com.proyectoFinal.gymtracker.Enum.MetodoPago;
 import lombok.Builder;
@@ -21,4 +22,7 @@ public class SuscripcionGimnasioResponse {
     private LocalDate fechaFin;
     private MetodoPago metodoPago;
     private EstadoSuscripcion estadoSuscripcion;
+    private Double costo;
+    @JsonProperty("isMercadoPagoVinculado")
+    private Boolean isMercadoPagoVinculado;
 }

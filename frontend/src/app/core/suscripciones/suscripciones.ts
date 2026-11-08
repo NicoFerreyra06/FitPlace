@@ -12,6 +12,8 @@ export interface SuscripcionGimnasioResponse {
     fechaFin: string | null,
     metodoPago: string | null,
     estadoSuscripcion: estadoSuscripcion,
+    costo: number,
+    isMercadoPagoVinculado: boolean,
 }
 
 type estadoSuscripcion = 'ACTIVA' | 'PENDIENTE' | 'VENCIDA' | 'CANCELADA'
@@ -28,6 +30,10 @@ export class Suscripciones {
 
     createSuscripcion(idGimnasio: number): Observable<SuscripcionGimnasioResponse>{
         return this.http.post<SuscripcionGimnasioResponse>(`${this.API_URL_SUSCRIPCION}/${idGimnasio}`, null);
+    }
+
+    cancelarSuscripcion(idSuscripcion: number): Observable<SuscripcionGimnasioResponse>{
+        return this.http.put<SuscripcionGimnasioResponse>(`${this.API_URL_SUSCRIPCION}/${idSuscripcion}/cancelar`, null);
     }
 
     generarPago(idSuscripcion: number): Observable<string>{

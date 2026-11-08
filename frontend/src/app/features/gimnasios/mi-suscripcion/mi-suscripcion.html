@@ -1,0 +1,62 @@
+<article class="tarjeta">
+  @if (!activa()) {
+    <p class="franja" role="status">
+      <svg class="icono" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 8v4M12 16h.01" />
+      </svg>
+      Tenés la cuota de {{ mes }} pendiente
+    </p>
+  }
+
+  <div class="cuerpo">
+    <div>
+      <h3 class="nombre">{{ suscripcion().nombreGimnasio }}</h3>
+      @if (activa()) {
+        <p class="linea">Pagado hasta el {{ suscripcion().fechaFin | date: 'dd/MM/yyyy' }}</p>
+      } @else if (!suscripcion().isMercadoPagoVinculado) {
+        <p class="linea">Pagá la cuota en recepción para que te activen.</p>
+      }
+    </div>
+
+    <div class="cuota-fila">
+      <span class="cuota-etiqueta">
+        Cuota mensual
+        @if (activa()) {
+          <span class="al-dia">Al día</span>
+        }
+      </span>
+      <span class="cuota">$ {{ precio() }}</span>
+    </div>
+
+    @if (confirmando()) {
+      <div class="confirmar">
+        <p class="confirmar-texto">
+          @if (activa()) {
+            Vas a perder el acceso a {{ suscripcion().nombreGimnasio }} desde hoy, aunque tengas pagado hasta el
+            {{ suscripcion().fechaFin | date: 'dd/MM/yyyy' }}. <strong>No se devuelve el dinero.</strong>
+          } @else {
+            Vas a cancelar tu suscripción pendiente a {{ suscripcion().nombreGimnasio }}.
+          }
+        </p>
+        <div class="botones">
+          <button type="button" class="btn btn--contorno" (click)="confirmando.set(false)">Volver</button>
+          <button type="button" class="btn btn--peligro" (click)="confirmarCancelacion()">Sí, cancelar</button>
+        </div>
+      </div>
+    } @else {
+      <div class="botones">
+        @if (activa()) {
+          <button type="button" class="btn btn--cancelar" (click)="confirmando.set(true)">Cancelar suscripción</button>
+        } @else {
+          <button type="button" class="btn btn--contorno" (click)="confirmando.set(true)">Cancelar</button>
+          @if (suscripcion().isMercadoPagoVinculado) {
+            <button type="button" class="btn" [disabled]="pagando()" (click)="completarPago.emit()">
+              {{ pagando() ? 'Redirigiendo…' : 'Completar pago' }}
+            </button>
+          }
+        }
+      </div>
+    }
+  </div>
+</article>

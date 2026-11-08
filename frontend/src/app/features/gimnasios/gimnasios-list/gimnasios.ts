@@ -3,11 +3,12 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Gimnasios, gimnasioResponse } from '../../../core/gimnasios/gimnasios';
-import { GimnasioDetails } from '../gimnasio-details/gimnasio-details'; 
+import { GimnasioDetails } from '../gimnasio-details/gimnasio-details';
+import { MiSuscripcion } from '../mi-suscripcion/mi-suscripcion';
 import { Suscripciones } from '../../../core/suscripciones/suscripciones';
 
 @Component({
-  imports: [GimnasioDetails],
+  imports: [GimnasioDetails, MiSuscripcion],
   selector: 'app-gimnasios',
   styleUrl: './gimnasios.css',
   templateUrl: './gimnasios.html',
@@ -175,6 +176,40 @@ export class GimnasioList {
       this.miSuscripcion.reload();
       this.avisoSuscripcion.set(`Te anotaste en ${gimnasio.nombre}. Pagá la cuota en recepción para que te activen.`)
     }
+  }
+
+  protected completarPago(idSuscripcion: number): void {
+    this.errorSuscripcion.set(false);
+    this.avisoSuscripcion.set(null);
+    this.pagandoMp.set(true);
+    this.suscripcionService.generarPago(idSuscripcion).subscribe({
+      next: (url) => {
+        window.location.href = url;
+      },
+      error: () => {
+        this.pagandoMp.set(false);
+        this.errorSuscripcion.set(true);
+        this.avisoSuscripcion.set('No se pudo iniciar el pago. Intentá de nuevo.');
+      },
+    });
+  }
+
+  protected cancelarSuscripcion(idSuscripcion: number): void {
+    this.errorSuscripcion.set(false);
+    this.avisoSuscripcion.set(null);
+
+    this.suscripcionService.cancelarSuscripcion(idSuscripcion).subscribe({
+      next: () => {
+        this.miSuscripcion.reload();
+        this.avisoSuscripcion.set('Cancelaste tu suscripción correctamente')
+        },
+      error: () => {
+          this.miSuscripcion.reload();
+          this.avisoSuscripcion.set('Error al desuscribir')
+          this.errorSuscripcion.set(true);
+        }
+    })
+
   }
 
   private fallarSuscripcion(texto: string, conMercadoPago: boolean): void {
