@@ -128,6 +128,25 @@ h2 {
   border-color: var(--border-strong);
 }
 
+.perfil-link {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.perfil-link:hover strong {
+  text-decoration: underline;
+}
+
+.perfil-link:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 6px;
+}
+
 .avatar {
   display: grid;
   flex-shrink: 0;

@@ -31,28 +31,32 @@
     <ul class="lista">
       @for (alumno of alumnos(); track alumno.id) {
         <li class="item">
-          <div class="avatar" aria-hidden="true">
-            {{ alumno.username.charAt(0).toUpperCase() }}
-          </div>
-
-          <div class="info">
-            <div class="titulo">
-              <strong>{{ alumno.username }}</strong>
-              @if (alumno.rutinaActivaId) {
-                <span class="badge">Con rutina activa</span>
-              } @else {
-                <span class="badge">Sin rutina activa</span>
-              }
+          <a class="perfil-link" [routerLink]="['/alumnos', alumno.id]">
+            <div class="avatar" aria-hidden="true">
+              {{ alumno.username.charAt(0).toUpperCase() }}
             </div>
-            <span class="muted">
-              @if (alumno.rachaActualDias) {
-                🔥 {{ alumno.rachaActualDias }} {{ alumno.rachaActualDias === 1 ? 'día' : 'días' }} de racha
-              } @else {
-                Sin racha activa
-              }
-            </span>
-          </div>
-
+          
+            <div class="info">
+              <div class="titulo">
+                <strong>{{ alumno.username }}</strong>
+                @if (alumno.rutinaActivaId) {
+                  <span class="badge">Con rutina activa</span>
+                } @else {
+                  <span class="badge">Sin rutina activa</span>
+                }
+              </div>
+              <span class="muted">
+                @if (alumno.rachaActualDias) {
+                  🔥 {{ alumno.rachaActualDias }}
+                  {{ alumno.rachaActualDias === 1 ? 'día' : 'días' }} de racha
+                } @else {
+                  Sin racha activa
+                }
+              </span>
+            </div>
+          
+          </a>
+        
           <div class="acciones-item">
             @if (confirmandoId() === alumno.id) {
               <span class="muted">¿Dar de baja a {{ alumno.username }}?</span>

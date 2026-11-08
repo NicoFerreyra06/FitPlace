@@ -1,8 +1,11 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { EntrenadorService, EntrenadorResponse } from '../../core/entrenador/entrenador';
+import { Rutinas } from '../../core/rutinas/rutinas';
+import { Usuario } from '../../core/usuario/usuario';
 
 @Component({
   imports: [],
@@ -12,6 +15,8 @@ import { EntrenadorService, EntrenadorResponse } from '../../core/entrenador/ent
 })
 export class Entrenador implements OnInit {
   private readonly entrenadorService = inject(EntrenadorService);
+  private readonly rutinasService = inject(Rutinas);
+  private readonly usuarioService = inject(Usuario);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly cargando = signal(true);
@@ -68,6 +73,8 @@ export class Entrenador implements OnInit {
           this.miEntrenador.set(entrenador);
           this.asignando.set(null);
           this.mensajeExito.set(`¡${entrenador.username} es ahora tu entrenador!`);
+          this.usuarioService.limpiarPerfil();
+          this.validarRutinaActiva();
         },
         error: (err) => {
           this.asignando.set(null);
@@ -104,11 +111,43 @@ export class Entrenador implements OnInit {
           this.desvinculando.set(false);
           this.confirmandoDesvinculacion.set(false);
           this.mensajeExito.set(`Desvinculaste a ${nombre} como tu entrenador.`);
+          this.usuarioService.limpiarPerfil();
+          this.validarRutinaActiva();
         },
         error: (err) => {
           this.desvinculando.set(false);
           this.errorMsg.set(err.error?.message ?? 'No se pudo desvincular el entrenador.');
         },
+      });
+  }
+
+  private validarRutinaActiva(): void {
+    this.usuarioService
+      .getMiPerfil()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (perfil) => {
+          this.usuarioService.limpiarPerfil();
+
+          const idRutina = perfil.rutinaActivaId;
+          if (!idRutina) return;
+
+          this.rutinasService
+            .getRutina(idRutina)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+              next: () => {},
+              error: (error: HttpErrorResponse) => {
+                if (error.status === 403 || error.status === 404) {
+                  this.usuarioService
+                    .desactivarRutina()
+                    .pipe(takeUntilDestroyed(this.destroyRef))
+                    .subscribe({ error: () => {} });
+                }
+              },
+            });
+        },
+        error: () => {},
       });
   }
 }

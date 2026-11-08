@@ -1,9 +1,10 @@
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { AlumnoResponse, AlumnoService } from '../../core/alumnos/alumno';
+import { AlumnoResponse, AlumnoService } from '../../../core/alumnos/alumno';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 
 @Component({
-  imports: [],
+  imports: [RouterLink],
   selector: 'app-alumnos',
   styleUrl: './alumnos.css',
   templateUrl: './alumnos.html',

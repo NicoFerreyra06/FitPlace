@@ -14,7 +14,7 @@
     @if (cargando()) {
         <p class="muted">Cargando…</p>
     } @else if (rutinas().length === 0) {
-        <p class="muted">Todavía no creaste ninguna rutina.</p>
+        <p class="muted">Todavía no tenés rutinas.</p>
     } @else {
         <ul class="lista">
             @for (rutina of rutinas(); track rutina.id) {
@@ -26,6 +26,9 @@
                                 <span class="badge activa">Activa</span>
                             }
                             <span class="badge">{{ rutina.esPublica ? 'Pública' : 'Privada' }}</span>
+                            @if (esDelEntrenador(rutina)) {
+                                <span class="badge entrenador">Creada por tu entrenador</span>
+                            }
                         </div>
                         <span class="muted">{{ rutina.diaRutinas.length > 1 ? rutina.diaRutinas.length + ' dias por semana' : '1 dia a la semana'}}</span>
                     </a>
@@ -36,8 +39,10 @@
                         } @else {
                             <button type="button" class="btn btn--sm btn--contorno" (click)="desactivar()">Desactivar</button>  
                         }
-                        <a class="link link--neutro" [routerLink]="['/rutinas', rutina.id, 'editar']">Editar <span class="flecha">›</span></a>
-                        <button type="button" class="link link--peligro" (click)="eliminar(rutina)">Eliminar</button>
+                        @if (esMia(rutina)) {
+                            <a class="link link--neutro" [routerLink]="['/rutinas', rutina.id, 'editar']">Editar <span class="flecha">›</span></a>
+                            <button type="button" class="link link--peligro" (click)="eliminar(rutina)">Eliminar</button>
+                        }
                     </div>
                 </li>
             }

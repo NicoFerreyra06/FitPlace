@@ -1,0 +1,242 @@
+<main class="detalle">
+  <header class="topbar">
+    <a class="back" routerLink="/alumnos">&larr; Volver a mis alumnos</a>
+  </header>
+
+  @if (noEncontrado()) {
+    <div class="card estado-vacio" role="status">
+      <p><strong>No encontramos a este alumno entre tus alumnos.</strong></p>
+      <p class="muted">Puede que el enlace esté mal o que ya no esté a tu cargo.</p>
+      <a class="btn btn--sm" routerLink="/alumnos">Ir a mis alumnos</a>
+    </div>
+  } @else if (resultado.isLoading()) {
+    <p class="estado-msg" role="status">Cargando alumno…</p>
+  } @else if (resultado.error()) {
+    <div class="estado-error" role="alert">
+      <p class="error-msg">No se pudo cargar el alumno.</p>
+      <button type="button" class="btn btn--sm" (click)="resultado.reload()">
+        Reintentar
+      </button>
+    </div>
+  } @else if (alumno(); as a) {
+    <section class="card cabecera">
+      <div class="avatar" aria-hidden="true">
+        {{ a.username.charAt(0).toUpperCase() }}
+      </div>
+      <div class="identidad">
+        <h1>{{ a.username }}</h1>
+        <span class="badge">{{ etiquetaRol(a.rol) }}</span>
+      </div>
+    </section>
+
+    <section class="seccion" aria-labelledby="titulo-datos">
+      <h2 id="titulo-datos">Datos físicos</h2>
+      <div class="grid">
+        <article class="card dato">
+          <h3>Altura</h3>
+          <p class="numero">{{ a.altura !== null ? a.altura + ' m' : '—' }}</p>
+        </article>
+
+        <article class="card dato">
+          <h3>Peso</h3>
+          <p class="numero">{{ a.peso !== null ? a.peso + ' kg' : '—' }}</p>
+        </article>
+
+        <article class="card imc">
+          <h3>IMC</h3>
+          @if (a.imc !== null) {
+            <p class="numero">{{ a.imc | number: '1.1-1' }}</p>
+            <p class="etiqueta">({{ a.categoriaImc }})</p>
+          } @else {
+            <p class="muted">Sin datos de peso y altura.</p>
+          }
+        </article>
+      </div>
+    </section>
+
+    <section class="seccion" aria-labelledby="titulo-constancia">
+      <h2 id="titulo-constancia">Constancia</h2>
+      <div class="grid rachas">
+        <app-rachas [actual]="a.rachaActualDias" [maxima]="a.rachaMaximaDias" />
+      </div>
+    </section>
+
+    <section class="seccion" aria-labelledby="titulo-rutina">
+      <h2 id="titulo-rutina">Rutina actual</h2>
+
+      <article class="card rutina" [class.rutina--vacia]="!a.rutinaActivaId">
+        @if (!a.rutinaActivaId) {
+          <div class="rutina-estado" role="status">
+            <p class="rutina-estado-texto">
+              Todavía no tiene una rutina activa.
+            </p>
+          </div>
+        } @else if (rutina.isLoading() || (!nombreRutina() && historial.isLoading())) {
+          <div class="rutina-estado" role="status">
+            <span class="etiqueta-rutina">Rutina activa</span>
+            <p class="rutina-estado-texto">Cargando rutina…</p>
+          </div>
+        } @else if (rutinaPrivada()) {
+          <div class="rutina-privada" role="status">
+            <span class="etiqueta-rutina">Rutina activa</span>
+            <p class="muted">Tiene una rutina activa, pero es privada.</p>
+          </div>
+        } @else if (rutina.error()) {
+          <div class="rutina-estado" role="status">
+            <span class="etiqueta-rutina">Rutina activa</span>
+            <p class="rutina-estado-texto">No se pudo cargar la rutina.</p>
+          </div>
+        } @else {
+          <button
+            type="button"
+            class="rutina-toggle"
+            [attr.aria-expanded]="rutinaAbierta()"
+            aria-controls="detalle-rutina"
+            (click)="alternarRutina()"
+          >
+            <span class="rutina-info">
+              <span class="etiqueta-rutina">Rutina activa</span>
+              <strong>{{ nombreRutina() ?? 'Ver rutina' }}</strong>
+
+              <span class="muted">
+                @if (rutinaEsPrivada()) {
+                  Privada
+                }
+                @if (rutinaEsPrivada() && diasRutina().length > 0) {
+                  ·
+                }
+                @if (diasRutina().length > 0) {
+                  {{ diasRutina().length }}
+                  {{ diasRutina().length === 1 ? 'día' : 'días' }}
+                }
+              </span>
+            </span>
+
+            <span
+              class="flecha"
+              [class.rotada]="rutinaAbierta()"
+              aria-hidden="true"
+            >
+              ▸
+            </span>
+          </button>
+
+          @if (rutinaAbierta()) {
+            <div class="rutina-detalle" id="detalle-rutina">
+              @if (diasRutina().length === 0) {
+                <p class="muted">
+                  Esta rutina todavía no tiene días asignados.
+                </p>
+              } @else {
+                @for (dia of diasRutina(); track dia.id) {
+                  <section class="dia-rutina">
+                    <header class="dia-rutina-cabecera">
+                      <h3 class="dia-rutina-nombre">
+                        ›
+                        {{ etiquetaDia(dia.diaDeLaSemana) }}
+                        @if (dia.nombre) {
+                          <span class="dia-rutina-extra">· {{ dia.nombre }}</span>
+                        }
+                      </h3>
+
+                      <span class="muted">
+                        {{ dia.ejercicioRutinas.length }}
+                        {{ dia.ejercicioRutinas.length === 1 ? 'ejercicio' : 'ejercicios' }}
+                      </span>
+                    </header>
+
+                    @if (dia.ejercicioRutinas.length === 0) {
+                      <p class="muted">Sin ejercicios asignados.</p>
+                    } @else {
+                      <ul class="lista-ejercicios">
+                        @for (ej of dia.ejercicioRutinas; track ej.id) {
+                          <li class="ejercicio-rutina">
+                            <span class="ejercicio-nombre">
+                              {{ ej.nombreEjercicio }}
+                            </span>
+                            <span class="ejercicio-dosis">
+                              <strong>{{ ej.series }}</strong> series ×
+                              <strong>{{ ej.repeticiones }}</strong> reps
+                            </span>
+                          </li>
+                        }
+                      </ul>
+                    }
+                  </section>
+                }
+              }
+            </div>
+          }
+        }
+      </article>
+    </section>
+
+    <section class="seccion" aria-labelledby="titulo-records">
+      <h2 id="titulo-records">Récords personales</h2>
+
+      @if (historial.isLoading()) {
+        <p class="muted" role="status">Cargando récords…</p>
+      } @else if (historial.error()) {
+        <div class="fila-error" role="alert">
+          <span class="error-msg">No se pudieron cargar sus récords.</span>
+          <button type="button" class="btn btn--sm" (click)="historial.reload()">
+            Reintentar
+          </button>
+        </div>
+      } @else {
+        <ul class="records">
+          @for (
+            record of recordsVisibles();
+            track record.nombreEjercicio;
+            let i = $index
+          ) {
+            @let abierto = ejercicioAbierto() === record.nombreEjercicio;
+
+            <li class="record">
+              <button
+                type="button"
+                class="record-cabecera"
+                [attr.aria-expanded]="abierto"
+                [attr.aria-controls]="'progresion-alumno-' + i"
+                (click)="alternarProgresion(record.nombreEjercicio)"
+              >
+                <span>{{ record.nombreEjercicio }}</span>
+                <strong class="peso">{{ record.pesoMaximo }} kg</strong>
+                <time class="muted" [attr.datetime]="record.fechaLogro">
+                  Logrado el {{ record.fechaLogro | date: 'dd/MM/yyyy' }}
+                </time>
+                <span class="accion">
+                  {{ abierto ? 'Ocultar progresión' : 'Ver progresión' }}
+                </span>
+              </button>
+
+              @if (abierto) {
+                <div class="record-progresion" [id]="'progresion-alumno-' + i">
+                  @if (puntosProgresion().length > 0) {
+                    <app-progresion [puntos]="puntosProgresion()" />
+                  } @else {
+                    <p class="muted">
+                      Todavía no tiene entrenamientos con este ejercicio.
+                    </p>
+                  }
+                </div>
+              }
+            </li>
+          } @empty {
+            <li class="muted">Todavía no tiene récords personales.</li>
+          }
+        </ul>
+
+        @if (hayMasRecords()) {
+          <button
+            class="btn btn--contorno btn--sm"
+            type="button"
+            (click)="alternarRecords()"
+          >
+            {{ mostrarTodosLosRecords()? 'Ver menos' : 'Ver más (' + records().length + ')'}}
+          </button>
+        }
+      }
+    </section>
+  }
+</main>

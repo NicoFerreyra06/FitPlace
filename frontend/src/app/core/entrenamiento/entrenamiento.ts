@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { map, Observable, tap } from 'rxjs';
+import { forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
 import { Page } from '../../model/page';
 import { Usuario } from '../usuario/usuario';
 
@@ -50,13 +50,44 @@ export class Entrenamiento {
     pagina = 0,
     desde?: string,
     hasta?: string,
+    tamanio?: number,
   ): Observable<Page<EntrenamientoLog>> {
     let params = new HttpParams().set('page', pagina).set('sort', 'fecha,desc');
+    if (tamanio) params = params.set('size', tamanio);
     if (desde) params = params.set('desde', desde);
     if (hasta) params = params.set('hasta', hasta);
     return this.http.get<Page<EntrenamientoLog>>(`${this.API_URL}/usuario/${idUsuario}`, {
       params,
     });
+  }
+
+  /** Trae todas las páginas del historial propio (para descubrir rutinas usadas). */
+  getHistorialCompleto(idUsuario: number): Observable<EntrenamientoLog[]> {
+    const TAMANIO = 200;
+
+    return this.getHistorial(idUsuario, 0, undefined, undefined, TAMANIO).pipe(
+      switchMap((primera) => {
+        if (primera.last || primera.totalPages <= 1) {
+          return of(primera.content);
+        }
+
+        const paginas = Array.from(
+          { length: primera.totalPages - 1 },
+          (_, indice) => indice + 1,
+        );
+
+        return forkJoin(
+          paginas.map((pagina) =>
+            this.getHistorial(idUsuario, pagina, undefined, undefined, TAMANIO),
+          ),
+        ).pipe(
+          map((resto) => [
+            ...primera.content,
+            ...resto.flatMap((pagina) => pagina.content),
+          ]),
+        );
+      }),
+    );
   }
 
   /**
@@ -74,6 +105,39 @@ export class Entrenamiento {
 
   getById(id: number): Observable<EntrenamientoLog> {
     return this.http.get<EntrenamientoLog>(`${this.API_URL}/${id}`);
+  }
+
+  getHistorialAlumno(idAlumno: number, pagina = 0, tamanio = 200): Observable<Page<EntrenamientoLog>> {
+    const params = new HttpParams().set('page', pagina).set('size', tamanio).set('sort', 'fecha,desc');
+
+    return this.http.get<Page<EntrenamientoLog>>(`${this.API_URL}/alumno/${idAlumno}`, { params });
+  }
+
+  /** Trae todas las páginas del historial para poder calcular récords y progresión. */
+  getHistorialAlumnoCompleto(idAlumno: number): Observable<EntrenamientoLog[]> {
+    const TAMANIO = 200;
+
+    return this.getHistorialAlumno(idAlumno, 0, TAMANIO).pipe(
+      switchMap((primera) => {
+        if (primera.last || primera.totalPages <= 1) {
+          return of(primera.content);
+        }
+
+        const paginas = Array.from(
+          { length: primera.totalPages - 1 },
+          (_, indice) => indice + 1,
+        );
+
+        return forkJoin(
+          paginas.map((pagina) => this.getHistorialAlumno(idAlumno, pagina, TAMANIO)),
+        ).pipe(
+          map((resto) => [
+            ...primera.content,
+            ...resto.flatMap((pagina) => pagina.content),
+          ]),
+        );
+      }),
+    );
   }
 
   registrar(request: EntrenamientoLogRequest): Observable<EntrenamientoLog> {

@@ -61,6 +61,12 @@ export class RutinaDetails implements OnInit {
           err.error?.message ?? 'No se pudo cargar la rutina',
         );
         this.cargando.set(false);
+
+        // Si era mi rutina activa y dejé de tener acceso (por ejemplo,
+        // porque cambié de entrenador), la desactivo automáticamente.
+        if (err.status === 403 || err.status === 404) {
+          this.desactivarSiEsLaActiva(id);
+        }
       },
     });
   }
@@ -92,5 +98,18 @@ export class RutinaDetails implements OnInit {
 
   cerrarDetalle(): void {
     this.ejercicioSeleccionado.set(null);
+  }
+
+  private desactivarSiEsLaActiva(idRutina: number): void {
+    this.usuarioService.getMiPerfil().subscribe({
+      next: (perfil) => {
+        if (perfil.rutinaActivaId !== idRutina) return;
+
+        this.usuarioService.desactivarRutina().subscribe({
+          error: () => {},
+        });
+      },
+      error: () => {},
+    });
   }
 }

@@ -109,6 +109,12 @@ h1 {
   border-color: var(--success);
 }
 
+.badge.entrenador {
+  color: var(--primary);
+  background: rgb(200 241 105 / 0.08);
+  border-color: rgb(200 241 105 / 0.35);
+}
+
 .acciones {
   display: flex;
   align-items: center;
