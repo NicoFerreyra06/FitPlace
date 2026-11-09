@@ -22,6 +22,7 @@ import { Entrenador } from './features/entrenador/entrenador';
 import { rolGuard } from './core/auth/rol-guard';
 import { Alumnos } from './features/alumnos/mis-alumnos/alumnos';
 import { AlumnoDetalle } from './features/alumnos/alumno-detalle/alumno-detalle/alumno-detalle';
+import { NotFound } from './features/not-found/not-found';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -53,5 +54,5 @@ export const routes: Routes = [
     ],
     canActivate: [authGuard],
   },
-  { path: '**', redirectTo: 'login' },
+  { path: '**', component: NotFound},
 ];
