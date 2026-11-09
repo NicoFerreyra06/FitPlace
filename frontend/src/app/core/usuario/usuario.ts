@@ -1,12 +1,23 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { Observable, shareReplay, tap } from 'rxjs';
+import { Page } from '../../model/page';
+
+export type RolUsuario = 'USUARIO' | 'ENTRENADOR' | 'ADMIN' | 'ADMIN_GIMNASIO';
+export type RolAsignable = Exclude<RolUsuario, 'ADMIN'>;
+
+export interface UsuarioAdmin {
+  id: number;
+  username: string;
+  email: string;
+  rol: RolUsuario;
+}
 
 export interface UsuarioPerfil {
   id: number;
   username: string;
   email: string;
-  rol: string;
+  rol: RolUsuario;
   codigoAmigo: string;
   peso: number;
   altura: number;
@@ -39,11 +50,26 @@ export interface PerfilUpdateRequest {
 @Service()
 export class Usuario {
   private readonly http = inject(HttpClient);
+  private readonly API_URL = 'http://localhost:8080/usuarios';
 
   private perfil: Observable<UsuarioPerfil> | null = null;
 
   getMiPerfil(): Observable<UsuarioPerfil> {
-    return this.http.get<UsuarioPerfil>('http://localhost:8080/usuarios/me');
+    return this.http.get<UsuarioPerfil>(`${this.API_URL}/me`);
+  }
+
+  getUsuarios(pagina: number): Observable<Page<UsuarioAdmin>> {
+    const params = new HttpParams().set('page', pagina);
+    return this.http.get<Page<UsuarioAdmin>>(this.API_URL, { params });
+  }
+
+  getUsuario(id: number): Observable<UsuarioAdmin> {
+    return this.http.get<UsuarioAdmin>(`${this.API_URL}/${id}`);
+  }
+
+  cambiarRol(id: number, nuevoRol: RolAsignable): Observable<UsuarioAdmin> {
+    const params = new HttpParams().set('nuevoRol', nuevoRol);
+    return this.http.put<UsuarioAdmin>(`${this.API_URL}/${id}/rol`, null, { params });
   }
 
   getPerfilGuardado (): Observable<UsuarioPerfil>{

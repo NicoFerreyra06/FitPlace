@@ -1,0 +1,223 @@
+.usuarios-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 16px 48px;
+}
+
+.encabezado {
+  margin-bottom: 24px;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 8px;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  margin-bottom: 18px;
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.texto-secundario,
+.estado {
+  margin-bottom: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.panel {
+  padding: 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+}
+
+.aviso {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  font-size: 14px;
+  border-radius: var(--radius-md);
+}
+
+.aviso--ok {
+  color: var(--primary);
+  background: rgb(200 241 105 / 0.12);
+  border: 1px solid rgb(200 241 105 / 0.4);
+}
+
+.aviso--error {
+  color: var(--danger);
+  background: rgb(248 113 113 / 0.1);
+  border: 1px solid var(--danger);
+}
+
+.tabla-contenedor {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th,
+td {
+  padding: 13px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+td {
+  font-size: 14px;
+}
+
+.rol {
+  display: inline-flex;
+  padding: 4px 10px;
+  color: var(--primary);
+  background: rgb(200 241 105 / 0.1);
+  border: 1px solid rgb(200 241 105 / 0.3);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.estado--error {
+  color: var(--danger);
+}
+
+.estado--error p {
+  margin-bottom: 12px;
+}
+
+.detalle {
+  margin-top: 20px;
+}
+
+.detalle-encabezado {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.detalle-encabezado h2 {
+  margin-bottom: 6px;
+}
+
+.btn-cerrar {
+  width: 32px;
+  height: 32px;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 22px 0;
+}
+
+.datos div {
+  min-width: 0;
+}
+
+.datos dt,
+.formulario-rol label {
+  margin-bottom: 6px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.datos dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.formulario-rol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.formulario-rol label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.formulario-rol select {
+  min-width: 190px;
+  padding: 9px 12px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font: inherit;
+}
+
+.solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .panel {
+    padding: 16px;
+  }
+
+  th,
+  td {
+    padding: 11px 8px;
+  }
+
+  .paginacion {
+    flex-wrap: wrap;
+  }
+}

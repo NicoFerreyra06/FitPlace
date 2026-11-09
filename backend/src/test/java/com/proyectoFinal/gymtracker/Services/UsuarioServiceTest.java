@@ -19,6 +19,8 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -104,5 +106,40 @@ public class UsuarioServiceTest {
         var response = usuarioService.toAmigoResponse(usuario2);
 
         assertEquals("lucio_dev", response.getUsername());
+    }
+
+    @Test
+    @DisplayName("Permite cambiar el rol de una cuenta no administradora")
+    void testCambiarRolDeUsuario() {
+        when(usuarioRepository.findById(usuario.getId())).thenReturn(Optional.of(usuario));
+        when(usuarioRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        var response = usuarioService.cambiarRol(usuario.getId(), Rol.ENTRENADOR);
+
+        assertEquals(Rol.ENTRENADOR, response.getRol());
+        assertEquals(usuario.getUsername(), response.getUsername());
+        verify(usuarioRepository).save(usuario);
+    }
+
+    @Test
+    @DisplayName("No permite asignar el rol de administrador")
+    void testNoPermiteAsignarRolAdmin() {
+        assertThrows(BusinessLogicException.class,
+                () -> usuarioService.cambiarRol(usuario.getId(), Rol.ADMIN));
+
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("No permite modificar el rol de una cuenta administradora")
+    void testNoPermiteModificarRolDeAdmin() {
+        Usuario administrador = Usuario.builder().id(4L).username("admin").email("admin@test.com")
+                .rol(Rol.ADMIN).codigoAmigo(UUID.randomUUID().toString()).build();
+        when(usuarioRepository.findById(administrador.getId())).thenReturn(Optional.of(administrador));
+
+        assertThrows(BusinessLogicException.class,
+                () -> usuarioService.cambiarRol(administrador.getId(), Rol.USUARIO));
+
+        verify(usuarioRepository, never()).save(any());
     }
 }
