@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { Page } from '../../model/page';
+import { UsuarioPerfil } from '../usuario/usuario';
 
 export interface gimnasioResponse {
     id: number,
@@ -43,6 +44,14 @@ export class Gimnasios {
         return this.http.get<gimnasioResponse[]>(`${this.URL}/me`).pipe(
             map(gimnasios => gimnasios.map(gimnasio => this.formatearGimnasio(gimnasio))),
         );
+    }
+
+    getGimnasio(idGimnasio: number): Observable<gimnasioResponse> {
+        return this.http.get<gimnasioResponse>(`${this.URL}/${idGimnasio}`);
+    }
+
+    getMiembros(idGimnasio: number): Observable<UsuarioPerfil[]> {
+        return this.http.get<UsuarioPerfil[]>(`${this.URL}/me/suscripciones/${idGimnasio}`);
     }
 
     getAllGimnasios(pagina: number): Observable<Page<gimnasioResponse>>{

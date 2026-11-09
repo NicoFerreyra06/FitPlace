@@ -17,6 +17,7 @@ import { RutinasPublicas } from './features/rutinas/rutinas-publicas/rutinas-pub
 import { MisAmigos } from './features/amigos/mis-amigos/mis-amigos';
 import { AmigoDetalle } from './features/amigos/amigo-detalle/amigo-detalle';
 import { GimnasioList } from './features/gimnasios/gimnasios-list/gimnasios';
+import { GestionGimnasio } from './features/gimnasios/gestion-gimnasio/gestion-gimnasio';
 import { Entrenador } from './features/entrenador/entrenador';
 import { rolGuard } from './core/auth/rol-guard';
 import { Alumnos } from './features/alumnos/mis-alumnos/alumnos';
@@ -45,6 +46,7 @@ export const routes: Routes = [
       { path: 'amigos', component: MisAmigos },
       { path: 'amigos/:id', component: AmigoDetalle },
       { path: 'gimnasios', component: GimnasioList },
+      { path: 'gimnasios/:id/gestion', component: GestionGimnasio, canActivate: [rolGuard], data: {roles: ['ADMIN_GIMNASIO']} },
       { path: 'entrenadores', component: Entrenador },
       { path: 'alumnos', component: Alumnos, canActivate: [rolGuard], data: {roles: ['ENTRENADOR']} },
       { path: 'alumnos/:id', component: AlumnoDetalle, canActivate: [rolGuard], data: {roles: ['ENTRENADOR']} }

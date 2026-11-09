@@ -1,0 +1,243 @@
+.gestion-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.volver {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.volver:hover {
+  color: var(--text);
+}
+
+h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.muted {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.aviso {
+  margin: 0;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--primary);
+  background: rgb(200 241 105 / 0.12);
+  border: 1px solid rgb(200 241 105 / 0.4);
+  border-radius: var(--radius-md);
+}
+
+.aviso--error {
+  color: var(--danger);
+  background: transparent;
+  border-color: var(--danger);
+}
+
+.sin-acceso {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-md);
+}
+
+.sin-acceso p {
+  margin: 0;
+  color: var(--danger);
+}
+
+.resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.stat-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.stat-numero {
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.seccion {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.seccion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 38px;
+}
+
+.secciones {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.secciones .seccion {
+  flex: 1 1 320px;
+}
+
+.pendientes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 12px;
+}
+
+.pendientes .muted {
+  grid-column: 1 / -1;
+}
+
+.pendiente {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid rgb(250 204 21 / 0.35);
+  border-radius: var(--radius-md);
+}
+
+.pendiente-nombre {
+  flex-grow: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.avatar {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  font-weight: 600;
+  color: var(--warning);
+  background: rgb(250 204 21 / 0.1);
+  border: 1px solid rgb(250 204 21 / 0.35);
+  border-radius: 50%;
+}
+
+.control {
+  width: 200px;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+select.control {
+  background: var(--bg);
+}
+
+.control:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.tabla {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.fila {
+  display: grid;
+  gap: 12px;
+  align-items: center;
+  margin: 0;
+  padding: 12px 18px;
+  font-size: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.fila--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.fila--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.fila--cabecera {
+  padding: 10px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--surface);
+  border-top: 0;
+}
+
+.fila span,
+.fila strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  padding: 2px 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
