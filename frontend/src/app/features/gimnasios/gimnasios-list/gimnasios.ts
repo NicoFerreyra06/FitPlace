@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Gimnasios, gimnasioResponse } from '../../../core/gimnasios/gimnasios';
 import { GimnasioDetails } from '../gimnasio-details/gimnasio-details';
@@ -8,7 +8,7 @@ import { MiSuscripcion } from '../mi-suscripcion/mi-suscripcion';
 import { Suscripciones } from '../../../core/suscripciones/suscripciones';
 
 @Component({
-  imports: [GimnasioDetails, MiSuscripcion],
+  imports: [GimnasioDetails, MiSuscripcion, RouterLink],
   selector: 'app-gimnasios',
   styleUrl: './gimnasios.css',
   templateUrl: './gimnasios.html',

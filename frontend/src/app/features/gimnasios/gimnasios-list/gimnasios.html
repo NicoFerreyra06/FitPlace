@@ -50,6 +50,9 @@
                 Vincular Mercado Pago
               </button>
             }
+            <a class="btn btn--sm btn--contorno" [routerLink]="['/gimnasios', gimnasio.id, 'gestion']" (click)="$event.stopPropagation()">
+              Gestionar
+            </a>
           </article>
         }
       </div>

@@ -1,5 +1,5 @@
 import { Service, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface SuscripcionGimnasioResponse {
@@ -16,7 +16,7 @@ export interface SuscripcionGimnasioResponse {
     isMercadoPagoVinculado: boolean,
 }
 
-type estadoSuscripcion = 'ACTIVA' | 'PENDIENTE' | 'VENCIDA' | 'CANCELADA'
+export type estadoSuscripcion = 'ACTIVA' | 'PENDIENTE' | 'VENCIDA' | 'CANCELADA'
 
 @Service()
 export class Suscripciones {
@@ -38,5 +38,14 @@ export class Suscripciones {
 
     generarPago(idSuscripcion: number): Observable<string>{
         return this.http.post(`${this.API_URL_PAGOS}/${idSuscripcion}`, null, { responseType: 'text' })
+    }
+
+    getSuscripcionesGimnasio(idGimnasio: number, estado: estadoSuscripcion | null): Observable<SuscripcionGimnasioResponse[]>{
+        const params = estado ? new HttpParams().set('estado', estado) : new HttpParams();
+        return this.http.get<SuscripcionGimnasioResponse[]>(`${this.API_URL_SUSCRIPCION}/gimnasio/${idGimnasio}`, { params });
+    }
+
+    activarSuscripcion(idSuscripcion: number, metodoPago: 'EFECTIVO' | 'TRANSFERENCIA'): Observable<SuscripcionGimnasioResponse>{
+        return this.http.put<SuscripcionGimnasioResponse>(`${this.API_URL_SUSCRIPCION}/${idSuscripcion}/activar`, null, { params: { metodoPago } });
     }
 }

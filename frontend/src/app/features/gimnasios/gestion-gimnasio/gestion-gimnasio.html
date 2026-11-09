@@ -1,0 +1,121 @@
+<main class="gestion-page">
+  @if (sinAcceso(); as mensaje) {
+  <div class="sin-acceso" role="alert">
+    <p>{{ mensaje }}</p>
+    <a class="volver" routerLink="/gimnasios">← Volver a Gimnasios</a>
+  </div>
+  } @else {
+  <header class="header">
+    <a class="volver" routerLink="/gimnasios">← Volver a Gimnasios</a>
+    <h1>{{ gimnasio.value()?.nombre ?? 'Gestión del gimnasio' }}</h1>
+  </header>
+
+  @if (aviso(); as texto) {
+    <p class="aviso" [class.aviso--error]="error()">{{ texto }}</p>
+  }
+
+  <div class="resumen">
+    <div class="stat">
+      <span class="stat-label">Miembros</span>
+      <span class="stat-numero">{{ cantidadMiembros() }}</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Cuota mensual</span>
+      <span class="stat-numero">$ {{ precio() }}</span>
+    </div>
+  </div>
+
+  <section class="seccion" aria-labelledby="pendientes-titulo">
+    <h2 id="pendientes-titulo">Para activar</h2>
+
+    @if (pendientes.isLoading() && !pendientes.hasValue()) {
+      <p class="muted" role="status">Cargando…</p>
+    } @else if (pendientes.error()) {
+      <p class="muted" role="alert">No se pudieron cargar las suscripciones pendientes.</p>
+    } @else {
+      <div class="pendientes">
+        
+        @for (suscripcion of pendientes.value(); track suscripcion.id) {
+          <div class="pendiente">
+            <div class="avatar" aria-hidden="true">{{ suscripcion.nombreUsuario.charAt(0).toUpperCase() }}</div>
+            <strong class="pendiente-nombre">{{ suscripcion.nombreUsuario }}</strong>
+            <button type="button" class="btn btn--sm" [disabled]="activandoId() === suscripcion.id"
+              (click)="activar(suscripcion, 'EFECTIVO')">Efectivo</button>
+            <button type="button" class="btn btn--sm btn--contorno" [disabled]="activandoId() === suscripcion.id"
+              (click)="activar(suscripcion, 'TRANSFERENCIA')">Transferencia</button>
+          </div>
+        } @empty {
+          <p class="muted">No hay suscripciones pendientes.</p>
+        }
+      </div>
+    }
+  </section>
+
+  <div class="secciones">
+    <section class="seccion" aria-labelledby="suscripciones-titulo">
+      <div class="seccion-header">
+        <h2 id="suscripciones-titulo">Historial de suscripciones</h2>
+        <select class="control" aria-label="Filtrar por estado" [ngModel]="estado()" (ngModelChange)="estado.set($event)">
+          <option [ngValue]="null">Todos los estados</option>
+          @for (e of estados; track e) {
+            <option [ngValue]="e">{{ e }}</option>
+          }
+        </select>
+      </div>
+
+      @if (suscripciones.isLoading() && !suscripciones.hasValue()) {
+        <p class="muted" role="status">Cargando suscripciones…</p>
+      } @else if (suscripciones.error()) {
+        <p class="muted" role="alert">No se pudieron cargar las suscripciones.</p>
+      } @else {
+        <div class="tabla">
+          <div class="fila fila--cabecera fila--3">
+            <span>Usuario</span><span>Estado</span><span>Vence</span>
+          </div>
+          @for (suscripcion of suscripciones.value(); track suscripcion.id) {
+            <div class="fila fila--3">
+              <strong>{{ suscripcion.nombreUsuario }}</strong>
+              <span><span class="badge">{{ suscripcion.estadoSuscripcion }}</span></span>
+              <span class="muted">{{ suscripcion.fechaFin ? (suscripcion.fechaFin | date: 'dd/MM/yyyy') : '—' }}</span>
+            </div>
+          } @empty {
+            <p class="fila muted">No hay suscripciones.</p>
+          }
+        </div>
+      }
+    </section>
+
+    <section class="seccion" aria-labelledby="miembros-titulo">
+      <div class="seccion-header">
+        <h2 id="miembros-titulo">Miembros</h2>
+        <input type="text" class="control" placeholder="Buscar…" aria-label="Buscar miembros"
+          [ngModel]="busqueda()" (ngModelChange)="busqueda.set($event)" />
+      </div>
+
+      @if (miembros.isLoading() && !miembros.hasValue()) {
+        <p class="muted" role="status">Cargando miembros…</p>
+      } @else if (miembros.error()) {
+        <p class="muted" role="alert">No se pudieron cargar los miembros.</p>
+      } @else {
+        <div class="tabla">
+          <div class="fila fila--cabecera fila--2">
+            <span>Usuario</span><span>Email</span>
+          </div>
+          @for (miembro of miembrosFiltrados(); track miembro.id) {
+            <div class="fila fila--2">
+              <strong>{{ miembro.username }}</strong>
+              <span class="muted">{{ miembro.email }}</span>
+            </div>
+          } @empty {
+            @if (busqueda()) {
+              <p class="fila muted">No se encontraron miembros para "{{ busqueda() }}".</p>
+            } @else {
+              <p class="fila muted">Todavía no hay miembros.</p>
+            }
+          }
+        </div>
+      }
+    </section>
+  </div>
+  }
+</main>
