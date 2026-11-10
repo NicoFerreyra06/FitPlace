@@ -36,12 +36,17 @@ public class AjusteEsquemaMusculo implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         try {
             List<String> tipo = jdbcTemplate.queryForList(CONSULTA_TIPO, String.class);
-            if (tipo.isEmpty() || !"enum".equalsIgnoreCase(tipo.get(0))) return;
-
-            jdbcTemplate.execute(CONVERTIR_A_VARCHAR);
-            log.info("Columna musculo.grupo_muscular convertida de ENUM a VARCHAR(30) para admitir grupos musculares nuevos");
+            if (!tipo.isEmpty() && "enum".equalsIgnoreCase(tipo.get(0))) {
+                jdbcTemplate.execute(CONVERTIR_A_VARCHAR);
+                log.info("Columna musculo.grupo_muscular convertida de ENUM a VARCHAR(30) para admitir grupos musculares nuevos");
+            }
         } catch (DataAccessException e) {
             log.error("No se pudo revisar o ajustar la columna musculo.grupo_muscular", e);
+        }
+
+        try {
+            jdbcTemplate.execute("UPDATE ejercicio SET activo = TRUE WHERE activo IS NULL");
+        } catch (DataAccessException ignored) {
         }
     }
 }

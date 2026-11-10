@@ -14,4 +14,5 @@ public class EjercicioResponse {
     private String descripcion;
     private List<Musculo> musculosPrincipales;
     private List<Musculo> musculosSecundarios;
+    private boolean activo;
 }

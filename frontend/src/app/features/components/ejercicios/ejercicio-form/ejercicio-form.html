@@ -1,0 +1,97 @@
+<div class="modal-backdrop" (click)="onCerrar()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>{{ esEdicion() ? 'Editar ejercicio' : 'Nuevo ejercicio' }}</h2>
+      <button class="close-btn" type="button" aria-label="Cerrar" (click)="onCerrar()">&times;</button>
+    </header>
+
+    <form class="modal-body" (ngSubmit)="onGuardar()">
+      @if (errorLocal() || errorExterno()) {
+        <div class="alerta-error">
+          {{ errorLocal() || errorExterno() }}
+        </div>
+      }
+
+      <div class="field">
+        <label for="form-nombre">Nombre <span class="requerido">*</span></label>
+        <input
+          id="form-nombre"
+          type="text"
+          placeholder="Ej: Peso muerto convencional, Press francés..."
+          [ngModel]="nombre()"
+          (ngModelChange)="nombre.set($event)"
+          name="nombre"
+          autocomplete="off"
+          required
+        />
+      </div>
+
+      <div class="field">
+        <div class="label-fila">
+          <label for="form-descripcion">Descripción / Técnica</label>
+          <span class="contador">{{ descripcion().length }}/500</span>
+        </div>
+        <textarea
+          id="form-descripcion"
+          rows="3"
+          maxlength="500"
+          placeholder="Explicación de la postura, agarre o rango de movimiento..."
+          [ngModel]="descripcion()"
+          (ngModelChange)="descripcion.set($event)"
+          name="descripcion"
+        ></textarea>
+      </div>
+
+      <section class="section-musculos">
+        <div class="seccion-titulo">
+          <h3>Músculos Principales <span class="requerido">* (al menos 1)</span></h3>
+          <p class="ayuda">Músculos que reciben la mayor tensión y estímulo en este ejercicio.</p>
+        </div>
+
+        <div class="chips-grid">
+          @for (m of musculosOrdenados(); track m.id) {
+            <button
+              type="button"
+              class="chip-btn"
+              [class.seleccionado-principal]="esPrincipal(m.id)"
+              (click)="togglePrincipal(m.id)"
+            >
+              <span class="check-icon">{{ esPrincipal(m.id) ? '✓' : '+' }}</span>
+              {{ m.nombre }}
+            </button>
+          }
+        </div>
+      </section>
+
+      <section class="section-musculos">
+        <div class="seccion-titulo">
+          <h3>Músculos Secundarios <span class="opcional">(Opcional)</span></h3>
+          <p class="ayuda">Músculos estabilizadores o sinergistas involucrados en el movimiento.</p>
+        </div>
+
+        <div class="chips-grid">
+          @for (m of musculosOrdenados(); track m.id) {
+            <button
+              type="button"
+              class="chip-btn"
+              [class.seleccionado-secundario]="esSecundario(m.id)"
+              (click)="toggleSecundario(m.id)"
+            >
+              <span class="check-icon">{{ esSecundario(m.id) ? '✓' : '+' }}</span>
+              {{ m.nombre }}
+            </button>
+          }
+        </div>
+      </section>
+
+      <footer class="modal-footer">
+        <button type="button" class="btn btn--vidrio" (click)="onCerrar()" [disabled]="guardando()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando...' : (esEdicion() ? 'Guardar cambios' : 'Crear ejercicio') }}
+        </button>
+      </footer>
+    </form>
+  </div>
+</div>

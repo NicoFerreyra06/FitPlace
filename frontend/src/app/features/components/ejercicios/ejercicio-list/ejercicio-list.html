@@ -1,5 +1,26 @@
 <main class="container">
-    <h1>Lista de ejercicios</h1>
+    <div class="header-fila">
+        <h1>Lista de ejercicios</h1>
+        @if (esAdmin()) {
+            <button class="btn btn--sm" type="button" (click)="abrirNuevoEjercicio()">
+                <span class="plus-icon">+</span> Nuevo ejercicio
+            </button>
+        }
+    </div>
+
+    @if (mensajeExito()) {
+        <div class="banner banner--success">
+            <span>{{ mensajeExito() }}</span>
+            <button class="banner-close" type="button" aria-label="Cerrar" (click)="mensajeExito.set(null)">&times;</button>
+        </div>
+    }
+
+    @if (mensajeError()) {
+        <div class="banner banner--danger">
+            <span>{{ mensajeError() }}</span>
+            <button class="banner-close" type="button" aria-label="Cerrar" (click)="mensajeError.set(null)">&times;</button>
+        </div>
+    }
 
     <div class="search-bar">
         <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -32,34 +53,115 @@
         <p class="empty-state">Cargando ejercicios desde la base de datos...</p>
     } @else {
         <section class="cards-grid">
-    @for (ejercicio of ejerciciosFiltrados(); track ejercicio.id) {
-        <article class="card" (click)="verDetalle(ejercicio)">
-        <h3>{{ ejercicio.nombre }}</h3>
-        
-        <div class="muscles-summary">
-            <span class="label">Músculos Principales:</span>
-            <div class="tags">
-            @for (m of ejercicio.musculosPrincipales; track m.id) {
-                <span class="badge primary">{{ m.nombre }}</span>
+            @for (ejercicio of ejerciciosFiltrados(); track ejercicio.id) {
+                <article class="card" (click)="verDetalle(ejercicio)">
+                    <div class="card-header">
+                        <h3>{{ ejercicio.nombre }}</h3>
+
+                        @if (esAdmin()) {
+                            <div class="admin-actions" (click)="$event.stopPropagation()">
+                                <button
+                                    type="button"
+                                    class="action-btn edit"
+                                    title="Editar ejercicio"
+                                    aria-label="Editar ejercicio"
+                                    (click)="abrirEditarEjercicio(ejercicio, $event)"
+                                >
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 20h9"/>
+                                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                                    </svg>
+                                </button>
+                                <button
+                                    type="button"
+                                    class="action-btn delete"
+                                    title="Eliminar ejercicio"
+                                    aria-label="Eliminar ejercicio"
+                                    (click)="abrirEliminar(ejercicio, $event)"
+                                >
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6"/>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        }
+                    </div>
+                
+                    <div class="muscles-summary">
+                        <span class="label">Músculos Principales:</span>
+                        <div class="tags">
+                            @for (m of ejercicio.musculosPrincipales; track m.id) {
+                                <span class="badge primary">{{ m.nombre }}</span>
+                            }
+                        </div>
+                    </div>
+
+                    @if (ejercicio.musculosSecundarios && ejercicio.musculosSecundarios.length > 0) {
+                        <div class="muscles-summary">
+                            <span class="label">Músculos Secundarios:</span>
+                            <div class="tags">
+                                @for (m of ejercicio.musculosSecundarios; track m.id) {
+                                    <span class="badge secondary">{{ m.nombre }}</span>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <span class="link">Ver detalle <span class="flecha">›</span></span>
+                </article>
+            } @empty {
+                @if (busqueda()) {
+                    <p class="empty-state">No se encontraron ejercicios para "{{ busqueda() }}".</p>
+                } @else {
+                    <p class="empty-state">No hay ejercicios registrados.</p>
+                }
             }
-            </div>
-        </div>
-
-        <span class="link">Ver detalle <span class="flecha">›</span></span>
-        </article>
-    } @empty {
-        @if (busqueda()) {
-            <p class="empty-state">No se encontraron ejercicios para "{{ busqueda() }}".</p>
-        } @else {
-            <p class="empty-state">No hay ejercicios registrados.</p>
-        }
-    }
-    </section>
-
+        </section>
     }
     
-    <!-- Modal / Detalle -->
+    <!-- Modal Detalle -->
     @if (ejercicioSeleccionado(); as ej) {
-        <app-ejercicio-details [ejercicio]="ej" (cerrar)="cerrarDetalle()" />
+        <app-ejercicio-details
+            [ejercicio]="ej"
+            [esAdmin]="esAdmin()"
+            (cerrar)="cerrarDetalle()"
+            (editar)="cerrarDetalle(); abrirEditarEjercicio($event)"
+            (eliminar)="cerrarDetalle(); abrirEliminar($event)"
+        />
+    }
+
+    <!-- Modal Formulario (Crear / Editar) -->
+    @if (formularioAbierto()) {
+        <app-ejercicio-form
+            [ejercicio]="ejercicioAEditar()"
+            [musculos]="musculos()"
+            [guardando]="guardandoEjercicio()"
+            [errorExterno]="errorFormulario()"
+            (guardar)="guardarEjercicio($event)"
+            (cerrar)="cerrarFormulario()"
+        />
+    }
+
+    <!-- Modal Confirmación Eliminación -->
+    @if (ejercicioAEliminar(); as ej) {
+        <div class="modal-backdrop" (click)="cerrarEliminar()">
+            <div class="modal-content modal-content--sm" (click)="$event.stopPropagation()">
+                <div class="modal-header">
+                    <h2>Eliminar ejercicio</h2>
+                    <button class="close-btn" type="button" aria-label="Cerrar" (click)="cerrarEliminar()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de que deseas dar de baja el ejercicio <strong>"{{ ej.nombre }}"</strong>?</p>
+                    <p class="ayuda-baja">
+                        Se realizará una baja lógica: el ejercicio no aparecerá más en el catálogo ni podrá ser agregado a nuevas rutinas. Aquellos usuarios que ya lo tengan en sus rutinas o récords lo conservarán.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn--vidrio" (click)="cerrarEliminar()">Cancelar</button>
+                    <button type="button" class="btn btn--peligro" (click)="confirmarEliminar()">Eliminar</button>
+                </div>
+            </div>
+        </div>
     }
 </main>

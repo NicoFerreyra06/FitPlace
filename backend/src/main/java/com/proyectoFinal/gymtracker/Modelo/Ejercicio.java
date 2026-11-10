@@ -24,6 +24,10 @@ public class Ejercicio {
     @Column(length = 500)
     private String descripcion;
 
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    @Builder.Default
+    private boolean activo = true;
+
     @ManyToMany
     @JoinTable(
         name = "ejercicio_musculo_principal",

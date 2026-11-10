@@ -4,6 +4,13 @@ import { Ejercicio } from '../../model/ejercicio';
 import { Observable } from 'rxjs';
 import { Page } from '../../model/page';
 
+export interface EjercicioRequest {
+  nombre: string;
+  descripcion?: string;
+  musculoPrincipalId: number[];
+  musculoSecundarioId?: number[];
+}
+
 @Service()
 export class EjercicioService {
   private http = inject(HttpClient);
@@ -23,5 +30,17 @@ export class EjercicioService {
 
   getEjerciciosPorMusculo(id: string | number): Observable<Ejercicio[]> {
     return this.http.get<Ejercicio[]>(`${this.apiUrl}/porMusculo/${id}`);
+  }
+
+  crearEjercicio(data: EjercicioRequest): Observable<Ejercicio> {
+    return this.http.post<Ejercicio>(this.apiUrl, data);
+  }
+
+  actualizarEjercicio(id: number, data: EjercicioRequest): Observable<Ejercicio> {
+    return this.http.put<Ejercicio>(`${this.apiUrl}/${id}`, data);
+  }
+
+  eliminarEjercicio(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
