@@ -6,6 +6,7 @@ import com.proyectoFinal.gymtracker.DTO.Request.UsuarioRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.AmigoResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.GananciaGimnasioProjection;
 import com.proyectoFinal.gymtracker.DTO.Response.LoginResponse;
+import com.proyectoFinal.gymtracker.DTO.Response.UsuarioAdminResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
 import com.proyectoFinal.gymtracker.Services.AuthService;
@@ -41,7 +42,7 @@ public class UsuarioController {
 
     @GetMapping("/{idUsuario}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UsuarioResponse> verPerfilOtroUsuario(@PathVariable Long idUsuario) {
+    public ResponseEntity<UsuarioAdminResponse> verPerfilOtroUsuario(@PathVariable Long idUsuario) {
         return ResponseEntity.ok(usuarioService.verPerfilOtroUsuario(idUsuario));
     }
 
@@ -68,13 +69,13 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<UsuarioResponse>> getUsuarios(@PageableDefault (size = 10) Pageable pageable) {
+    public ResponseEntity<Page<UsuarioAdminResponse>> getUsuarios(@PageableDefault (size = 10) Pageable pageable) {
         return ResponseEntity.ok(usuarioService.getUsuarios(pageable));
     }
 
     @PutMapping("/{idUsuario}/rol")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UsuarioResponse> cambiarRol(@PathVariable Long idUsuario, @RequestParam Rol nuevoRol) {
+    public ResponseEntity<UsuarioAdminResponse> cambiarRol(@PathVariable Long idUsuario, @RequestParam Rol nuevoRol) {
         return ResponseEntity.ok(usuarioService.cambiarRol(idUsuario, nuevoRol));
     }
 

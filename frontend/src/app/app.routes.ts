@@ -24,6 +24,7 @@ import { Alumnos } from './features/alumnos/mis-alumnos/alumnos';
 import { AlumnoDetalle } from './features/alumnos/alumno-detalle/alumno-detalle/alumno-detalle';
 import { NotFound } from './features/not-found/not-found';
 import { MusculoList } from './features/musculos/musculo-list/musculo-list';
+import { UsuariosAdmin } from './features/administracion/usuarios/usuarios-admin';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -49,6 +50,7 @@ export const routes: Routes = [
       { path: 'amigos/:id', component: AmigoDetalle },
       { path: 'gimnasios', component: GimnasioList },
       { path: 'gimnasios/:id/gestion', component: GestionGimnasio, canActivate: [rolGuard], data: {roles: ['ADMIN_GIMNASIO']} },
+      { path: 'admin/usuarios', component: UsuariosAdmin, canActivate: [rolGuard], data: {roles: ['ADMIN']} },
       { path: 'entrenadores', component: Entrenador },
       { path: 'alumnos', component: Alumnos, canActivate: [rolGuard], data: {roles: ['ENTRENADOR']} },
       { path: 'alumnos/:id', component: AlumnoDetalle, canActivate: [rolGuard], data: {roles: ['ENTRENADOR']} },
