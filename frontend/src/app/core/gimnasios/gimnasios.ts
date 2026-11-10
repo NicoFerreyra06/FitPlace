@@ -63,6 +63,10 @@ export class Gimnasios {
         return this.http.put<gimnasioResponse>(`${this.URL}/me/${idGimnasio}`, request);
     }
 
+    actualizarCualquierGimnasio(idGimnasio: number, request: GimnasioUpdateRequest): Observable<gimnasioResponse> {
+        return this.http.put<gimnasioResponse>(`${this.URL}/${idGimnasio}`, request);
+    }
+
     eliminarGimnasio(idGimnasio: number): Observable<void> {
         return this.http.delete<void>(`${this.URL}/${idGimnasio}`);
     }
