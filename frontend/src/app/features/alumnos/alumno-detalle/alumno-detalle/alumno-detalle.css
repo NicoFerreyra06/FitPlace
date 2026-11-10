@@ -117,6 +117,10 @@ h3 {
   gap: 12px;
 }
 
+.seccion > .btn {
+  align-self: flex-start;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
@@ -488,5 +492,226 @@ h3 {
   .dato,
   .flecha {
     transition: none;
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgb(0 0 0 / 0.7);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+  animation: fadeIn 0.2s var(--ease);
+}
+
+.modal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 85dvh;
+  padding: 20px 20px 28px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  box-shadow: 0 -8px 32px rgb(0 0 0 / 0.5);
+  overflow-y: auto;
+  animation: slideUp 0.25s var(--ease);
+}
+
+.modal-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-cabecera h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.modal-cerrar {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  font: inherit;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--text-muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.modal-cerrar:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+.modal-cerrar:focus-visible {
+  outline: 2px solid var(--focus);
+}
+
+.modal-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.modal-item {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.modal-item:hover {
+  border-color: var(--border-strong);
+}
+
+.modal-item--activa {
+  border-color: var(--primary);
+  background: rgb(200 241 105 / 0.04);
+}
+
+.modal-item--activa:hover {
+  background: rgb(200 241 105 / 0.07);
+}
+
+.modal-item-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+}
+
+.modal-item-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.modal-item-cabecera:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.modal-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.modal-item-titulo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.modal-item-titulo strong {
+  font-size: 15px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.modal-item-detalle {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px 16px 16px;
+  background: rgb(0 0 0 / 0.2);
+  border-top: 1px solid var(--border);
+}
+
+.modal .badge {
+  padding: 2px 8px;
+  font-size: 11px;
+  border-radius: var(--radius-pill);
+}
+
+.modal .badge--activa {
+  color: var(--primary);
+  background: rgb(200 241 105 / 0.12);
+  border-color: var(--primary);
+}
+
+.modal .badge--mia {
+  color: var(--primary);
+  background: rgb(200 241 105 / 0.08);
+  border-color: rgb(200 241 105 / 0.35);
+}
+
+.modal-item-fila > .btn {
+  flex-shrink: 0;
+}
+
+.modal-item-fila > .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+@media (min-width: 600px) {
+  .modal-overlay {
+    align-items: center;
+    padding: 24px;
+  }
+
+  .modal {
+    border-radius: var(--radius-md);
+    max-height: 80dvh;
+    padding: 24px;
+    box-shadow: 0 20px 48px rgb(0 0 0 / 0.6);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(16px); opacity: 0.9; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay,
+  .modal {
+    animation: none;
   }
 }

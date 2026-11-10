@@ -112,13 +112,7 @@
               </span>
             </span>
 
-            <span
-              class="flecha"
-              [class.rotada]="rutinaAbierta()"
-              aria-hidden="true"
-            >
-              ▸
-            </span>
+            <span class="flecha" [class.rotada]="rutinaAbierta()" aria-hidden="true">›</span>
           </button>
 
           @if (rutinaAbierta()) {
@@ -169,6 +163,9 @@
           }
         }
       </article>
+
+      <button type="button" class="btn btn--contorno btn--sm" (click)="abrirModal()">Asignar rutina</button>
+
     </section>
 
     <section class="seccion" aria-labelledby="titulo-records">
@@ -238,5 +235,115 @@
         }
       }
     </section>
+
+    @if (modalAbierto()) {
+      <div class="modal-overlay" (click)="cerrarModal()" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+        <div class="modal" (click)="$event.stopPropagation()">
+          <header class="modal-cabecera">
+            <h2 id="modal-titulo">Asignar rutina</h2>
+            <button type="button" class="modal-cerrar" (click)="cerrarModal()" aria-label="Cerrar">×</button>
+          </header>
+          @if (errorAsignacion()) {
+            <p class="error-msg">{{ errorAsignacion() }}</p>
+          }
+          @if (cargandoRutinas()) {
+            <p class="muted" role="status">Cargando rutinas…</p>
+          } @else if (rutinasDisponibles().length === 0) {
+            <p class="muted">No hay rutinas disponibles.</p>
+          } @else {
+            <ul class="modal-lista">
+              @for (rutina of rutinasDisponibles(); track rutina.id) {
+                @let esActiva = rutina.id === alumno()?.rutinaActivaId;
+                <li class="modal-item" [class.modal-item--activa]="esActiva">
+                  <div class="modal-item-fila">
+                    <button
+                      type="button"
+                      class="modal-item-cabecera"
+                      [attr.aria-expanded]="rutinaExpandidaId() === rutina.id"
+                      (click)="alternarDetalleRutina(rutina.id)"
+                    >
+                      <div class="modal-item-info">
+                        <div class="modal-item-titulo">
+                          <strong>{{ rutina.nombre }}</strong>
+                          @if (esActiva) {
+                            <span class="badge badge--activa">Activa</span>
+                          }
+                          <span class="badge">{{ rutina.esPublica ? 'Pública' : 'Privada' }}</span>
+                          @if (esMia(rutina)) {
+                            <span class="badge badge--mia">Creada por ti</span>
+                          }
+                        </div>
+                        <span class="muted">
+                          {{ rutina.diaRutinas.length }}
+                          {{ rutina.diaRutinas.length === 1 ? 'día' : 'días' }} por semana
+                        </span>
+                      </div>
+                    
+                      <span class="flecha" [class.rotada]="rutinaExpandidaId() === rutina.id" aria-hidden="true">›</span>
+                    </button>
+                  
+                    <button
+                      type="button"
+                      class="btn btn--sm"
+                      [disabled]="esActiva || asignando() !== null"
+                      (click)="asignarRutina(rutina.id)"
+                    >
+                      @if (asignando() === rutina.id) {
+                        Asignando…
+                      } @else if (esActiva) {
+                        Activa
+                      } @else {
+                        Asignar
+                      }
+                    </button>
+                  </div>
+                
+                  @if (rutinaExpandidaId() === rutina.id) {
+                    <div class="modal-item-detalle">
+                      @if (rutina.diaRutinas.length === 0) {
+                        <p class="muted">Esta rutina no tiene días asignados.</p>
+                      } @else {
+                        @for (dia of rutina.diaRutinas; track dia.id) {
+                          <section class="dia-rutina">
+                            <header class="dia-rutina-cabecera">
+                              <h3 class="dia-rutina-nombre">
+                                › {{ etiquetaDia(dia.diaDeLaSemana) }}
+                                @if (dia.nombre) {
+                                  <span class="dia-rutina-extra">· {{ dia.nombre }}</span>
+                                }
+                              </h3>
+                              <span class="muted">
+                                {{ dia.ejercicioRutinas.length }}
+                                {{ dia.ejercicioRutinas.length === 1 ? 'ejercicio' : 'ejercicios' }}
+                              </span>
+                            </header>
+                          
+                            @if (dia.ejercicioRutinas.length === 0) {
+                              <p class="muted">Sin ejercicios asignados.</p>
+                            } @else {
+                              <ul class="lista-ejercicios">
+                                @for (ej of dia.ejercicioRutinas; track ej.id) {
+                                  <li class="ejercicio-rutina">
+                                    <span class="ejercicio-nombre">{{ ej.nombreEjercicio }}</span>
+                                    <span class="ejercicio-dosis">
+                                      <strong>{{ ej.series }}</strong> series ×
+                                      <strong>{{ ej.repeticiones }}</strong> reps
+                                    </span>
+                                  </li>
+                                }
+                              </ul>
+                            }
+                          </section>
+                        }
+                      }
+                    </div>
+                  }
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </div>
+    }
   }
 </main>
