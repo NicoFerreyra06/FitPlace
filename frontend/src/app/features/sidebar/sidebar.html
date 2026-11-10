@@ -196,6 +196,31 @@
         </svg>
         Usuarios
       </a>
+      <a
+        class="item"
+        routerLink="/admin/ganancias"
+        routerLinkActive="activo"
+        ariaCurrentWhenActive="page"
+        (click)="cerrarMenu()"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 3v18h18" />
+          <path d="m19 9-5 5-4-4-5 5" />
+        </svg>
+        Ganancias
+      </a>
+      <a
+        class="item"
+        routerLink="/admin/gimnasios"
+        routerLinkActive="activo"
+        ariaCurrentWhenActive="page"
+        (click)="cerrarMenu()"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 21h18M5 21V7l7-4 7 4v14M9 10h.01M15 10h.01M9 14h.01M15 14h.01M10 21v-4h4v4" />
+        </svg>
+        Gimnasios
+      </a>
     }
   </nav>
 

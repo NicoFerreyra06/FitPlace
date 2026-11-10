@@ -11,6 +11,7 @@ import { Progresion } from '../../../components/progresion/progresion';
 import { Rachas } from '../../../components/rachas/rachas';
 import { DiaRutinaResponse, DIAS_SEMANA, etiquetaDia, RutinaResponse } from '../../../../core/rutinas/rutinas.model';
 import { catchError, forkJoin, of } from 'rxjs';
+import { AsignarRutinaModal } from './asignar-rutina-modal';
 
 interface RecordDerivado {
   nombreEjercicio: string;
@@ -19,7 +20,7 @@ interface RecordDerivado {
 }
 
 @Component({
-  imports: [DatePipe, DecimalPipe, RouterLink, Rachas, Progresion],
+  imports: [DatePipe, DecimalPipe, RouterLink, Rachas, Progresion, AsignarRutinaModal],
   selector: 'app-alumno-detalle',
   styleUrl: './alumno-detalle.css',
   templateUrl: './alumno-detalle.html',
@@ -223,7 +224,4 @@ export class AlumnoDetalle {
     this.rutinaExpandidaId.update((abierto) => (abierto === id ? null : id));
   }
 
-  protected esMia(rutina: RutinaResponse): boolean {
-    return this.misRutinaIds().has(rutina.id);
-  }
 }

@@ -13,6 +13,13 @@ export interface UsuarioAdmin {
   rol: RolUsuario;
 }
 
+export interface GananciaGimnasio {
+  nombreGimnasio: string;
+  totalIngresosBrutos: number;
+  comisionFitPlace: number;
+  gananciaNetaGimnasio: number;
+}
+
 export interface UsuarioPerfil {
   id: number;
   username: string;
@@ -70,6 +77,11 @@ export class Usuario {
   cambiarRol(id: number, nuevoRol: RolAsignable): Observable<UsuarioAdmin> {
     const params = new HttpParams().set('nuevoRol', nuevoRol);
     return this.http.put<UsuarioAdmin>(`${this.API_URL}/${id}/rol`, null, { params });
+  }
+
+  getGananciasPorGimnasio(desde: string, hasta: string): Observable<GananciaGimnasio[]> {
+    const params = new HttpParams().set('desde', desde).set('hasta', hasta);
+    return this.http.get<GananciaGimnasio[]>(`${this.API_URL}/ganancias`, { params });
   }
 
   getPerfilGuardado (): Observable<UsuarioPerfil>{

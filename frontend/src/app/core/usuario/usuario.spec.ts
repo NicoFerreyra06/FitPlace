@@ -47,4 +47,14 @@ describe('Usuario', () => {
     expect(request.request.body).toBeNull();
     request.flush({ id: 7, username: 'demo', email: 'demo@test.com', rol: 'ENTRENADOR' });
   });
+
+  it('should request gym earnings for an inclusive date range', () => {
+    service.getGananciasPorGimnasio('2026-01-01', '2026-01-31').subscribe();
+
+    const request = http.expectOne(
+      'http://localhost:8080/usuarios/ganancias?desde=2026-01-01&hasta=2026-01-31',
+    );
+    expect(request.request.method).toBe('GET');
+    request.flush([]);
+  });
 });

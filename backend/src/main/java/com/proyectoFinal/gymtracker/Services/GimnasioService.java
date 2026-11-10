@@ -73,6 +73,18 @@ public class GimnasioService {
 
         if (!gimnasio.getAdmin().getId().equals(admin.getId())) throw new ForbiddenAccessException("Usted no es el admin del gimnasio");
 
+        return guardarCambiosGimnasio(request, gimnasio);
+    }
+
+    @Transactional
+    public GimnasioResponse actualizarCualquierGimnasio(GimnasioUpdateRequest request, Long idGimnasio) {
+        Gimnasio gimnasio = gimnasioRepository.findById(idGimnasio)
+                .orElseThrow(() -> new ResourceNotFoundException("Gimnasio no encontrado"));
+
+        return guardarCambiosGimnasio(request, gimnasio);
+    }
+
+    private GimnasioResponse guardarCambiosGimnasio(GimnasioUpdateRequest request, Gimnasio gimnasio) {
         gimnasio.setNombre(request.getNombre());
         gimnasio.setDireccion(request.getDireccion());
         gimnasio.setPrecioCuota(request.getPrecioCuota());

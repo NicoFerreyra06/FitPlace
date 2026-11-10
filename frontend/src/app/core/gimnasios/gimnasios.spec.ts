@@ -46,6 +46,25 @@ describe('Gimnasios', () => {
     expect(completed).toBe(true);
   });
 
+  it('updates any gym through the admin endpoint', () => {
+    const requestBody: GimnasioUpdateRequest = {
+      nombre: 'FitPlace Actualizado',
+      direccion: 'Calle 456',
+      precioCuota: 15000,
+      horarioApertura: '09:00',
+      horarioCierre: '22:00',
+      diasAbierto: ['TUESDAY', 'THURSDAY'],
+      fotoUrl: null,
+    };
+
+    service.actualizarCualquierGimnasio(7, requestBody).subscribe();
+
+    const request = httpTesting.expectOne('http://localhost:8080/gimnasios/7');
+    expect(request.request.method).toBe('PUT');
+    expect(request.request.body).toEqual(requestBody);
+    request.flush({ id: 7, ...requestBody });
+  });
+
   it('deletes a gym through the gym endpoint', () => {
     let completed = false;
 
