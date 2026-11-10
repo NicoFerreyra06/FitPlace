@@ -12,4 +12,5 @@ public class MusculoResponse {
     private Long id;
     private String nombre;
     private GrupoMuscular grupoMuscular;
+    private String funcionAnatomica;
 }

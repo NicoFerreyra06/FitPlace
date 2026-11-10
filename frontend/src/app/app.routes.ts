@@ -23,6 +23,7 @@ import { rolGuard } from './core/auth/rol-guard';
 import { Alumnos } from './features/alumnos/mis-alumnos/alumnos';
 import { AlumnoDetalle } from './features/alumnos/alumno-detalle/alumno-detalle/alumno-detalle';
 import { NotFound } from './features/not-found/not-found';
+import { MusculoList } from './features/musculos/musculo-list/musculo-list';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -50,7 +51,8 @@ export const routes: Routes = [
       { path: 'gimnasios/:id/gestion', component: GestionGimnasio, canActivate: [rolGuard], data: {roles: ['ADMIN_GIMNASIO']} },
       { path: 'entrenadores', component: Entrenador },
       { path: 'alumnos', component: Alumnos, canActivate: [rolGuard], data: {roles: ['ENTRENADOR']} },
-      { path: 'alumnos/:id', component: AlumnoDetalle, canActivate: [rolGuard], data: {roles: ['ENTRENADOR']} }
+      { path: 'alumnos/:id', component: AlumnoDetalle, canActivate: [rolGuard], data: {roles: ['ENTRENADOR']} },
+      { path: 'musculos', component: MusculoList, canActivate: [rolGuard], data: {roles: ['ADMIN']} }
     ],
     canActivate: [authGuard],
   },

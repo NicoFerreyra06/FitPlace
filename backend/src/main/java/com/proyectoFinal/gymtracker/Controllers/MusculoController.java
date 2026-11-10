@@ -5,6 +5,7 @@ import com.proyectoFinal.gymtracker.DTO.Response.MusculoResponse;
 import com.proyectoFinal.gymtracker.Enum.GrupoMuscular;
 import com.proyectoFinal.gymtracker.Modelo.Musculo;
 import com.proyectoFinal.gymtracker.Services.MusculoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +24,7 @@ public class MusculoController {
     private final MusculoService musculoService;
 
     @PostMapping
-    public ResponseEntity<MusculoResponse> addMusculo(@RequestBody MusculoRequest musculo){
+    public ResponseEntity<MusculoResponse> addMusculo(@Valid @RequestBody MusculoRequest musculo){
         return ResponseEntity.status(HttpStatus.CREATED).body(musculoService.addMusculo(musculo));
     }
 
@@ -49,8 +50,8 @@ public class MusculoController {
     }
 
     @PutMapping("/{idMusculo}")
-    public ResponseEntity<MusculoResponse> updateMusculo(@RequestBody MusculoRequest musculo,
-                                                               @PathVariable Long idMusculo){
+    public ResponseEntity<MusculoResponse> updateMusculo(@Valid @RequestBody MusculoRequest musculo,
+                                                         @PathVariable Long idMusculo){
         return ResponseEntity.status(HttpStatus.OK).body(musculoService.updateMusculo(musculo, idMusculo));
     }
 

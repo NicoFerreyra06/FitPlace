@@ -1,0 +1,146 @@
+<main class="container">
+  <div class="header-fila">
+    <h1>Gestión de músculos</h1>
+    <button class="btn btn--sm" type="button" (click)="abrirNuevo()">
+      <span class="plus-icon">+</span> Nuevo músculo
+    </button>
+  </div>
+
+  @if (mensajeExito()) {
+    <div class="banner banner--success">
+      <span>{{ mensajeExito() }}</span>
+      <button class="banner-close" type="button" aria-label="Cerrar" (click)="mensajeExito.set(null)">&times;</button>
+    </div>
+  }
+
+  @if (mensajeError()) {
+    <div class="banner banner--danger">
+      <span>{{ mensajeError() }}</span>
+      <button class="banner-close" type="button" aria-label="Cerrar" (click)="mensajeError.set(null)">&times;</button>
+    </div>
+  }
+
+  <div class="filtros-barra">
+    <div class="search-bar">
+      <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Buscar por nombre o función anatómica..."
+        [ngModel]="busqueda()"
+        (ngModelChange)="busqueda.set($event)"
+      />
+      @if (busqueda()) {
+        <button class="search-clear" (click)="busqueda.set('')" type="button">&times;</button>
+      }
+    </div>
+
+    <div class="filter">
+      <label for="filtro-grupo">Filtrar por grupo muscular</label>
+      <select id="filtro-grupo" [ngModel]="filtroGrupo()" (ngModelChange)="filtroGrupo.set($event)">
+        <option value="">Todos los grupos</option>
+        @for (g of grupos; track g.valor) {
+          <option [value]="g.valor">{{ g.etiqueta }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  @if (cargando()) {
+    <p class="empty-state">Cargando músculos desde la base de datos...</p>
+  } @else {
+    <section class="cards-grid">
+      @for (m of musculosFiltrados(); track m.id) {
+        <article class="card">
+          <div class="card-header">
+            <h3>{{ m.nombre }}</h3>
+
+            <div class="admin-actions">
+              <button
+                type="button"
+                class="action-btn edit"
+                title="Editar músculo"
+                aria-label="Editar músculo"
+                (click)="abrirEditar(m, $event)"
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 20h9"/>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                </svg>
+              </button>
+              <button
+                type="button"
+                class="action-btn delete"
+                title="Eliminar músculo"
+                aria-label="Eliminar músculo"
+                (click)="abrirEliminar(m, $event)"
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="grupo-tag">
+            <span class="badge primary">{{ etiquetaGrupo(m.grupoMuscular) }}</span>
+          </div>
+
+          <div class="funcion-block">
+            <span class="label">Función anatómica</span>
+            <p class="funcion-texto" [class.sin-funcion]="!m.funcionAnatomica">
+              {{ m.funcionAnatomica || 'Sin función anatómica especificada.' }}
+            </p>
+          </div>
+        </article>
+      } @empty {
+        @if (busqueda() || filtroGrupo()) {
+          <p class="empty-state">No se encontraron músculos con los filtros aplicados.</p>
+        } @else {
+          <p class="empty-state">No hay músculos registrados en el catálogo.</p>
+        }
+      }
+    </section>
+  }
+
+  <!-- Modal Formulario (Crear / Editar) -->
+  @if (formularioAbierto()) {
+    <app-musculo-form
+      [musculo]="musculoAEditar()"
+      [guardando]="guardandoMusculo()"
+      [errorExterno]="errorFormulario()"
+      (guardar)="guardarMusculo($event)"
+      (cerrar)="cerrarFormulario()"
+    />
+  }
+
+  <!-- Modal Confirmación Eliminación -->
+  @if (musculoAEliminar(); as m) {
+    <div class="modal-backdrop" (click)="cerrarEliminar()">
+      <div class="modal-content modal-content--sm" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Eliminar músculo</h2>
+          <button class="close-btn" type="button" aria-label="Cerrar" (click)="cerrarEliminar()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>¿Estás seguro de que deseas eliminar el músculo <strong>"{{ m.nombre }}"</strong>?</p>
+          <p class="ayuda-baja">
+            Por seguridad, si este músculo ya está asignado como principal o secundario en algún ejercicio del catálogo, el sistema rechazará la eliminación para mantener la consistencia de los ejercicios.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn--vidrio" (click)="cerrarEliminar()" [disabled]="eliminandoMusculo()">
+            Cancelar
+          </button>
+          <button type="button" class="btn btn--peligro" (click)="confirmarEliminar()" [disabled]="eliminandoMusculo()">
+            {{ eliminandoMusculo() ? 'Eliminando...' : 'Eliminar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</main>

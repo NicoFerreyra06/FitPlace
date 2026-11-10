@@ -26,5 +26,12 @@ public interface EjercicioRepository extends JpaRepository<Ejercicio, Long> {
             "WHERE (mp.id = :musculoId OR ms.id = :musculoId) AND e.activo = true")
     List<Ejercicio> findByMusculo(@Param("musculoId") Long musculoId);
 
+    // Incluye ejercicios dados de baja lógica: si el músculo alguna vez se usó, no se permite borrarlo.
+    @Query("SELECT DISTINCT e FROM Ejercicio e " +
+            "LEFT JOIN e.musculosPrincipales mp " +
+            "LEFT JOIN e.musculosSecundarios ms " +
+            "WHERE mp.id = :musculoId OR ms.id = :musculoId")
+    List<Ejercicio> findAllByMusculoId(@Param("musculoId") Long musculoId);
+
     List<Ejercicio> findByNombreContainingIgnoreCaseAndActivoTrue(String nombre);
 }
