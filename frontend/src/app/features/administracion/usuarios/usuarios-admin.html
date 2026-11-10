@@ -1,0 +1,126 @@
+<main class="usuarios-page">
+  <header class="encabezado">
+    <div>
+      <h1>Administrar usuarios</h1>
+      <p class="texto-secundario">Consultá las cuentas y gestioná sus roles.</p>
+    </div>
+  </header>
+
+  @if (error()) {
+    <p class="aviso aviso--error" role="alert">{{ error() }}</p>
+  }
+  @if (exito()) {
+    <p class="aviso aviso--ok" role="status">{{ exito() }}</p>
+  }
+
+  <section class="panel" aria-labelledby="usuarios-titulo">
+    <h2 id="usuarios-titulo">Usuarios registrados</h2>
+
+    @if (usuarios.isLoading() && !usuarios.hasValue()) {
+      <p class="estado" role="status">Cargando usuarios…</p>
+    } @else if (usuarios.error()) {
+      <div class="estado estado--error" role="alert">
+        <p>No se pudieron cargar los usuarios.</p>
+        <button class="btn btn--sm btn--contorno" type="button" (click)="usuarios.reload()">Reintentar</button>
+      </div>
+    } @else if (usuarios.value(); as paginaUsuarios) {
+      @if (paginaUsuarios.empty) {
+        <p class="estado">Todavía no hay usuarios registrados.</p>
+      } @else {
+        <div class="tabla-contenedor">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Email</th>
+                <th scope="col">Rol</th>
+                <th scope="col"><span class="solo-lectores">Acciones</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (usuario of paginaUsuarios.content; track usuario.id) {
+                <tr>
+                  <td>{{ usuario.username }}</td>
+                  <td>{{ usuario.email }}</td>
+                  <td><span class="rol">{{ etiquetaRol(usuario.rol) }}</span></td>
+                  <td>
+                    <button class="btn btn--sm btn--contorno" type="button" (click)="verDetalle(usuario)">
+                      Ver detalle
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if (paginaUsuarios.totalPages > 1) {
+          <nav class="paginacion" aria-label="Paginación de usuarios">
+            <button
+              class="btn btn--sm btn--contorno"
+              type="button"
+              [disabled]="paginaUsuarios.first"
+              (click)="cambiarPagina(-1)"
+            >
+              ← Anterior
+            </button>
+            <span>Página {{ paginaUsuarios.number + 1 }} de {{ paginaUsuarios.totalPages }}</span>
+            <button
+              class="btn btn--sm btn--contorno"
+              type="button"
+              [disabled]="paginaUsuarios.last"
+              (click)="cambiarPagina(1)"
+            >
+              Siguiente →
+            </button>
+          </nav>
+        }
+      }
+    }
+  </section>
+
+  @if (usuarioSeleccionado(); as seleccionado) {
+    <section class="detalle panel" aria-labelledby="detalle-titulo">
+      <header class="detalle-encabezado">
+        <div>
+          <h2 id="detalle-titulo">Detalle de usuario</h2>
+          <p class="texto-secundario">Información básica y permisos de la cuenta.</p>
+        </div>
+        <button class="btn-cerrar" type="button" aria-label="Cerrar detalle" (click)="cerrarDetalle()">×</button>
+      </header>
+
+      @if (cargandoDetalle()) {
+        <p class="estado" role="status">Cargando detalle…</p>
+      } @else if (detalleUsuario(); as detalle) {
+        <dl class="datos">
+          <div><dt>Nombre</dt><dd>{{ detalle.username }}</dd></div>
+          <div><dt>Email</dt><dd>{{ detalle.email }}</dd></div>
+          <div><dt>Rol actual</dt><dd>{{ etiquetaRol(detalle.rol) }}</dd></div>
+        </dl>
+
+        @if (detalle.rol === 'ADMIN') {
+          <p class="texto-secundario">El rol Administrador no se puede asignar ni modificar desde esta pantalla.</p>
+        } @else {
+          <div class="formulario-rol">
+            <label for="rol-usuario">Cambiar rol</label>
+            <select id="rol-usuario" [value]="rolSeleccionado()" (change)="seleccionarRol($event)">
+              <option value="USUARIO">Usuario</option>
+              <option value="ENTRENADOR">Entrenador</option>
+              <option value="ADMIN_GIMNASIO">Admin de gimnasio</option>
+            </select>
+            <button
+              class="btn btn--sm"
+              type="button"
+              [disabled]="guardandoRol() || !rolSeleccionado() || rolSeleccionado() === detalle.rol"
+              (click)="guardarRol()"
+            >
+              {{ guardandoRol() ? 'Guardando…' : 'Guardar rol' }}
+            </button>
+          </div>
+        }
+      } @else {
+        <p class="estado estado--error" role="alert">No se pudo cargar el detalle de {{ seleccionado.username }}.</p>
+      }
+    </section>
+  }
+</main>
