@@ -18,17 +18,22 @@ export interface AlumnoResponse {
 @Service()
 export class AlumnoService {
     private readonly http = inject(HttpClient);
-    private readonly API_URL = 'http://localhost:8080/usuarios/me';
+    private readonly API_URL_ME = 'http://localhost:8080/usuarios/me';
+    private readonly API_URL_USERS = 'http://localhost:8080/usuarios';
     
     getAlumnos(): Observable<AlumnoResponse[]> {
-      return this.http.get<AlumnoResponse[]>(`${this.API_URL}/alumnos`);
+      return this.http.get<AlumnoResponse[]>(`${this.API_URL_ME}/alumnos`);
     }
 
     getAlumnoById(id: string): Observable<AlumnoResponse | null> {
       return this.getAlumnos().pipe(map((alumnos) => alumnos.find((alumno) => String(alumno.id) === id) ?? null));
     }
+
+    asignarRutina(idAlumno: number, idRutina: number): Observable<AlumnoResponse> {
+      return this.http.put<AlumnoResponse>(`${this.API_URL_USERS}/${idAlumno}/rutina-activa/${idRutina}`, null);
+}
   
     eliminarAlumno(idAlumno: number): Observable<AlumnoResponse> {
-      return this.http.delete<AlumnoResponse>(`${this.API_URL}/alumnos/${idAlumno}`);
+      return this.http.delete<AlumnoResponse>(`${this.API_URL_ME}/alumnos/${idAlumno}`);
     }
 }
