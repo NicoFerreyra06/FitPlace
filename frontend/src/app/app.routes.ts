@@ -1,58 +1,37 @@
 import { Routes } from '@angular/router';
 import { Login } from './features/auth/login/login';
-import { Home } from './features/home/home';
 import { authGuard } from './core/auth/auth-guard';
-import { Registro } from './features/auth/registro/registro';
-import { Perfil } from './features/perfil/perfil';
-import { EjercicioList } from './features/components/ejercicios/ejercicio-list/ejercicio-list';
-import { Layout } from './features/layout/layout';
-import { Historial } from './features/entrenamientos/historial/historial';
-import { MisRutinas } from './features/rutinas/mis-rutinas/mis-rutinas';
-import { RutinaForm } from './features/rutinas/rutina-form/rutina-form';
-import { RutinaDetails } from './features/rutinas/rutina-details/rutina-details';
-import { EntrenamientoHoy } from './features/entrenamientos/entrenamiento-hoy/entrenamiento-hoy';
-import { MisRecords } from './features/records/mis-records/mis-records';
-import { RecordDetalle } from './features/records/record-detalle/record-detalle';
-import { RutinasPublicas } from './features/rutinas/rutinas-publicas/rutinas-publicas';
-import { MisAmigos } from './features/amigos/mis-amigos/mis-amigos';
-import { AmigoDetalle } from './features/amigos/amigo-detalle/amigo-detalle';
-import { GimnasioList } from './features/gimnasios/gimnasios-list/gimnasios';
-import { GestionGimnasio } from './features/gimnasios/gestion-gimnasio/gestion-gimnasio';
-import { Entrenador } from './features/entrenador/entrenador';
 import { rolGuard } from './core/auth/rol-guard';
-import { Alumnos } from './features/alumnos/mis-alumnos/alumnos';
-import { AlumnoDetalle } from './features/alumnos/alumno-detalle/alumno-detalle/alumno-detalle';
-import { NotFound } from './features/not-found/not-found';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: Login },
-  { path: 'register', component: Registro },
+  { path: 'register', loadComponent: () => import('./features/auth/registro/registro').then(m => m.Registro) },
   {
     path: '',
-    component: Layout,
+    loadComponent: () => import('./features/layout/layout').then(m => m.Layout),
     children: [
-      { path: 'home', component: Home },
-      { path: 'ejercicios', component: EjercicioList },
-      { path: 'perfil', component: Perfil },
-      { path: 'entrenamientos', component: Historial },
-      { path: 'entrenamientos/hoy', component: EntrenamientoHoy },
-      { path: 'rutinas', component: MisRutinas },
-      { path: 'rutinas/publicas', component: RutinasPublicas },
-      { path: 'rutinas/nueva', component: RutinaForm },
-      { path: 'rutinas/:id', component: RutinaDetails },
-      { path: 'rutinas/:id/editar', component: RutinaForm },
-      { path: 'records', component: MisRecords },
-      { path: 'records/:ejercicioId', component: RecordDetalle },
-      { path: 'amigos', component: MisAmigos },
-      { path: 'amigos/:id', component: AmigoDetalle },
-      { path: 'gimnasios', component: GimnasioList },
-      { path: 'gimnasios/:id/gestion', component: GestionGimnasio, canActivate: [rolGuard], data: {roles: ['ADMIN_GIMNASIO']} },
-      { path: 'entrenadores', component: Entrenador },
-      { path: 'alumnos', component: Alumnos, canActivate: [rolGuard], data: {roles: ['ENTRENADOR']} },
-      { path: 'alumnos/:id', component: AlumnoDetalle, canActivate: [rolGuard], data: {roles: ['ENTRENADOR']} }
+      { path: 'home', loadComponent: () => import('./features/home/home').then(m => m.Home) },
+      { path: 'ejercicios', loadComponent: () => import('./features/components/ejercicios/ejercicio-list/ejercicio-list').then(m => m.EjercicioList) },
+      { path: 'perfil', loadComponent: () => import('./features/perfil/perfil').then(m => m.Perfil) },
+      { path: 'entrenamientos', loadComponent: () => import('./features/entrenamientos/historial/historial').then(m => m.Historial) },
+      { path: 'entrenamientos/hoy', loadComponent: () => import('./features/entrenamientos/entrenamiento-hoy/entrenamiento-hoy').then(m => m.EntrenamientoHoy) },
+      { path: 'rutinas', loadComponent: () => import('./features/rutinas/mis-rutinas/mis-rutinas').then(m => m.MisRutinas) },
+      { path: 'rutinas/publicas', loadComponent: () => import('./features/rutinas/rutinas-publicas/rutinas-publicas').then(m => m.RutinasPublicas) },
+      { path: 'rutinas/nueva', loadComponent: () => import('./features/rutinas/rutina-form/rutina-form').then(m => m.RutinaForm) },
+      { path: 'rutinas/:id', loadComponent: () => import('./features/rutinas/rutina-details/rutina-details').then(m => m.RutinaDetails) },
+      { path: 'rutinas/:id/editar', loadComponent: () => import('./features/rutinas/rutina-form/rutina-form').then(m => m.RutinaForm) },
+      { path: 'records', loadComponent: () => import('./features/records/mis-records/mis-records').then(m => m.MisRecords) },
+      { path: 'records/:ejercicioId', loadComponent: () => import('./features/records/record-detalle/record-detalle').then(m => m.RecordDetalle) },
+      { path: 'amigos', loadComponent: () => import('./features/amigos/mis-amigos/mis-amigos').then(m => m.MisAmigos) },
+      { path: 'amigos/:id', loadComponent: () => import('./features/amigos/amigo-detalle/amigo-detalle').then(m => m.AmigoDetalle) },
+      { path: 'gimnasios', loadComponent: () => import('./features/gimnasios/gimnasios-list/gimnasios').then(m => m.GimnasioList) },
+      { path: 'gimnasios/:id/gestion', loadComponent: () => import('./features/gimnasios/gestion-gimnasio/gestion-gimnasio').then(m => m.GestionGimnasio), canActivate: [rolGuard], data: {roles: ['ADMIN_GIMNASIO']} },
+      { path: 'entrenadores', loadComponent: () => import('./features/entrenador/entrenador').then(m => m.Entrenador) },
+      { path: 'alumnos', loadComponent: () => import('./features/alumnos/mis-alumnos/alumnos').then(m => m.Alumnos), canActivate: [rolGuard], data: {roles: ['ENTRENADOR']} },
+      { path: 'alumnos/:id', loadComponent: () => import('./features/alumnos/alumno-detalle/alumno-detalle/alumno-detalle').then(m => m.AlumnoDetalle), canActivate: [rolGuard], data: {roles: ['ENTRENADOR']} }
     ],
     canActivate: [authGuard],
   },
-  { path: '**', component: NotFound},
+  { path: '**', loadComponent: () => import('./features/not-found/not-found').then(m => m.NotFound) },
 ];
