@@ -1,5 +1,6 @@
 export interface Musculo {
-    id: string | number,
-    nombre: string,
-    grupoMuscular: string
-};
+    id: string | number;
+    nombre: string;
+    grupoMuscular: string;
+    funcionAnatomica?: string;
+}

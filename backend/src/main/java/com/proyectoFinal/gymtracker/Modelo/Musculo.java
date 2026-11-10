@@ -26,4 +26,7 @@ public class Musculo {
     @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(name = "grupo_muscular", nullable = false, length = 30)
     private GrupoMuscular grupoMuscular;
+
+    @Column(name = "funcion_anatomica", length = 500)
+    private String funcionAnatomica;
 }

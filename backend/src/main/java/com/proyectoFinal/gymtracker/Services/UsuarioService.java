@@ -4,8 +4,10 @@ import com.proyectoFinal.gymtracker.DTO.Request.PerfilUpdateRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.AmigoResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.GananciaGimnasioProjection;
 import com.proyectoFinal.gymtracker.DTO.Response.PerfilAmigoResponse;
+import com.proyectoFinal.gymtracker.DTO.Response.UsuarioAdminResponse;
 import com.proyectoFinal.gymtracker.DTO.Response.UsuarioResponse;
 import com.proyectoFinal.gymtracker.Enum.Rol;
+import com.proyectoFinal.gymtracker.Exception.BusinessLogicException;
 import com.proyectoFinal.gymtracker.Exception.ForbiddenAccessException;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
@@ -36,9 +38,9 @@ public class UsuarioService {
         return toResponse(usuario);
     }
 
-    public UsuarioResponse verPerfilOtroUsuario(Long idUsuario) {
+    public UsuarioAdminResponse verPerfilOtroUsuario(Long idUsuario) {
         Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
-        return toResponse(usuario);
+        return toAdminResponse(usuario);
     }
 
     public UsuarioResponse editarPerfil(Usuario usuario, PerfilUpdateRequest request) {
@@ -74,8 +76,8 @@ public class UsuarioService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public Page<UsuarioResponse> getUsuarios(Pageable pageable) {
-        return usuarioRepository.findAll(pageable).map(this::toResponse);
+    public Page<UsuarioAdminResponse> getUsuarios(Pageable pageable) {
+        return usuarioRepository.findAll(pageable).map(this::toAdminResponse);
     }
 
     public List<UsuarioResponse> getEntrenadores() {
@@ -84,10 +86,27 @@ public class UsuarioService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public UsuarioResponse cambiarRol(Long idUsuario, Rol nuevoRol) {
+    public UsuarioAdminResponse cambiarRol(Long idUsuario, Rol nuevoRol) {
+        if (nuevoRol == Rol.ADMIN) {
+            throw new BusinessLogicException("No se puede asignar el rol de administrador desde esta pantalla");
+        }
+
         Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+        if (usuario.getRol() == Rol.ADMIN) {
+            throw new BusinessLogicException("No se puede modificar el rol de un administrador");
+        }
+
         usuario.setRol(nuevoRol);
-        return toResponse(usuarioRepository.save(usuario));
+        return toAdminResponse(usuarioRepository.save(usuario));
+    }
+
+    public UsuarioAdminResponse toAdminResponse(Usuario usuario) {
+        return UsuarioAdminResponse.builder()
+                .id(usuario.getId())
+                .username(usuario.getNombreUsuario())
+                .email(usuario.getEmail())
+                .rol(usuario.getRol())
+                .build();
     }
 
     public UsuarioResponse toResponse(Usuario usuario) {

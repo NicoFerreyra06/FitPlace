@@ -9,9 +9,20 @@ import { Ejercicio } from '../../../../model/ejercicio';
 })
 export class EjercicioDetails {
   ejercicio = input.required<Ejercicio>();
+  esAdmin = input<boolean>(false);
   cerrar = output<void>();
+  editar = output<Ejercicio>();
+  eliminar = output<Ejercicio>();
 
   onCerrar(): void {
     this.cerrar.emit();
+  }
+
+  onEditar(): void {
+    this.editar.emit(this.ejercicio());
+  }
+
+  onEliminar(): void {
+    this.eliminar.emit(this.ejercicio());
   }
 }

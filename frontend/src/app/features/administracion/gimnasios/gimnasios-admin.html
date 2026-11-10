@@ -1,0 +1,200 @@
+<main class="gimnasios-admin-page">
+  <header class="encabezado">
+    <h1>Administrar gimnasios</h1>
+    <p class="texto-secundario">Editá o eliminá gimnasios registrados en FitPlace.</p>
+  </header>
+
+  @if (error()) {
+    <p class="aviso aviso--error" role="alert">{{ error() }}</p>
+  }
+  @if (exito()) {
+    <p class="aviso aviso--ok" role="status">{{ exito() }}</p>
+  }
+
+  <section class="panel" aria-labelledby="lista-titulo">
+    <h2 id="lista-titulo">Todos los gimnasios</h2>
+    @if (gimnasios.isLoading() && !gimnasios.hasValue()) {
+      <p class="estado" role="status">Cargando gimnasios…</p>
+    } @else if (gimnasios.error()) {
+      <div class="estado estado--error" role="alert">
+        <p>No se pudieron cargar los gimnasios.</p>
+        <button class="btn btn--sm btn--contorno" type="button" (click)="gimnasios.reload()">Reintentar</button>
+      </div>
+    } @else if (gimnasios.value(); as paginaGimnasios) {
+      @if (paginaGimnasios.empty) {
+        <p class="estado">Todavía no hay gimnasios registrados.</p>
+      } @else {
+        <div class="tabla-contenedor">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Gimnasio</th>
+                <th scope="col">Administrador</th>
+                <th scope="col">Dirección</th>
+                <th scope="col">Cuota mensual</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (gimnasio of paginaGimnasios.content; track gimnasio.id) {
+                <tr>
+                  <th scope="row">{{ gimnasio.nombre }}</th>
+                  <td>{{ gimnasio.nombreAdmin }}</td>
+                  <td>{{ gimnasio.direccion }}</td>
+                  <td>$ {{ gimnasio.precioCuota }}</td>
+                  <td>
+                    <div class="acciones-fila">
+                      <button class="btn btn--sm btn--contorno" type="button" (click)="editar(gimnasio)">
+                        Editar
+                      </button>
+                      <button
+                        class="btn btn--sm btn--peligro"
+                        type="button"
+                        [disabled]="eliminandoId() !== null"
+                        (click)="confirmandoEliminacion.set(gimnasio.id)"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                    @if (confirmandoEliminacion() === gimnasio.id) {
+                      <div class="confirmacion" role="alertdialog" aria-label="Confirmar eliminación">
+                        <p>¿Eliminar {{ gimnasio.nombre }}? Esta acción no se puede deshacer.</p>
+                        <div class="acciones-fila">
+                          <button
+                            class="btn btn--sm btn--peligro"
+                            type="button"
+                            [disabled]="eliminandoId() === gimnasio.id"
+                            (click)="eliminar(gimnasio)"
+                          >
+                            {{ eliminandoId() === gimnasio.id ? 'Eliminando…' : 'Sí, eliminar' }}
+                          </button>
+                          <button
+                            class="btn btn--sm btn--contorno"
+                            type="button"
+                            [disabled]="eliminandoId() === gimnasio.id"
+                            (click)="confirmandoEliminacion.set(null)"
+                          >
+                            Cancelar
+                          </button>
+                        </div>
+                      </div>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if (paginaGimnasios.totalPages > 1) {
+          <nav class="paginacion" aria-label="Paginación de gimnasios">
+            <button
+              class="btn btn--sm btn--contorno"
+              type="button"
+              [disabled]="paginaGimnasios.first"
+              (click)="cambiarPagina(-1)"
+            >
+              ← Anterior
+            </button>
+            <span>Página {{ paginaGimnasios.number + 1 }} de {{ paginaGimnasios.totalPages }}</span>
+            <button
+              class="btn btn--sm btn--contorno"
+              type="button"
+              [disabled]="paginaGimnasios.last"
+              (click)="cambiarPagina(1)"
+            >
+              Siguiente →
+            </button>
+          </nav>
+        }
+      }
+    }
+  </section>
+
+  @if (gimnasioEditando(); as gimnasio) {
+    <section class="panel editor" aria-labelledby="editar-titulo">
+      <div class="editor-encabezado">
+        <div>
+          <h2 id="editar-titulo">Editar {{ gimnasio.nombre }}</h2>
+          <p class="texto-secundario">Actualizá la información del gimnasio.</p>
+        </div>
+        <button class="btn-cerrar" type="button" aria-label="Cerrar edición" (click)="cancelarEdicion()">×</button>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="guardar()">
+        <div class="campos">
+          <label>
+            Nombre
+            <input type="text" formControlName="nombre" maxlength="60" />
+            @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+              <span class="field-error">Ingresá un nombre de entre 3 y 60 caracteres.</span>
+            }
+          </label>
+          <label>
+            Dirección
+            <input type="text" formControlName="direccion" maxlength="60" />
+            @if (form.controls.direccion.touched && form.controls.direccion.invalid) {
+              <span class="field-error">Ingresá una dirección de entre 3 y 60 caracteres.</span>
+            }
+          </label>
+          <label>
+            Cuota mensual
+            <input type="number" formControlName="precioCuota" min="0.1" step="0.01" />
+            @if (form.controls.precioCuota.touched && form.controls.precioCuota.invalid) {
+              <span class="field-error">La cuota debe ser mayor a cero.</span>
+            }
+          </label>
+          <label>
+            Horario de apertura
+            <input type="time" formControlName="horarioApertura" />
+            @if (form.controls.horarioApertura.touched && form.controls.horarioApertura.invalid) {
+              <span class="field-error">Ingresá el horario de apertura.</span>
+            }
+          </label>
+          <label>
+            Horario de cierre
+            <input type="time" formControlName="horarioCierre" />
+            @if (form.controls.horarioCierre.touched && form.controls.horarioCierre.invalid) {
+              <span class="field-error">Ingresá el horario de cierre.</span>
+            }
+          </label>
+          <label class="campo-ancho">
+            URL de la foto (opcional)
+            <input type="url" formControlName="fotoUrl" maxlength="255" />
+          </label>
+        </div>
+
+        @if (form.hasError('horarioInvalido')) {
+          <p class="field-error" role="alert">El horario de cierre debe ser posterior al de apertura.</p>
+        }
+        @if (form.controls.diasAbierto.touched && form.controls.diasAbierto.invalid) {
+          <p class="field-error" role="alert">Seleccioná al menos un día de apertura.</p>
+        }
+        <fieldset class="dias">
+          <legend>Días de apertura</legend>
+          <div class="dias-opciones">
+            @for (dia of diasSemana; track dia.valor) {
+              <label class="dia-opcion">
+                <input
+                  type="checkbox"
+                  [checked]="form.controls.diasAbierto.value.includes(dia.valor)"
+                  (change)="cambiarDia(dia.valor, $event)"
+                />
+                {{ dia.etiqueta }}
+              </label>
+            }
+          </div>
+        </fieldset>
+
+        <div class="acciones">
+          <button class="btn" type="submit" [disabled]="guardando()">
+            {{ guardando() ? 'Guardando…' : 'Guardar cambios' }}
+          </button>
+          <button class="btn btn--contorno" type="button" [disabled]="guardando()" (click)="cancelarEdicion()">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </section>
+  }
+</main>

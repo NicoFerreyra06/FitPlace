@@ -30,6 +30,17 @@
           </div>
         </section>
       }
+
+      @if (esAdmin()) {
+        <footer class="modal-footer">
+          <button type="button" class="btn btn--vidrio btn--sm" (click)="onEditar()">
+            Editar ejercicio
+          </button>
+          <button type="button" class="btn btn--peligro btn--sm" (click)="onEliminar()">
+            Eliminar
+          </button>
+        </footer>
+      }
     </div>
   </div>
 </div>

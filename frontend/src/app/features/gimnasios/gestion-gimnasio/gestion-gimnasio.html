@@ -14,6 +14,123 @@
     <p class="aviso" [class.aviso--error]="error()">{{ texto }}</p>
   }
 
+  @if (gimnasio.hasValue()) {
+    <section class="administrar" aria-label="Administrar gimnasio">
+      @if (editando()) {
+        <form class="formulario-edicion" [formGroup]="form" (ngSubmit)="guardarEdicion()">
+          <div class="seccion-header">
+            <div>
+              <h2>Editar información</h2>
+              <p class="muted">Mantené actualizados los datos de tu gimnasio.</p>
+            </div>
+          </div>
+
+          <div class="campos">
+            <div class="campo">
+              <label for="nombre-gimnasio">Nombre</label>
+              <input id="nombre-gimnasio" type="text" formControlName="nombre" maxlength="60" />
+              @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+                <span class="field-error">Ingresá un nombre de entre 3 y 60 caracteres.</span>
+              }
+            </div>
+
+            <div class="campo">
+              <label for="direccion-gimnasio">Dirección</label>
+              <input id="direccion-gimnasio" type="text" formControlName="direccion" maxlength="60" />
+              @if (form.controls.direccion.touched && form.controls.direccion.invalid) {
+                <span class="field-error">Ingresá una dirección de entre 3 y 60 caracteres.</span>
+              }
+            </div>
+
+            <div class="campo">
+              <label for="precio-gimnasio">Cuota mensual</label>
+              <input id="precio-gimnasio" type="number" formControlName="precioCuota" min="0.1" step="0.01" />
+              @if (form.controls.precioCuota.touched && form.controls.precioCuota.invalid) {
+                <span class="field-error">La cuota debe ser mayor a 0.</span>
+              }
+            </div>
+
+            <div class="campo">
+              <label for="apertura-gimnasio">Horario de apertura</label>
+              <input id="apertura-gimnasio" type="time" formControlName="horarioApertura" />
+            </div>
+
+            <div class="campo">
+              <label for="cierre-gimnasio">Horario de cierre</label>
+              <input id="cierre-gimnasio" type="time" formControlName="horarioCierre" />
+            </div>
+
+            <div class="campo campo--ancho">
+              <label for="foto-gimnasio">URL de la foto (opcional)</label>
+              <input id="foto-gimnasio" type="url" formControlName="fotoUrl" maxlength="255" />
+              @if (form.controls.fotoUrl.touched && form.controls.fotoUrl.invalid) {
+                <span class="field-error">Ingresá una URL válida de hasta 255 caracteres.</span>
+              }
+            </div>
+          </div>
+
+          @if (form.controls.horarioApertura.touched && form.controls.horarioApertura.invalid) {
+            <span class="field-error">Ingresá el horario de apertura.</span>
+          }
+          @if (form.controls.horarioCierre.touched && form.controls.horarioCierre.invalid) {
+            <span class="field-error">Ingresá el horario de cierre.</span>
+          }
+          @if (form.hasError('horarioInvalido') && (form.controls.horarioApertura.touched || form.controls.horarioCierre.touched)) {
+            <span class="field-error">El horario de cierre debe ser posterior al de apertura.</span>
+          }
+          @if (form.controls.diasAbierto.touched && form.controls.diasAbierto.invalid) {
+            <span class="field-error">Seleccioná al menos un día de apertura.</span>
+          }
+          <fieldset class="dias">
+            <legend>Días de apertura</legend>
+            <div class="dias-opciones">
+              @for (dia of diasSemana; track dia.valor) {
+                <label class="dia-opcion">
+                  <input type="checkbox" [checked]="form.controls.diasAbierto.value.includes(dia.valor)"
+                    (change)="cambiarDia(dia.valor, $event)" />
+                  {{ dia.etiqueta }}
+                </label>
+              }
+            </div>
+          </fieldset>
+
+          <div class="acciones">
+            <button type="submit" class="btn" [disabled]="guardando()">
+              {{ guardando() ? 'Guardando…' : 'Guardar cambios' }}
+            </button>
+            <button type="button" class="btn btn--contorno" [disabled]="guardando()" (click)="cancelarEdicion()">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      } @else {
+        <div class="acciones">
+          <button type="button" class="btn btn--contorno" (click)="iniciarEdicion()">Editar información</button>
+          <button type="button" class="btn btn--peligro" (click)="confirmandoEliminacion.set(true)">Eliminar gimnasio</button>
+        </div>
+      }
+
+      @if (confirmandoEliminacion()) {
+        <div class="confirmacion" role="alertdialog" aria-labelledby="confirmar-eliminar-titulo"
+          aria-describedby="confirmar-eliminar-descripcion">
+          <div>
+            <h2 id="confirmar-eliminar-titulo">¿Eliminar {{ gimnasio.value().nombre }}?</h2>
+            <p id="confirmar-eliminar-descripcion" class="muted">
+              Esta acción quitará el gimnasio de la lista. No se puede deshacer.
+            </p>
+          </div>
+          <div class="acciones">
+            <button type="button" class="btn btn--peligro" [disabled]="eliminando()" (click)="eliminarGimnasio()">
+              {{ eliminando() ? 'Eliminando…' : 'Sí, eliminar gimnasio' }}
+            </button>
+            <button type="button" class="btn btn--contorno" [disabled]="eliminando()"
+              (click)="confirmandoEliminacion.set(false)">Cancelar</button>
+          </div>
+        </div>
+      }
+    </section>
+  }
+
   <div class="resumen">
     <div class="stat">
       <span class="stat-label">Miembros</span>

@@ -61,6 +61,9 @@ public class RutinaService {
                                     .stream().map(ejDto -> {
                                         Ejercicio ejBase = ejercicioRepository.findById(ejDto.getEjercicioId())
                                                 .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
+                                        if (!ejBase.isActivo()) {
+                                            throw new BusinessLogicException("El ejercicio '" + ejBase.getNombre() + "' no está disponible");
+                                        }
                                         return EjercicioRutina.builder()
                                                 .dia(dia)
                                                 .ejercicio(ejBase)
@@ -119,6 +122,9 @@ public class RutinaService {
                     for (EjercicioRutinaRequest ejReq : diaReq.getEjercicios()) {
                         Ejercicio ej = ejercicioRepository.findById(ejReq.getEjercicioId())
                                 .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
+                        if (!ej.isActivo()) {
+                            throw new BusinessLogicException("El ejercicio '" + ej.getNombre() + "' no está disponible");
+                        }
                         nuevoDia.getEjercicios().add(EjercicioRutina.builder()
                                 .dia(nuevoDia)
                                 .ejercicio(ej)
@@ -165,6 +171,9 @@ public class RutinaService {
 
                 for (EjercicioRutinaRequest newReq : unmatchedReqs) {
                     Ejercicio ej = ejercicioRepository.findById(newReq.getEjercicioId()).orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
+                    if (!ej.isActivo()) {
+                        throw new BusinessLogicException("El ejercicio '" + ej.getNombre() + "' no está disponible");
+                    }
                     ejerciciosActuales.add(EjercicioRutina.builder()
                             .dia(diaActual)
                             .ejercicio(ej)

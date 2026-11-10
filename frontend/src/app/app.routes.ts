@@ -27,9 +27,13 @@ export const routes: Routes = [
       { path: 'amigos/:id', loadComponent: () => import('./features/amigos/amigo-detalle/amigo-detalle').then(m => m.AmigoDetalle) },
       { path: 'gimnasios', loadComponent: () => import('./features/gimnasios/gimnasios-list/gimnasios').then(m => m.GimnasioList) },
       { path: 'gimnasios/:id/gestion', loadComponent: () => import('./features/gimnasios/gestion-gimnasio/gestion-gimnasio').then(m => m.GestionGimnasio), canActivate: [rolGuard], data: {roles: ['ADMIN_GIMNASIO']} },
+      { path: 'admin/usuarios', loadComponent: () => import('./features/administracion/usuarios/usuarios-admin').then(m => m.UsuariosAdmin), canActivate: [rolGuard], data: {roles: ['ADMIN']} },
+      { path: 'admin/ganancias', loadComponent: () => import('./features/administracion/ganancias/ganancias-admin').then(m => m.GananciasAdmin), canActivate: [rolGuard], data: {roles: ['ADMIN']} },
+      { path: 'admin/gimnasios', loadComponent: () => import('./features/administracion/gimnasios/gimnasios-admin').then(m => m.GimnasiosAdmin), canActivate: [rolGuard], data: {roles: ['ADMIN']} },
       { path: 'entrenadores', loadComponent: () => import('./features/entrenador/entrenador').then(m => m.Entrenador) },
       { path: 'alumnos', loadComponent: () => import('./features/alumnos/mis-alumnos/alumnos').then(m => m.Alumnos), canActivate: [rolGuard], data: {roles: ['ENTRENADOR']} },
-      { path: 'alumnos/:id', loadComponent: () => import('./features/alumnos/alumno-detalle/alumno-detalle/alumno-detalle').then(m => m.AlumnoDetalle), canActivate: [rolGuard], data: {roles: ['ENTRENADOR']} }
+      { path: 'alumnos/:id', loadComponent: () => import('./features/alumnos/alumno-detalle/alumno-detalle/alumno-detalle').then(m => m.AlumnoDetalle), canActivate: [rolGuard], data: {roles: ['ENTRENADOR']} },
+      { path: 'musculos', loadComponent: () => import('./features/musculos/musculo-list/musculo-list').then(m => m.MusculoList), canActivate: [rolGuard], data: {roles: ['ADMIN']} }
     ],
     canActivate: [authGuard],
   },

@@ -19,6 +19,15 @@ export interface gimnasioResponse {
     isMercadoPagoVinculado: boolean,
 }
 
+export interface GimnasioUpdateRequest {
+    nombre: string;
+    direccion: string;
+    precioCuota: number;
+    horarioApertura: string;
+    horarioCierre: string;
+    diasAbierto: string[];
+    fotoUrl: string | null;
+}
 
 @Service()
 export class Gimnasios {
@@ -48,6 +57,18 @@ export class Gimnasios {
 
     getGimnasio(idGimnasio: number): Observable<gimnasioResponse> {
         return this.http.get<gimnasioResponse>(`${this.URL}/${idGimnasio}`);
+    }
+
+    actualizarGimnasio(idGimnasio: number, request: GimnasioUpdateRequest): Observable<gimnasioResponse> {
+        return this.http.put<gimnasioResponse>(`${this.URL}/me/${idGimnasio}`, request);
+    }
+
+    actualizarCualquierGimnasio(idGimnasio: number, request: GimnasioUpdateRequest): Observable<gimnasioResponse> {
+        return this.http.put<gimnasioResponse>(`${this.URL}/${idGimnasio}`, request);
+    }
+
+    eliminarGimnasio(idGimnasio: number): Observable<void> {
+        return this.http.delete<void>(`${this.URL}/${idGimnasio}`);
     }
 
     getMiembros(idGimnasio: number): Observable<UsuarioPerfil[]> {

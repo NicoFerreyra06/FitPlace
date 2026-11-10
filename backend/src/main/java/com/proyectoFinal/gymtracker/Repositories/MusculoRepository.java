@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface MusculoRepository extends JpaRepository<Musculo, Long> {
     List<Musculo> findByGrupoMuscular(GrupoMuscular grupoMuscular);
+    boolean existsByNombreIgnoreCase(String nombre);
+    boolean existsByNombreIgnoreCaseAndIdNot(String nombre, Long id);
 }

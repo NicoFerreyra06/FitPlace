@@ -1,0 +1,71 @@
+<div class="modal-backdrop" (click)="onCerrar()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <h2>{{ esEdicion() ? 'Editar músculo' : 'Nuevo músculo' }}</h2>
+      <button class="close-btn" type="button" aria-label="Cerrar" (click)="onCerrar()">&times;</button>
+    </header>
+
+    <form class="modal-body" (ngSubmit)="onGuardar()">
+      @if (errorLocal() || errorExterno()) {
+        <div class="alerta-error">
+          {{ errorLocal() || errorExterno() }}
+        </div>
+      }
+
+      <div class="field">
+        <label for="form-musculo-nombre">Nombre del músculo <span class="requerido">*</span></label>
+        <input
+          id="form-musculo-nombre"
+          type="text"
+          placeholder="Ej: Pectoral menor, Redondo mayor, Psoas..."
+          [ngModel]="nombre()"
+          (ngModelChange)="nombre.set($event)"
+          name="nombre"
+          autocomplete="off"
+          required
+        />
+      </div>
+
+      <div class="field">
+        <label for="form-grupo-muscular">Grupo muscular <span class="requerido">*</span></label>
+        <select
+          id="form-grupo-muscular"
+          [ngModel]="grupoMuscular()"
+          (ngModelChange)="grupoMuscular.set($event)"
+          name="grupoMuscular"
+          required
+        >
+          @for (grupo of grupos; track grupo.valor) {
+            <option [value]="grupo.valor">{{ grupo.etiqueta }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="field">
+        <div class="label-fila">
+          <label for="form-funcion-anatomica">Función anatómica / biomecánica</label>
+          <span class="contador">{{ funcionAnatomica().length }}/500</span>
+        </div>
+        <textarea
+          id="form-funcion-anatomica"
+          rows="3"
+          maxlength="500"
+          placeholder="Ej: Abducción y rotación interna del húmero, estabilización de la cintura escapular..."
+          [ngModel]="funcionAnatomica()"
+          (ngModelChange)="funcionAnatomica.set($event)"
+          name="funcionAnatomica"
+        ></textarea>
+        <p class="ayuda">Describe el movimiento o acción articular principal que este músculo permite realizar.</p>
+      </div>
+
+      <footer class="modal-footer">
+        <button type="button" class="btn btn--vidrio" (click)="onCerrar()" [disabled]="guardando()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando...' : (esEdicion() ? 'Guardar cambios' : 'Crear músculo') }}
+        </button>
+      </footer>
+    </form>
+  </div>
+</div>

@@ -1,15 +1,17 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AlumnoResponse, AlumnoService } from '../../../../core/alumnos/alumno';
 import { Entrenamiento, EntrenamientoLog } from '../../../../core/entrenamiento/entrenamiento';
 import { Rutinas } from '../../../../core/rutinas/rutinas';
 import { etiquetaRol } from '../../../../core/usuario/usuario';
 import { Progresion } from '../../../components/progresion/progresion';
 import { Rachas } from '../../../components/rachas/rachas';
-import { DiaRutinaResponse, DIAS_SEMANA, etiquetaDia } from '../../../../core/rutinas/rutinas.model';
+import { DiaRutinaResponse, DIAS_SEMANA, etiquetaDia, RutinaResponse } from '../../../../core/rutinas/rutinas.model';
+import { catchError, forkJoin, of } from 'rxjs';
+import { AsignarRutinaModal } from './asignar-rutina-modal';
 
 interface RecordDerivado {
   nombreEjercicio: string;
@@ -18,7 +20,7 @@ interface RecordDerivado {
 }
 
 @Component({
-  imports: [DatePipe, DecimalPipe, RouterLink, Rachas, Progresion],
+  imports: [DatePipe, DecimalPipe, RouterLink, Rachas, Progresion, AsignarRutinaModal],
   selector: 'app-alumno-detalle',
   styleUrl: './alumno-detalle.css',
   templateUrl: './alumno-detalle.html',
@@ -28,9 +30,18 @@ export class AlumnoDetalle {
   private readonly alumnoService = inject(AlumnoService);
   private readonly entrenamientoService = inject(Entrenamiento);
   private readonly rutinasService = inject(Rutinas);
+  private readonly destroyRef = inject(DestroyRef);
 
   private readonly alumnoId = this.route.snapshot.paramMap.get('id') ?? '';
   private readonly idValido = this.alumnoId.length > 0;
+
+  protected readonly modalAbierto = signal<boolean>(false);
+  protected readonly rutinasDisponibles = signal<RutinaResponse[]>([]);
+  protected readonly cargandoRutinas = signal<boolean>(false);
+  protected readonly errorAsignacion = signal<string | null>(null);
+  protected readonly asignando = signal<number | null>(null);
+  protected readonly misRutinaIds = signal<Set<number>>(new Set());
+  protected readonly rutinaExpandidaId = signal<number | null>(null);
 
   protected readonly resultado = rxResource({
     params: () => (this.idValido ? { id: this.alumnoId } : undefined),
@@ -161,4 +172,56 @@ export class AlumnoDetalle {
   }
 
   protected readonly etiquetaRol = etiquetaRol;
+
+  protected abrirModal(): void {
+    this.modalAbierto.set(true);
+    this.errorAsignacion.set(null);
+    
+    if (this.rutinasDisponibles().length > 0) return;
+    this.cargandoRutinas.set(true);
+    forkJoin({
+      propias: this.rutinasService.getMisRutinas(),
+      publicas: this.rutinasService.getRutinasPublicas(0, 100)
+    }).pipe(catchError(() => of(null)), takeUntilDestroyed(this.destroyRef))
+      .subscribe((resultado) => {
+        this.cargandoRutinas.set(false);
+        if (!resultado) return;
+        const { propias, publicas } = resultado;
+        const propiaIds = new Set(propias.content.map((r) => r.id));
+        this.misRutinaIds.set(propiaIds);
+        this.rutinasDisponibles.set([...propias.content, ...publicas.content.filter((r) => !propiaIds.has(r.id))]);
+      });
+  }
+
+  protected cerrarModal(): void {
+    this.modalAbierto.set(false);
+  }
+
+  protected asignarRutina(idRutina: number): void {
+    const alumno = this.alumno();
+    if (!alumno) return;
+    this.asignando.set(idRutina);
+    this.errorAsignacion.set(null);
+    this.alumnoService
+      .asignarRutina(alumno.id, idRutina)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.resultado.reload();
+          this.asignando.set(null);
+          this.cerrarModal();
+        },
+        error: (err) => {
+          this.errorAsignacion.set(
+            err.error?.message ?? 'No se pudo asignar la rutina',
+          );
+          this.asignando.set(null);
+        },
+      });
+  }
+
+  protected alternarDetalleRutina(id: number): void {
+    this.rutinaExpandidaId.update((abierto) => (abierto === id ? null : id));
+  }
+
 }

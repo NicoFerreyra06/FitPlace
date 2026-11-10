@@ -13,11 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class EjercicioRequest {
-    @NotBlank
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
-    @Size(max = 100, message = "La descripción no puede superar los 100 caracteres")
+    @Size(max = 500, message = "La descripción no puede superar los 500 caracteres")
     private String descripcion;
-    @NotEmpty
+    @NotEmpty(message = "Debe seleccionar al menos un músculo principal")
     private List<Long> musculoPrincipalId;
     private List<Long> musculoSecundarioId;
 }

@@ -1,0 +1,130 @@
+.administrar,
+.formulario-edicion,
+.confirmacion {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.administrar {
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.campos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.campo label,
+.dias legend {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.campo input {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 12px;
+  font: inherit;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.campo input:focus-visible {
+  outline: none;
+  border-color: var(--focus);
+}
+
+.campo input.ng-invalid.ng-touched {
+  border-color: var(--danger);
+}
+
+.campo--ancho {
+  grid-column: 1 / -1;
+}
+
+.field-error {
+  font-size: 12.5px;
+  color: var(--danger);
+}
+
+.dias {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.dias legend {
+  margin-bottom: 10px;
+}
+
+.dias-opciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dia-opcion {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.dia-opcion input {
+  accent-color: var(--primary);
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.confirmacion {
+  padding: 16px;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-md);
+}
+
+.confirmacion h2 {
+  margin-bottom: 6px;
+}
+
+.confirmacion .muted {
+  line-height: 1.5;
+}
+
+@media (max-width: 560px) {
+  .campos {
+    grid-template-columns: 1fr;
+  }
+
+  .campo--ancho {
+    grid-column: auto;
+  }
+
+  .acciones > .btn {
+    flex: 1 1 100%;
+  }
+}

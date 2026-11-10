@@ -112,13 +112,7 @@
               </span>
             </span>
 
-            <span
-              class="flecha"
-              [class.rotada]="rutinaAbierta()"
-              aria-hidden="true"
-            >
-              ▸
-            </span>
+            <span class="flecha" [class.rotada]="rutinaAbierta()" aria-hidden="true">›</span>
           </button>
 
           @if (rutinaAbierta()) {
@@ -169,6 +163,9 @@
           }
         }
       </article>
+
+      <button type="button" class="btn btn--contorno btn--sm" (click)="abrirModal()">Asignar rutina</button>
+
     </section>
 
     <section class="seccion" aria-labelledby="titulo-records">
@@ -238,5 +235,20 @@
         }
       }
     </section>
+
+    @if (modalAbierto()) {
+      <app-asignar-rutina-modal
+        [rutinas]="rutinasDisponibles()"
+        [alumnoRutinaActivaId]="alumno()?.rutinaActivaId ?? null"
+        [error]="errorAsignacion()"
+        [cargando]="cargandoRutinas()"
+        [asignando]="asignando()"
+        [misRutinaIds]="misRutinaIds()"
+        [rutinaExpandidaId]="rutinaExpandidaId()"
+        (cerrar)="cerrarModal()"
+        (asignar)="asignarRutina($event)"
+        (alternarDetalle)="alternarDetalleRutina($event)"
+      />
+    }
   }
 </main>

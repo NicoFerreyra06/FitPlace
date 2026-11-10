@@ -117,6 +117,10 @@ h3 {
   gap: 12px;
 }
 
+.seccion > .btn {
+  align-self: flex-start;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
@@ -485,8 +489,7 @@ h3 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dato,
-  .flecha {
+  .dato {
     transition: none;
   }
 }

@@ -4,6 +4,7 @@ import com.proyectoFinal.gymtracker.DTO.Request.EjercicioRequest;
 import com.proyectoFinal.gymtracker.DTO.Response.EjercicioResponse;
 import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Ejercicio;
+import com.proyectoFinal.gymtracker.Modelo.Musculo;
 import com.proyectoFinal.gymtracker.Repositories.EjercicioRepository;
 import com.proyectoFinal.gymtracker.Repositories.MusculoRepository;
 import jakarta.transaction.Transactional;
@@ -22,11 +23,19 @@ public class EjercicioService {
     private final MusculoRepository musculoRepository;
 
     public EjercicioResponse addEjercicio(EjercicioRequest request) {
+        List<Musculo> principales = request.getMusculoPrincipalId() != null
+                ? musculoRepository.findAllById(request.getMusculoPrincipalId())
+                : List.of();
+        List<Musculo> secundarios = request.getMusculoSecundarioId() != null && !request.getMusculoSecundarioId().isEmpty()
+                ? musculoRepository.findAllById(request.getMusculoSecundarioId())
+                : List.of();
+
         Ejercicio ejercicio = Ejercicio.builder()
                 .nombre(request.getNombre())
                 .descripcion(request.getDescripcion())
-                .musculosPrincipales(musculoRepository.findAllById(request.getMusculoPrincipalId()))
-                .musculosSecundarios(musculoRepository.findAllById(request.getMusculoSecundarioId()))
+                .activo(true)
+                .musculosPrincipales(principales)
+                .musculosSecundarios(secundarios)
                 .build();
 
         Ejercicio saved = ejercicioRepository.save(ejercicio);
@@ -35,13 +44,21 @@ public class EjercicioService {
 
     public List<EjercicioResponse> addEjercicios(List<EjercicioRequest> requests) {
         List<Ejercicio> ejercicios = requests.stream()
-                .map(request -> Ejercicio.builder()
-                        .nombre(request.getNombre())
-                        .descripcion(request.getDescripcion())
-                        .musculosPrincipales(musculoRepository.findAllById(request.getMusculoPrincipalId()))
-                        .musculosSecundarios(musculoRepository.findAllById(request.getMusculoSecundarioId()))
-                        .build()
-                ).toList();
+                .map(request -> {
+                    List<Musculo> principales = request.getMusculoPrincipalId() != null
+                            ? musculoRepository.findAllById(request.getMusculoPrincipalId())
+                            : List.of();
+                    List<Musculo> secundarios = request.getMusculoSecundarioId() != null && !request.getMusculoSecundarioId().isEmpty()
+                            ? musculoRepository.findAllById(request.getMusculoSecundarioId())
+                            : List.of();
+                    return Ejercicio.builder()
+                            .nombre(request.getNombre())
+                            .descripcion(request.getDescripcion())
+                            .activo(true)
+                            .musculosPrincipales(principales)
+                            .musculosSecundarios(secundarios)
+                            .build();
+                }).toList();
 
         return ejercicioRepository.saveAll(ejercicios).stream()
                 .map(this::toResponse)
@@ -53,10 +70,17 @@ public class EjercicioService {
         Ejercicio ejercicio = ejercicioRepository.findById(idEjercicio)
                 .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
 
+        List<Musculo> principales = ejercicioRequest.getMusculoPrincipalId() != null
+                ? musculoRepository.findAllById(ejercicioRequest.getMusculoPrincipalId())
+                : List.of();
+        List<Musculo> secundarios = ejercicioRequest.getMusculoSecundarioId() != null && !ejercicioRequest.getMusculoSecundarioId().isEmpty()
+                ? musculoRepository.findAllById(ejercicioRequest.getMusculoSecundarioId())
+                : List.of();
+
         ejercicio.setNombre(ejercicioRequest.getNombre());
         ejercicio.setDescripcion(ejercicioRequest.getDescripcion());
-        ejercicio.setMusculosPrincipales(musculoRepository.findAllById(ejercicioRequest.getMusculoPrincipalId()));
-        ejercicio.setMusculosSecundarios(musculoRepository.findAllById(ejercicioRequest.getMusculoSecundarioId()));
+        ejercicio.setMusculosPrincipales(principales);
+        ejercicio.setMusculosSecundarios(secundarios);
 
         return toResponse(ejercicioRepository.save(ejercicio));
     }
@@ -69,7 +93,7 @@ public class EjercicioService {
     }
 
     public Page<EjercicioResponse> getAll(Pageable pageable) {
-        return ejercicioRepository.findAll(pageable)
+        return ejercicioRepository.findAllByActivoTrue(pageable)
                 .map(this::toResponse);
     }
 
@@ -77,7 +101,8 @@ public class EjercicioService {
         Ejercicio ejercicio = ejercicioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Ejercicio no encontrado"));
 
-        ejercicioRepository.delete(ejercicio);
+        ejercicio.setActivo(false);
+        ejercicioRepository.save(ejercicio);
     }
 
     public List<EjercicioResponse> getByMusculo(Long musculoId) {
@@ -93,7 +118,7 @@ public class EjercicioService {
     }
 
     public List<EjercicioResponse> buscarPorNombre(String nombre) {
-        return ejercicioRepository.findByNombreContainingIgnoreCase(nombre)
+        return ejercicioRepository.findByNombreContainingIgnoreCaseAndActivoTrue(nombre)
                 .stream()
                 .map(this::toResponse)
                 .toList();
@@ -104,6 +129,7 @@ public class EjercicioService {
                 .id(ejercicio.getId())
                 .nombre(ejercicio.getNombre())
                 .descripcion(ejercicio.getDescripcion())
+                .activo(ejercicio.isActivo())
                 .musculosPrincipales(ejercicio.getMusculosPrincipales())
                 .musculosSecundarios(ejercicio.getMusculosSecundarios())
                 .build();
