@@ -31,6 +31,11 @@ export class RutinasPublicas implements OnInit {
   protected readonly busqueda = signal<string>('');
   protected readonly activandoId = signal<number | null>(null);
 
+  protected readonly pagina = signal(0);
+  protected readonly cargandoMas = signal(false);
+  protected readonly hayMas = signal(false);
+  private readonly tamanioPagina = 10;
+
   protected readonly rutinasFiltradas = computed(() => {
     const texto = this.busqueda().trim().toLowerCase();
     const lista = this.rutinas();
@@ -48,13 +53,15 @@ export class RutinasPublicas implements OnInit {
 
   cargarDatos() {
     this.cargando.set(true);
+    this.pagina.set(0);
     forkJoin({
-      rutinas: this.rutinasService.getRutinasPublicas(),
+      rutinas: this.rutinasService.getRutinasPublicas(0, this.tamanioPagina),
       usuario: this.usuarioService.getPerfilGuardado(),
     }).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
       next: ({ rutinas, usuario }) => {
         this.rutinas.set(rutinas.content);
+        this.hayMas.set(!rutinas.last);
         this.rutinaActivaId.set(usuario.rutinaActivaId);
         this.cargando.set(false);
       },
@@ -65,6 +72,33 @@ export class RutinasPublicas implements OnInit {
         this.cargando.set(false);
       },
     });
+  }
+
+  cargarMas() {
+    if (this.cargandoMas() || !this.hayMas()) {
+      return;
+    }
+
+    const siguientePagina = this.pagina() + 1;
+    this.cargandoMas.set(true);
+
+    this.rutinasService
+      .getRutinasPublicas(siguientePagina, this.tamanioPagina)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (page) => {
+          this.rutinas.update((lista) => [...lista, ...page.content]);
+          this.pagina.set(siguientePagina);
+          this.hayMas.set(!page.last);
+          this.cargandoMas.set(false);
+        },
+        error: (err) => {
+          this.errorMsg.set(
+            err.error?.message ?? 'No se pudieron cargar más rutinas',
+          );
+          this.cargandoMas.set(false);
+        },
+      });
   }
 
   ordenarDias(dias: DiaRutinaResponse[]): DiaRutinaResponse[] {

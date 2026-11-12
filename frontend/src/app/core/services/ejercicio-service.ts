@@ -17,7 +17,7 @@ export class EjercicioService {
   private apiUrl = 'http://localhost:8080/ejercicios';
 
   getAllEjercicio(): Observable<Page<Ejercicio>> {
-    return this.http.get<Page<Ejercicio>>(this.apiUrl, { params: { size: 50 } });
+    return this.http.get<Page<Ejercicio>>(this.apiUrl, { params: { size: 1000 } });
   }
 
   getEjercicioById(id: string | number): Observable<Ejercicio> {

@@ -47,5 +47,18 @@
                 </li>
             }
         </ul>
+
+        @if (hayMas()) {
+            <div class="cargar-mas-contenedor">
+                <button
+                    type="button"
+                    class="btn btn--contorno"
+                    [disabled]="cargandoMas()"
+                    (click)="cargarMas()"
+                >
+                    {{ cargandoMas() ? 'Cargando…' : 'Ver más' }}
+                </button>
+            </div>
+        }
     }
 </main>

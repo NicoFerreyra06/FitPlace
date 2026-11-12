@@ -32,10 +32,10 @@
             class="search-input"
             placeholder="Buscar por nombre, músculo o grupo muscular..."
             [ngModel]="busqueda()"
-            (ngModelChange)="busqueda.set($event)"
+            (ngModelChange)="buscar($event)"
         />
         @if (busqueda()) {
-            <button class="search-clear" (click)="busqueda.set('')" type="button">&times;</button>
+            <button class="search-clear" (click)="buscar('')" type="button">&times;</button>
         }
     </div>
 
@@ -53,7 +53,7 @@
         <p class="empty-state">Cargando ejercicios desde la base de datos...</p>
     } @else {
         <section class="cards-grid">
-            @for (ejercicio of ejerciciosFiltrados(); track ejercicio.id) {
+            @for (ejercicio of ejerciciosPagina(); track ejercicio.id) {
                 <article class="card" (click)="verDetalle(ejercicio)">
                     <div class="card-header">
                         <h3>{{ ejercicio.nombre }}</h3>
@@ -118,6 +118,28 @@
                 }
             }
         </section>
+
+        @if (totalPaginas() > 1) {
+            <nav class="paginacion" aria-label="Paginación de ejercicios">
+                <button
+                    class="btn btn--sm btn--contorno"
+                    type="button"
+                    [disabled]="paginaActual() === 0"
+                    (click)="cambiarPagina(-1)"
+                >
+                    ← Anterior
+                </button>
+                <span>Página {{ paginaActual() + 1 }} de {{ totalPaginas() }}</span>
+                <button
+                    class="btn btn--sm btn--contorno"
+                    type="button"
+                    [disabled]="paginaActual() === totalPaginas() - 1"
+                    (click)="cambiarPagina(1)"
+                >
+                    Siguiente →
+                </button>
+            </nav>
+        }
     }
     
     <!-- Modal Detalle -->

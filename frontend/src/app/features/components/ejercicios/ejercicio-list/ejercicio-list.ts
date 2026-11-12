@@ -66,6 +66,22 @@ export class EjercicioList implements OnInit {
     });
   });
 
+  protected readonly pagina = signal(0);
+  protected readonly tamanioPagina = 9;
+
+  protected readonly totalPaginas = computed(() =>
+    Math.max(1, Math.ceil(this.ejerciciosFiltrados().length / this.tamanioPagina)),
+  );
+
+  protected readonly paginaActual = computed(() =>
+    Math.min(this.pagina(), this.totalPaginas() - 1),
+  );
+
+  protected readonly ejerciciosPagina = computed(() => {
+    const inicio = this.paginaActual() * this.tamanioPagina;
+    return this.ejerciciosFiltrados().slice(inicio, inicio + this.tamanioPagina);
+  });
+
   ngOnInit(): void {
     this.cargarEjercicios();
     this.cargarMusculos();
@@ -76,6 +92,7 @@ export class EjercicioList implements OnInit {
     this.ejercicioService.getAllEjercicio().subscribe({
       next: (data) => {
         this.ejercicios.set(data.content);
+        this.pagina.set(0);
         this.cargando.set(false);
       },
       error: (err) => {
@@ -97,15 +114,28 @@ export class EjercicioList implements OnInit {
   }
 
   filtrarPorMusculo(musculoId: string): void {
+    this.pagina.set(0);
     if (!musculoId) {
       this.cargarEjercicios();
     } else {
       this.ejercicioService.getEjerciciosPorMusculo(musculoId).subscribe({
         next: (data) => {
           this.ejercicios.set(data);
+          this.pagina.set(0);
         },
       });
     }
+  }
+
+  protected buscar(valor: string): void {
+    this.busqueda.set(valor);
+    this.pagina.set(0);
+  }
+
+  protected cambiarPagina(delta: number): void {
+    this.pagina.update((actual) =>
+      Math.min(Math.max(actual + delta, 0), this.totalPaginas() - 1),
+    );
   }
 
   verDetalle(ejercicio: Ejercicio): void {
@@ -161,6 +191,7 @@ export class EjercicioList implements OnInit {
       this.ejercicioService.crearEjercicio(payload).subscribe({
         next: (creado) => {
           this.ejercicios.update((lista) => [creado, ...lista]);
+          this.pagina.set(0);
           this.guardandoEjercicio.set(false);
           this.cerrarFormulario();
           this.mostrarExito(`Ejercicio "${creado.nombre}" creado exitosamente.`);

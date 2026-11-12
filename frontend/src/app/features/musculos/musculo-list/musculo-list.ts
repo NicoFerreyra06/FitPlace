@@ -56,6 +56,22 @@ export class MusculoList implements OnInit {
     });
   });
 
+  protected readonly pagina = signal(0);
+  protected readonly tamanioPagina = 9;
+
+  protected readonly totalPaginas = computed(() =>
+    Math.max(1, Math.ceil(this.musculosFiltrados().length / this.tamanioPagina)),
+  );
+
+  protected readonly paginaActual = computed(() =>
+    Math.min(this.pagina(), this.totalPaginas() - 1),
+  );
+
+  protected readonly musculosPagina = computed(() => {
+    const inicio = this.paginaActual() * this.tamanioPagina;
+    return this.musculosFiltrados().slice(inicio, inicio + this.tamanioPagina);
+  });
+
   ngOnInit(): void {
     this.cargarMusculos();
   }
@@ -65,6 +81,7 @@ export class MusculoList implements OnInit {
     this.musculoService.getAllMusculos().subscribe({
       next: (data) => {
         this.musculos.set(data.content);
+        this.pagina.set(0);
         this.cargando.set(false);
       },
       error: (err) => {
@@ -76,6 +93,22 @@ export class MusculoList implements OnInit {
 
   etiquetaGrupo(grupo: string): string {
     return etiquetaGrupoMuscular(grupo);
+  }
+
+  protected buscar(valor: string): void {
+    this.busqueda.set(valor);
+    this.pagina.set(0);
+  }
+
+  protected filtrarPorGrupo(grupo: string): void {
+    this.filtroGrupo.set(grupo);
+    this.pagina.set(0);
+  }
+
+  protected cambiarPagina(delta: number): void {
+    this.pagina.update((actual) =>
+      Math.min(Math.max(actual + delta, 0), this.totalPaginas() - 1),
+    );
   }
 
   abrirNuevo(): void {
@@ -123,6 +156,7 @@ export class MusculoList implements OnInit {
       this.musculoService.crearMusculo(payload).subscribe({
         next: (creado) => {
           this.musculos.update((lista) => [...lista, creado]);
+          this.pagina.set(0);
           this.guardandoMusculo.set(false);
           this.cerrarFormulario();
           this.mostrarExito(`Músculo "${creado.nombre}" creado exitosamente.`);
@@ -155,6 +189,7 @@ export class MusculoList implements OnInit {
       next: () => {
         this.eliminandoMusculo.set(false);
         this.musculos.update((lista) => lista.filter((item) => item.id !== m.id));
+        this.pagina.set(0);
         this.cerrarEliminar();
         this.mostrarExito(`Músculo "${m.nombre}" eliminado del catálogo.`);
       },

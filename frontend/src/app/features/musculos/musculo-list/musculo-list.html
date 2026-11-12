@@ -31,16 +31,16 @@
         class="search-input"
         placeholder="Buscar por nombre o función anatómica..."
         [ngModel]="busqueda()"
-        (ngModelChange)="busqueda.set($event)"
+        (ngModelChange)="buscar($event)"
       />
       @if (busqueda()) {
-        <button class="search-clear" (click)="busqueda.set('')" type="button">&times;</button>
+        <button class="search-clear" (click)="buscar('')" type="button">&times;</button>
       }
     </div>
 
     <div class="filter">
       <label for="filtro-grupo">Filtrar por grupo muscular</label>
-      <select id="filtro-grupo" [ngModel]="filtroGrupo()" (ngModelChange)="filtroGrupo.set($event)">
+      <select id="filtro-grupo" [ngModel]="filtroGrupo()" (ngModelChange)="filtrarPorGrupo($event)">
         <option value="">Todos los grupos</option>
         @for (g of grupos; track g.valor) {
           <option [value]="g.valor">{{ g.etiqueta }}</option>
@@ -53,7 +53,7 @@
     <p class="empty-state">Cargando músculos desde la base de datos...</p>
   } @else {
     <section class="cards-grid">
-      @for (m of musculosFiltrados(); track m.id) {
+      @for (m of musculosPagina(); track m.id) {
         <article class="card">
           <div class="card-header">
             <h3>{{ m.nombre }}</h3>
@@ -105,6 +105,28 @@
         }
       }
     </section>
+
+    @if (totalPaginas() > 1) {
+      <nav class="paginacion" aria-label="Paginación de músculos">
+        <button
+          class="btn btn--sm btn--contorno"
+          type="button"
+          [disabled]="paginaActual() === 0"
+          (click)="cambiarPagina(-1)"
+        >
+          ← Anterior
+        </button>
+        <span>Página {{ paginaActual() + 1 }} de {{ totalPaginas() }}</span>
+        <button
+          class="btn btn--sm btn--contorno"
+          type="button"
+          [disabled]="paginaActual() === totalPaginas() - 1"
+          (click)="cambiarPagina(1)"
+        >
+          Siguiente →
+        </button>
+      </nav>
+    }
   }
 
   <!-- Modal Formulario (Crear / Editar) -->

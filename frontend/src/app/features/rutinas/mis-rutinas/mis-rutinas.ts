@@ -29,6 +29,11 @@ export class MisRutinas implements OnInit {
   protected readonly entrenadorId = signal<number | null>(null);
   protected readonly errorMsg = signal<string | null>(null);
 
+  protected readonly pagina = signal(0);
+  protected readonly cargandoMas = signal(false);
+  protected readonly hayMas = signal(false);
+  private readonly tamanioPagina = 10;
+
   ngOnInit() {
     this.cargar();
   }
@@ -47,7 +52,7 @@ export class MisRutinas implements OnInit {
     this.errorMsg.set(null);
 
     forkJoin({
-      rutinas: this.rutinasService.getMisRutinas(),
+      rutinas: this.rutinasService.getMisRutinas(0, this.tamanioPagina),
       usuario: this.usuarioService.getPerfilGuardado(),
       entrenador: this.entrenadorService
         .getMiEntrenador()
@@ -64,6 +69,8 @@ export class MisRutinas implements OnInit {
             entrenador ? Number(entrenador.id) : null,
           );
           this.rutinaActivaId.set(usuario.rutinaActivaId);
+          this.pagina.set(0);
+          this.hayMas.set(!rutinas.last);
           this.rutinas.set(rutinas.content);
 
           const activaEsPropia =
@@ -88,6 +95,36 @@ export class MisRutinas implements OnInit {
             err.error?.message ?? 'No se pudo conectar con el servidor',
           );
           this.cargando.set(false);
+        },
+      });
+  }
+
+  protected cargarMas(): void {
+    if (this.cargando() || this.cargandoMas() || !this.hayMas()) {
+      return;
+    }
+
+    const siguientePagina = this.pagina() + 1;
+    this.cargandoMas.set(true);
+    this.errorMsg.set(null);
+
+    this.rutinasService
+      .getMisRutinas(siguientePagina, this.tamanioPagina)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (page) => {
+          const existentes = new Set(this.rutinas().map((r) => r.id));
+          const nuevas = page.content.filter((r) => !existentes.has(r.id));
+          this.rutinas.update((lista) => [...lista, ...nuevas]);
+          this.pagina.set(siguientePagina);
+          this.hayMas.set(!page.last);
+          this.cargandoMas.set(false);
+        },
+        error: (err) => {
+          this.errorMsg.set(
+            err.error?.message ?? 'No se pudieron cargar más rutinas',
+          );
+          this.cargandoMas.set(false);
         },
       });
   }

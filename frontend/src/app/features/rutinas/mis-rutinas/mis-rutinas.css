@@ -154,3 +154,9 @@ h1 {
 .link:hover .flecha {
   transform: translateX(3px);
 }
+
+.cargar-mas-contenedor {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
