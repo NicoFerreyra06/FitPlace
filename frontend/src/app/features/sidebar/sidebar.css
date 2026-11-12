@@ -44,6 +44,25 @@
   flex-direction: column;
   gap: 2px;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.nav-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-titulo {
+  margin-top: 8px;
+  padding: 12px 12px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
 }
 
 .item {
