@@ -103,7 +103,7 @@
         } @else {
           <div class="formulario-rol">
             <label for="rol-usuario">Cambiar rol</label>
-            <select id="rol-usuario" [value]="rolSeleccionado()" (change)="seleccionarRol($event)">
+            <select id="rol-usuario" [ngModel]="rolSeleccionado()" (ngModelChange)="cambiarRol($event)">
               <option value="USUARIO">Usuario</option>
               <option value="ENTRENADOR">Entrenador</option>
               <option value="ADMIN_GIMNASIO">Admin de gimnasio</option>

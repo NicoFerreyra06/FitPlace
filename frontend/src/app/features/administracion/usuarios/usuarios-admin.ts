@@ -1,13 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import {
-  etiquetaRol,
-  RolAsignable,
-  Usuario,
-  UsuarioAdmin,
-} from '../../../core/usuario/usuario';
+import { etiquetaRol, RolAsignable, Usuario, UsuarioAdmin } from '../../../core/usuario/usuario';
+import { FormsModule } from '@angular/forms';
 
 @Component({
+  imports: [FormsModule],
   selector: 'app-usuarios-admin',
   templateUrl: './usuarios-admin.html',
   styleUrl: './usuarios-admin.css',
@@ -56,12 +53,13 @@ export class UsuariosAdmin {
   protected cerrarDetalle(): void {
     this.usuarioSeleccionado.set(null);
     this.detalleUsuario.set(null);
+    this.rolSeleccionado.set('');
     this.error.set(null);
     this.exito.set(null);
   }
 
-  protected seleccionarRol(event: Event): void {
-    this.rolSeleccionado.set((event.target as HTMLSelectElement).value as RolAsignable);
+  protected cambiarRol(rol: RolAsignable | ''): void {
+    this.rolSeleccionado.set(rol);
   }
 
   protected guardarRol(): void {
