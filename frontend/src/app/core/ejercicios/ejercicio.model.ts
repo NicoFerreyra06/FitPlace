@@ -1,4 +1,4 @@
-import { Musculo } from './musculo';
+import { Musculo } from '../musculos/musculo.model';
 
 export interface Ejercicio {
   id: number;

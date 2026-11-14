@@ -1,3 +1,4 @@
+import { environment } from '../../../../environments/environment';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
@@ -45,7 +46,7 @@ describe('GimnasiosAdmin', () => {
     const fixture = TestBed.createComponent(GimnasiosAdmin);
     fixture.detectChanges();
 
-    http.expectOne('http://localhost:8080/gimnasios?page=0').flush(gymPage());
+    http.expectOne(`${environment.apiUrl}/gimnasios?page=0`).flush(gymPage());
     await fixture.whenStable();
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('admin-gym-demo');
@@ -60,7 +61,7 @@ describe('GimnasiosAdmin', () => {
     fixture.detectChanges();
     (fixture.nativeElement.querySelector('.editor form button[type="submit"]') as HTMLButtonElement).click();
 
-    const update = http.expectOne('http://localhost:8080/gimnasios/7');
+    const update = http.expectOne(`${environment.apiUrl}/gimnasios/7`);
     expect(update.request.method).toBe('PUT');
     expect(update.request.body).toEqual({
       nombre: 'FitPlace Actualizado',
@@ -73,7 +74,7 @@ describe('GimnasiosAdmin', () => {
     });
     update.flush({});
     fixture.detectChanges();
-    http.expectOne('http://localhost:8080/gimnasios?page=0').flush(gymPage('FitPlace Actualizado'));
+    http.expectOne(`${environment.apiUrl}/gimnasios?page=0`).flush(gymPage('FitPlace Actualizado'));
     await fixture.whenStable();
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('Los datos del gimnasio se actualizaron correctamente.');
@@ -88,11 +89,11 @@ describe('GimnasiosAdmin', () => {
     ) as HTMLButtonElement;
     confirmButton.click();
 
-    const deletion = http.expectOne('http://localhost:8080/gimnasios/7');
+    const deletion = http.expectOne(`${environment.apiUrl}/gimnasios/7`);
     expect(deletion.request.method).toBe('DELETE');
     deletion.flush(null, { status: 204, statusText: 'No Content' });
     fixture.detectChanges();
-    http.expectOne('http://localhost:8080/gimnasios?page=0').flush({
+    http.expectOne(`${environment.apiUrl}/gimnasios?page=0`).flush({
       ...gymPage(),
       content: [],
       totalElements: 0,

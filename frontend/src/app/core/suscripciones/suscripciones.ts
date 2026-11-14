@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Service, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -21,8 +22,8 @@ export type estadoSuscripcion = 'ACTIVA' | 'PENDIENTE' | 'VENCIDA' | 'CANCELADA'
 @Service()
 export class Suscripciones {
     private readonly http = inject(HttpClient);
-    private readonly API_URL_SUSCRIPCION = 'http://localhost:8080/suscripciones';
-    private readonly API_URL_PAGOS = 'http://localhost:8080/pagos';
+    private readonly API_URL_SUSCRIPCION = `${environment.apiUrl}/suscripciones`;
+    private readonly API_URL_PAGOS = `${environment.apiUrl}/pagos`;
 
     getSuscripcion(): Observable<SuscripcionGimnasioResponse>{
         return this.http.get<SuscripcionGimnasioResponse>(`${this.API_URL_SUSCRIPCION}/mia`)

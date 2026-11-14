@@ -1,8 +1,9 @@
+import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { Ejercicio } from '../../model/ejercicio';
+import { Ejercicio } from './ejercicio.model';
 import { Observable } from 'rxjs';
-import { Page } from '../../model/page';
+import { Page } from '../../shared/models/page';
 
 export interface EjercicioRequest {
   nombre: string;
@@ -14,7 +15,7 @@ export interface EjercicioRequest {
 @Service()
 export class EjercicioService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/ejercicios';
+  private apiUrl = `${environment.apiUrl}/ejercicios`;
 
   getAllEjercicio(): Observable<Page<Ejercicio>> {
     return this.http.get<Page<Ejercicio>>(this.apiUrl, { params: { size: 1000 } });

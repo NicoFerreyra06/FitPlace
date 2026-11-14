@@ -6,8 +6,8 @@ import {
   GRUPOS_MUSCULARES,
   MusculoRequest,
   MusculoService,
-} from '../../../core/services/musculo-service';
-import { Musculo } from '../../../model/musculo';
+} from '../../../core/musculos/musculo-service';
+import { Musculo } from '../../../core/musculos/musculo.model';
 import { MusculoForm } from '../musculo-form/musculo-form';
 
 @Component({

@@ -1,3 +1,4 @@
+import { environment } from '../../../../environments/environment';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
@@ -47,7 +48,7 @@ describe('GananciasAdmin', () => {
     fixture.detectChanges();
 
     http.expectOne(
-      'http://localhost:8080/usuarios/ganancias?desde=2026-01-01&hasta=2026-01-31',
+      `${environment.apiUrl}/usuarios/ganancias?desde=2026-01-01&hasta=2026-01-31`,
     ).flush([
       {
         nombreGimnasio: 'FitPlace Demo',

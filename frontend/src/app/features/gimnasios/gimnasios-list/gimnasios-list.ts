@@ -10,8 +10,8 @@ import { Suscripciones } from '../../../core/suscripciones/suscripciones';
 @Component({
   imports: [GimnasioDetails, MiSuscripcion, RouterLink],
   selector: 'app-gimnasios',
-  styleUrl: './gimnasios.css',
-  templateUrl: './gimnasios.html',
+  styleUrl: './gimnasios-list.css',
+  templateUrl: './gimnasios-list.html',
 })
 export class GimnasioList {
   private readonly gimnasiosService = inject(Gimnasios);

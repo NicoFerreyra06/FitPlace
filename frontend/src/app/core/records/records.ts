@@ -1,7 +1,8 @@
+import { environment } from '../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Page } from '../../model/page';
+import { Page } from '../../shared/models/page';
 
 export interface RecordPersonalResponse {
   id: number;
@@ -18,7 +19,7 @@ export const RANKING_TAMANIO_PAGINA = 10;
 @Service()
 export class Records {
   private readonly http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:8080/records';
+  private readonly API_URL = `${environment.apiUrl}/records`;
 
   /** Récords de un usuario: los propios o los de un amigo (si no es amigo, el backend responde 403). */
   getRecordsDeUsuario(idUsuario: number): Observable<RecordPersonalResponse[]> {

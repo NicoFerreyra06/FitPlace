@@ -6,10 +6,10 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { catchError, Observable, of, throwError } from 'rxjs';
 import { Usuario } from '../../../core/usuario/usuario';
 import { Records, RecordPersonalResponse } from '../../../core/records/records';
-import { EjercicioService } from '../../../core/services/ejercicio-service';
+import { EjercicioService } from '../../../core/ejercicios/ejercicio-service';
 import { Entrenamiento } from '../../../core/entrenamiento/entrenamiento';
-import { Page } from '../../../model/page';
-import { Progresion } from '../../components/progresion/progresion';
+import { Page } from '../../../shared/models/page';
+import { Progresion } from '../../../shared/components/progresion/progresion';
 
 /** Convierte las respuestas "no existe" del backend en null para mostrarlas como estado vacío y no como error. */
 function nullSiNoExiste<T>(estados: number[]) {

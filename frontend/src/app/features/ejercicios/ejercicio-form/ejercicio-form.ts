@@ -1,9 +1,9 @@
 import { Component, computed, effect, input, OnInit, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Ejercicio } from '../../../../model/ejercicio';
-import { Musculo } from '../../../../model/musculo';
-import { EjercicioRequest } from '../../../../core/services/ejercicio-service';
+import { Ejercicio } from '../../../core/ejercicios/ejercicio.model';
+import { Musculo } from '../../../core/musculos/musculo.model';
+import { EjercicioRequest } from '../../../core/ejercicios/ejercicio-service';
 
 const ORDEN_GRUPOS: Record<string, number> = {
   PECHO: 1,

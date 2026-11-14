@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { RutinaResponse, etiquetaDia } from '../../../../core/rutinas/rutinas.model';
+import { RutinaResponse, etiquetaDia } from '../../../core/rutinas/rutinas.model';
 
 @Component({
   selector: 'app-asignar-rutina-modal',

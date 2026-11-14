@@ -8,8 +8,8 @@ import { Amigos, PerfilAmigo } from '../../../core/amigos/amigos';
 import { Entrenamiento } from '../../../core/entrenamiento/entrenamiento';
 import { Records } from '../../../core/records/records';
 import { etiquetaRol } from '../../../core/usuario/usuario';
-import { Progresion } from '../../components/progresion/progresion';
-import { Rachas } from '../../components/rachas/rachas';
+import { Progresion } from '../../../shared/components/progresion/progresion';
+import { Rachas } from '../../../shared/components/rachas/rachas';
 
 /** Respuestas esperables del backend que se muestran como estado de la pantalla, no como falla. */
 type SinPerfil = 'no-encontrado' | 'sin-acceso';

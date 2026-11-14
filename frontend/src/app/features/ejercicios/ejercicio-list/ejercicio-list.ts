@@ -1,14 +1,14 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
-import { EjercicioService, EjercicioRequest } from '../../../../core/services/ejercicio-service';
-import { Usuario } from '../../../../core/usuario/usuario';
-import { Ejercicio } from '../../../../model/ejercicio';
+import { EjercicioService, EjercicioRequest } from '../../../core/ejercicios/ejercicio-service';
+import { Usuario } from '../../../core/usuario/usuario';
+import { Ejercicio } from '../../../core/ejercicios/ejercicio.model';
 import { EjercicioDetails } from '../ejercicio-details/ejercicio-details';
 import { EjercicioForm } from '../ejercicio-form/ejercicio-form';
 import { FormsModule } from '@angular/forms';
-import { MusculoService } from '../../../../core/services/musculo-service';
-import { Musculo } from '../../../../model/musculo';
+import { MusculoService } from '../../../core/musculos/musculo-service';
+import { Musculo } from '../../../core/musculos/musculo.model';
 
 @Component({
   imports: [EjercicioDetails, EjercicioForm, FormsModule],

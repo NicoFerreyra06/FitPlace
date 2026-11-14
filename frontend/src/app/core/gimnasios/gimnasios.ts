@@ -1,8 +1,9 @@
+import { environment } from '../../../environments/environment';
 import { Service } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { Page } from '../../model/page';
+import { Page } from '../../shared/models/page';
 import { UsuarioPerfil } from '../usuario/usuario';
 
 export interface gimnasioResponse {
@@ -32,8 +33,8 @@ export interface GimnasioUpdateRequest {
 @Service()
 export class Gimnasios {
     private readonly http = inject(HttpClient);
-    private readonly URL = 'http://localhost:8080/gimnasios';
-    private readonly URL_MP = 'http://localhost:8080/mercadopago';
+    private readonly URL = `${environment.apiUrl}/gimnasios`;
+    private readonly URL_MP = `${environment.apiUrl}/mercadopago`;
 
     private readonly DIAS: Record<string, string> = {
         MONDAY: 'Lunes',

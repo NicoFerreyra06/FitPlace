@@ -1,8 +1,9 @@
+import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Musculo } from '../../model/musculo';
-import { Page } from '../../model/page';
+import { Musculo } from './musculo.model';
+import { Page } from '../../shared/models/page';
 
 export interface MusculoRequest {
   nombre: string;
@@ -41,7 +42,7 @@ export function etiquetaGrupoMuscular(grupo: string): string {
 @Service()
 export class MusculoService {
   private readonly http = inject(HttpClient);
-  private readonly url = 'http://localhost:8080/musculos';
+  private readonly url = `${environment.apiUrl}/musculos`;
 
   getAllMusculos(): Observable<Page<Musculo>> {
     // El catálogo se usa completo en la gestión y en los selectores de ejercicios.

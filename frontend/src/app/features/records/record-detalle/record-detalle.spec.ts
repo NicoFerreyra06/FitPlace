@@ -1,10 +1,11 @@
+import { environment } from '../../../../environments/environment';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { RecordDetalle } from './record-detalle';
 
-const API = 'http://localhost:8080';
+const API = environment.apiUrl;
 
 const fila = (id: number, nombreUsuario: string, pesoMaximo: number) => ({
   id,

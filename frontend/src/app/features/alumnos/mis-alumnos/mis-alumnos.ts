@@ -6,8 +6,8 @@ import { RouterLink } from '@angular/router';
 @Component({
   imports: [RouterLink],
   selector: 'app-alumnos',
-  styleUrl: './alumnos.css',
-  templateUrl: './alumnos.html',
+  styleUrl: './mis-alumnos.css',
+  templateUrl: './mis-alumnos.html',
 })
 export class Alumnos implements OnInit{
   private readonly alumnoService = inject(AlumnoService);

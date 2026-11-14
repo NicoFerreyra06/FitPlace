@@ -1,14 +1,15 @@
+import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { DiaRutinaResponse, RutinaRequest, RutinaResponse } from './rutinas.model';
-import { Page } from '../../model/page';
+import { Page } from '../../shared/models/page';
 import { Usuario } from '../usuario/usuario';
 
 @Service()
 export class Rutinas {
   private readonly http = inject(HttpClient);
-  private readonly URL = 'http://localhost:8080/rutinas';
+  private readonly URL = `${environment.apiUrl}/rutinas`;
   private readonly usuarioService = inject(Usuario);
 
   getMisRutinas(page: number = 0, size: number = 50): Observable<Page<RutinaResponse>> {

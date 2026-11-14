@@ -1,7 +1,8 @@
+import { environment } from '../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
-import { Page } from '../../model/page';
+import { Page } from '../../shared/models/page';
 import { Usuario } from '../usuario/usuario';
 
 export interface MarcaEjercicio {
@@ -42,7 +43,7 @@ export interface PuntoProgresion {
 @Service()
 export class Entrenamiento {
   private readonly http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:8080/entrenamientos';
+  private readonly API_URL = `${environment.apiUrl}/entrenamientos`;
   private readonly usuarioService = inject(Usuario);
 
   getHistorial(
