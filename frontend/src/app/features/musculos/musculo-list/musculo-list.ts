@@ -9,10 +9,11 @@ import {
 } from '../../../core/musculos/musculo-service';
 import { Musculo } from '../../../core/musculos/musculo.model';
 import { MusculoForm } from '../musculo-form/musculo-form';
+import { Paginacion } from '../../../shared/components/paginacion/paginacion';
 
 @Component({
   selector: 'app-musculo-list',
-  imports: [CommonModule, FormsModule, MusculoForm],
+  imports: [CommonModule, FormsModule, MusculoForm, Paginacion],
   templateUrl: './musculo-list.html',
   styleUrl: './musculo-list.css',
 })

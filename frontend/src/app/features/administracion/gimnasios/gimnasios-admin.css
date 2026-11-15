@@ -130,16 +130,6 @@ tbody th {
   line-height: 1.4;
 }
 
-.paginacion {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 18px;
-  color: var(--text-muted);
-  font-size: 14px;
-}
-
 .editor {
   margin-top: 20px;
 }
@@ -255,9 +245,5 @@ tbody th {
 
   .campo-ancho {
     grid-column: auto;
-  }
-
-  .paginacion {
-    flex-wrap: wrap;
   }
 }

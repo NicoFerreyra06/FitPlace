@@ -2,9 +2,10 @@ import { Component, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { etiquetaRol, RolAsignable, Usuario, UsuarioAdmin } from '../../../core/usuario/usuario';
 import { FormsModule } from '@angular/forms';
+import { Paginacion } from '../../../shared/components/paginacion/paginacion';
 
 @Component({
-  imports: [FormsModule],
+  imports: [FormsModule, Paginacion],
   selector: 'app-usuarios-admin',
   templateUrl: './usuarios-admin.html',
   styleUrl: './usuarios-admin.css',

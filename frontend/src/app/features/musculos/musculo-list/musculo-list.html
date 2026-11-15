@@ -106,27 +106,11 @@
       }
     </section>
 
-    @if (totalPaginas() > 1) {
-      <nav class="paginacion" aria-label="Paginación de músculos">
-        <button
-          class="btn btn--sm btn--contorno"
-          type="button"
-          [disabled]="paginaActual() === 0"
-          (click)="cambiarPagina(-1)"
-        >
-          ← Anterior
-        </button>
-        <span>Página {{ paginaActual() + 1 }} de {{ totalPaginas() }}</span>
-        <button
-          class="btn btn--sm btn--contorno"
-          type="button"
-          [disabled]="paginaActual() === totalPaginas() - 1"
-          (click)="cambiarPagina(1)"
-        >
-          Siguiente →
-        </button>
-      </nav>
-    }
+    <app-paginacion
+      [pagina]="paginaActual()"
+      [totalPaginas]="totalPaginas()"
+      (cambiar)="cambiarPagina($event)"
+    />
   }
 
   <!-- Modal Formulario (Crear / Editar) -->

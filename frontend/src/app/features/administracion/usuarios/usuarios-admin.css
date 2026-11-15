@@ -101,16 +101,6 @@ td {
   white-space: nowrap;
 }
 
-.paginacion {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 18px;
-  color: var(--text-muted);
-  font-size: 14px;
-}
-
 .estado--error {
   color: var(--danger);
 }
@@ -215,9 +205,5 @@ td {
   th,
   td {
     padding: 11px 8px;
-  }
-
-  .paginacion {
-    flex-wrap: wrap;
   }
 }

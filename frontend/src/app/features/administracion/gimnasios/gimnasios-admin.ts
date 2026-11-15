@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Gimnasios, gimnasioResponse } from '../../../core/gimnasios/gimnasios';
+import { Paginacion } from '../../../shared/components/paginacion/paginacion';
 
 const DIAS_SEMANA = [
   { valor: 'MONDAY', etiqueta: 'Lunes' },
@@ -22,7 +23,7 @@ const horarioValido: ValidatorFn = (control: AbstractControl): ValidationErrors 
 };
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, Paginacion],
   selector: 'app-gimnasios-admin',
   templateUrl: './gimnasios-admin.html',
   styleUrl: './gimnasios-admin.css',

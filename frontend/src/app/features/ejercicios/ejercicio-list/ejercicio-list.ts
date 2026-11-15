@@ -9,9 +9,10 @@ import { EjercicioForm } from '../ejercicio-form/ejercicio-form';
 import { FormsModule } from '@angular/forms';
 import { MusculoService } from '../../../core/musculos/musculo-service';
 import { Musculo } from '../../../core/musculos/musculo.model';
+import { Paginacion } from '../../../shared/components/paginacion/paginacion';
 
 @Component({
-  imports: [EjercicioDetails, EjercicioForm, FormsModule],
+  imports: [EjercicioDetails, EjercicioForm, FormsModule, Paginacion],
   selector: 'app-ejercicio-list',
   styleUrl: './ejercicio-list.css',
   templateUrl: './ejercicio-list.html',

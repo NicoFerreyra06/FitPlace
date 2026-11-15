@@ -6,9 +6,10 @@ import { Gimnasios, gimnasioResponse } from '../../../core/gimnasios/gimnasios';
 import { GimnasioDetails } from '../gimnasio-details/gimnasio-details';
 import { MiSuscripcion } from '../mi-suscripcion/mi-suscripcion';
 import { Suscripciones } from '../../../core/suscripciones/suscripciones';
+import { Paginacion } from '../../../shared/components/paginacion/paginacion';
 
 @Component({
-  imports: [GimnasioDetails, MiSuscripcion, RouterLink],
+  imports: [GimnasioDetails, MiSuscripcion, RouterLink, Paginacion],
   selector: 'app-gimnasios',
   styleUrl: './gimnasios-list.css',
   templateUrl: './gimnasios-list.html',

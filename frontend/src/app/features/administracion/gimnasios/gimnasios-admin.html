@@ -86,27 +86,11 @@
           </table>
         </div>
 
-        @if (paginaGimnasios.totalPages > 1) {
-          <nav class="paginacion" aria-label="Paginación de gimnasios">
-            <button
-              class="btn btn--sm btn--contorno"
-              type="button"
-              [disabled]="paginaGimnasios.first"
-              (click)="cambiarPagina(-1)"
-            >
-              ← Anterior
-            </button>
-            <span>Página {{ paginaGimnasios.number + 1 }} de {{ paginaGimnasios.totalPages }}</span>
-            <button
-              class="btn btn--sm btn--contorno"
-              type="button"
-              [disabled]="paginaGimnasios.last"
-              (click)="cambiarPagina(1)"
-            >
-              Siguiente →
-            </button>
-          </nav>
-        }
+        <app-paginacion
+          [pagina]="paginaGimnasios.number"
+          [totalPaginas]="paginaGimnasios.totalPages"
+          (cambiar)="cambiarPagina($event)"
+        />
       }
     }
   </section>

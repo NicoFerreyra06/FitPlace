@@ -142,19 +142,6 @@
   align-self: flex-start;
 }
 
-.paginacion {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-top: 24px;
-}
-
-.paginacion-texto {
-  font-size: 14px;
-  color: var(--text-muted);
-}
-
 .estado-msg,
 .empty-state {
   grid-column: 1 / -1;
@@ -185,4 +172,8 @@
   .card:hover {
     transform: none;
   }
+}
+
+app-paginacion {
+  --paginacion-margen: 24px;
 }

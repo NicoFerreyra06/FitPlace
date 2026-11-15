@@ -89,17 +89,11 @@
     </section>
 
     @if (gimnasios.value(); as datos) {
-      @if (datos.totalPages > 1) {
-        <nav class="paginacion" aria-label="Paginación">
-          <button type="button" class="btn btn--sm btn--vidrio" [disabled]="datos.first" (click)="cambiarPagina(-1)">
-            ← Anterior
-          </button>
-          <span class="paginacion-texto">Página {{ datos.number + 1 }} de {{ datos.totalPages }}</span>
-          <button type="button" class="btn btn--sm btn--vidrio" [disabled]="datos.last" (click)="cambiarPagina(1)">
-            Siguiente →
-          </button>
-        </nav>
-      }
+      <app-paginacion
+        [pagina]="datos.number"
+        [totalPaginas]="datos.totalPages"
+        (cambiar)="cambiarPagina($event)"
+      />
     }
   }
 
