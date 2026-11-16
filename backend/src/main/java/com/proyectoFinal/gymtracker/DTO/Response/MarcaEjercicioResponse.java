@@ -8,6 +8,7 @@ import lombok.Data;
 public class MarcaEjercicioResponse {
     private Long id;
     private Long ejercicioRutinaId;
+    private Long ejercicioId;
     private String nombreEjercicio;
     private Double pesoLevantado;
     private Integer repeticionesLogradas;

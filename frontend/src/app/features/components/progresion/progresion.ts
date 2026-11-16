@@ -3,25 +3,39 @@ import {
   Component,
   computed,
   DestroyRef,
+  effect,
   ElementRef,
   inject,
   input,
-  LOCALE_ID,
-  signal,
+  viewChild,
 } from '@angular/core';
-import { DatePipe, DecimalPipe, formatDate } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
+import type ApexCharts from 'apexcharts';
 import { PuntoProgresion } from '../../../core/entrenamiento/entrenamiento';
+import { aSerieApex, aTiempo, formatearFecha, PuntoSerie } from './progresion.serie';
 
-const ALTO = 220;
-const MARGEN = { arriba: 12, derecha: 12, abajo: 28, izquierda: 44 };
+type Opciones = ApexCharts.ApexOptions;
+
+const ALTO = 240;
 const MS_POR_DIA = 86_400_000;
 
 /**
+ * Carga ApexCharts con el bundle mínimo de área más la extensión de anotaciones (la que
+ * resalta la mejor marca). Va aparte del bundle principal para no encarecer la carga inicial.
+ */
+function cargarApex(): Promise<{ default: typeof ApexCharts }> {
+  return Promise.all([
+    import('apexcharts/area'),
+    import('apexcharts/features/annotations'),
+  ]).then(([modulo]) => modulo);
+}
+
+/**
  * Resumen y gráfico de la progresión de un ejercicio. Solo dibuja: recibe los puntos y no sabe
- * de quién son, así sirve igual para la progresión propia y para la de un amigo.
+ * de quién son, así sirve igual para la progresión propia, la de un amigo y la de un alumno.
  *
- * El SVG se dibuja en píxeles reales (mide el ancho del contenedor con un ResizeObserver),
- * así los textos no se achican en el celular como pasaría escalando un viewBox fijo.
+ * El gráfico lo dibuja ApexCharts, que se carga con un import dinámico para que la librería
+ * quede en un chunk aparte y no pese en la carga inicial de la app.
  */
 @Component({
   selector: 'app-progresion',
@@ -33,18 +47,13 @@ export class Progresion {
   /** Ordenados del entrenamiento más viejo al más nuevo, como los devuelve el backend. */
   readonly puntos = input.required<PuntoProgresion[]>();
 
-  private readonly locale = inject(LOCALE_ID);
-  protected readonly alto = ALTO;
-  protected readonly ancho = signal(600);
-
-  constructor() {
-    const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
-    const observer = new ResizeObserver(([entrada]) =>
-      this.ancho.set(Math.max(240, Math.floor(entrada.contentRect.width))),
-    );
-    afterNextRender(() => observer.observe(host));
-    inject(DestroyRef).onDestroy(() => observer.disconnect());
-  }
+  private readonly contenedor = viewChild<ElementRef<HTMLDivElement>>('grafico');
+  private readonly destroyRef = inject(DestroyRef);
+  private chart: ApexCharts | null = null;
+  private modulo: Promise<{ default: typeof ApexCharts }> | null = null;
+  private version = 0;
+  private destruido = false;
+  private primerCambio = true;
 
   protected readonly resumen = computed(() => {
     const puntos = this.puntos();
@@ -59,96 +68,148 @@ export class Progresion {
     return { primero, ultimo, mejor, variacion, porcentaje, cantidad: puntos.length };
   });
 
-  /** Texto para lectores de pantalla: lo mismo que se ve en el gráfico, dicho en una frase. */
+  /** Texto para lectores de pantalla: lo mismo que muestra el gráfico, dicho en una frase. */
   protected readonly descripcion = computed(() => {
     const r = this.resumen();
     if (!r) return '';
-    const fecha = (f: string) => formatDate(f, 'dd/MM/yyyy', this.locale);
     return (
-      `Progresión en ${r.cantidad} entrenamientos: de ${r.primero.pesoMaximo} kg el ${fecha(r.primero.fecha)} ` +
-      `a ${r.ultimo.pesoMaximo} kg el ${fecha(r.ultimo.fecha)}. Mejor marca: ${r.mejor.pesoMaximo} kg.`
+      `Progresión en ${r.cantidad} entrenamientos: de ${r.primero.pesoMaximo} kg el ${formatearFecha(aTiempo(r.primero.fecha))} ` +
+      `a ${r.ultimo.pesoMaximo} kg el ${formatearFecha(aTiempo(r.ultimo.fecha))}. Mejor marca: ${r.mejor.pesoMaximo} kg.`
     );
   });
 
-  protected readonly grafico = computed(() => {
-    const puntos = this.puntos();
-    if (puntos.length === 0) return null;
+  private readonly serie = computed(() => aSerieApex(this.puntos()));
 
-    const x0 = MARGEN.izquierda;
-    const x1 = this.ancho() - MARGEN.derecha;
-    const y0 = MARGEN.arriba;
-    const y1 = ALTO - MARGEN.abajo;
-
-    const tiempos = puntos.map((p) => aTiempo(p.fecha));
-    const t0 = tiempos[0];
-    const t1 = tiempos[tiempos.length - 1];
-    const pesos = puntos.map((p) => p.pesoMaximo);
-    const pesoMaximo = Math.max(...pesos);
-    const escala = escalaRedonda(pesos);
-
-    // Eje X por fecha real: si pasaron dos semanas entre entrenamientos, se ve el hueco.
-    const x = (t: number) => (t1 === t0 ? (x0 + x1) / 2 : x0 + ((t - t0) / (t1 - t0)) * (x1 - x0));
-    const y = (peso: number) => y1 - ((peso - escala.min) / (escala.max - escala.min)) * (y1 - y0);
-
-    const marcas = puntos.map((p, i) => ({
-      ...p,
-      cx: x(tiempos[i]),
-      cy: y(p.pesoMaximo),
-      esMejor: p.pesoMaximo === pesoMaximo,
-    }));
-    const linea = marcas.map((m, i) => `${i === 0 ? 'M' : 'L'}${m.cx},${m.cy}`).join(' ');
-    const area =
-      marcas.length > 1
-        ? `${linea} L${marcas[marcas.length - 1].cx},${y1} L${marcas[0].cx},${y1} Z`
-        : null;
-
-    // Etiquetas de fecha repartidas en el tiempo (no por punto), así no se pisan si hay entrenamientos seguidos.
-    const cantidadFechas = t1 === t0 ? 1 : Math.max(2, Math.min(5, Math.floor((x1 - x0) / 80)));
-    const ejeX = Array.from({ length: cantidadFechas }, (_, i) => {
-      const t = cantidadFechas === 1 ? t0 : t0 + (i * (t1 - t0)) / (cantidadFechas - 1);
-      return { fecha: new Date(t), x: x(t) };
-    });
-    const formatoFecha = t1 - t0 > 300 * MS_POR_DIA ? 'MM/yy' : 'dd/MM';
-
-    const ejeY = escala.marcas.map((valor) => ({ valor, y: y(valor) }));
-
-    return { x0, x1, y1, marcas, linea, area, ejeX, ejeY, formatoFecha };
+  private readonly mejorPunto = computed<PuntoSerie | null>(() => {
+    const mejor = this.resumen()?.mejor;
+    return mejor ? { x: aTiempo(mejor.fecha), y: mejor.pesoMaximo } : null;
   });
 
-  protected anclaFecha(primera: boolean, ultima: boolean): string {
-    if (primera && !ultima) return 'start';
-    if (ultima && !primera) return 'end';
-    return 'middle';
-  }
-}
+  constructor() {
+    afterNextRender(() => void this.dibujar());
 
-/** "yyyy-MM-dd" a milisegundos en hora local, para que el día no se corra por la zona horaria. */
-function aTiempo(fecha: string): number {
-  const [anio, mes, dia] = fecha.split('-').map(Number);
-  return new Date(anio, mes - 1, dia).getTime();
-}
+    effect(() => {
+      // Se registra la dependencia desde el primer cambio, pero el primer dibujo lo hace
+      // afterNextRender, cuando el contenedor ya existe.
+      this.serie();
+      if (this.primerCambio) {
+        this.primerCambio = false;
+        return;
+      }
+      void this.dibujar();
+    });
 
-/**
- * Rango del eje Y con valores redondos (pasos de 1, 2, 2.5 o 5 por potencia de 10)
- * que contiene a todos los pesos. Nunca baja de 0.
- */
-function escalaRedonda(pesos: number[]): { min: number; max: number; marcas: number[] } {
-  let min = Math.min(...pesos);
-  let max = Math.max(...pesos);
-  if (min === max) {
-    min = Math.max(0, min - 5);
-    max = max + 5;
+    this.destroyRef.onDestroy(() => {
+      this.destruido = true;
+      this.chart?.destroy();
+      this.chart = null;
+    });
   }
 
-  const crudo = (max - min) / 4;
-  const magnitud = 10 ** Math.floor(Math.log10(crudo));
-  const paso = [1, 2, 2.5, 5, 10].map((f) => f * magnitud).find((p) => p >= crudo) ?? crudo;
-  const desde = Math.floor(min / paso) * paso;
-  const hasta = Math.ceil(max / paso) * paso;
+  /**
+   * Crea el gráfico desde cero con los datos actuales. Se recrea en cada cambio porque es más
+   * simple y predecible que sincronizar serie y anotaciones por separado.
+   */
+  private async dibujar(): Promise<void> {
+    const contenedor = this.contenedor()?.nativeElement;
+    if (!contenedor || this.destruido) return;
 
-  const marcas: number[] = [];
-  for (let v = desde; v <= hasta + paso / 2; v += paso) {
-    marcas.push(Number(v.toFixed(2)));
+    const version = ++this.version;
+    const modulo = (this.modulo ??= cargarApex());
+    const { default: Apex } = await modulo;
+
+    // Mientras cargaba la librería pudo llegar otro cambio o destruirse el componente.
+    if (this.destruido || version !== this.version) return;
+
+    this.chart?.destroy();
+    const chart = new Apex(contenedor, this.opciones(this.serie(), this.mejorPunto()));
+    this.chart = chart;
+    await chart.render();
   }
-  return { min: desde, max: hasta, marcas };
+
+  private opciones(serie: PuntoSerie[], mejor: PuntoSerie | null): Opciones {
+    const dias = serie.length > 1 ? (serie[serie.length - 1].x - serie[0].x) / MS_POR_DIA : 0;
+
+    return {
+      chart: {
+        type: 'area',
+        height: ALTO,
+        background: 'transparent',
+        fontFamily: 'inherit',
+        foreColor: '#a1a1a6',
+        toolbar: { show: false },
+        zoom: { enabled: false },
+        animations: { enabled: true, speed: 400 },
+      },
+      series: [{ name: 'Peso máximo', data: serie }],
+      colors: ['#c8f169'],
+      dataLabels: { enabled: false },
+      stroke: { curve: 'smooth', width: 2 },
+      fill: {
+        type: 'gradient',
+        gradient: { shadeIntensity: 0, opacityFrom: 0.3, opacityTo: 0, stops: [0, 100] },
+      },
+      markers: {
+        size: 3,
+        colors: ['#0b0b0c'],
+        strokeColors: '#c8f169',
+        strokeWidth: 2,
+        hover: { size: 5 },
+      },
+      grid: {
+        borderColor: 'rgba(255, 255, 255, 0.1)',
+        strokeDashArray: 4,
+        padding: { left: 8, right: 12 },
+      },
+      xaxis: {
+        type: 'datetime',
+        labels: {
+          datetimeUTC: false,
+          format: dias > 300 ? 'MM/yy' : 'dd/MM',
+          style: { colors: '#a1a1a6', fontSize: '11px' },
+        },
+        axisBorder: { show: false },
+        axisTicks: { show: false },
+        tooltip: { enabled: false },
+      },
+      yaxis: {
+        labels: {
+          formatter: (valor: number) => `${valor}`,
+          style: { colors: '#a1a1a6', fontSize: '11px' },
+        },
+      },
+      tooltip: {
+        theme: 'dark',
+        x: { formatter: (valor: number) => formatearFecha(valor) },
+        y: { formatter: (valor: number) => `${valor} kg` },
+      },
+      annotations: mejor
+        ? {
+            points: [
+              {
+                x: mejor.x,
+                y: mejor.y,
+                marker: {
+                  size: 6,
+                  fillColor: '#c8f169',
+                  strokeColor: '#0b0b0c',
+                  strokeWidth: 2,
+                },
+                label: {
+                  text: `Mejor: ${mejor.y} kg`,
+                  borderColor: '#c8f169',
+                  offsetY: -6,
+                  style: { background: '#18181a', color: '#c8f169', fontSize: '11px' },
+                },
+              },
+            ],
+          }
+        : undefined,
+      legend: { show: false },
+      noData: {
+        text: 'Sin datos para graficar',
+        style: { color: '#a1a1a6', fontSize: '13px' },
+      },
+    };
+  }
 }

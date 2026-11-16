@@ -4,7 +4,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AlumnoResponse, AlumnoService } from '../../../../core/alumnos/alumno';
-import { Entrenamiento, EntrenamientoLog } from '../../../../core/entrenamiento/entrenamiento';
+import {
+  Entrenamiento,
+  EntrenamientoLog,
+  PuntoProgresion,
+} from '../../../../core/entrenamiento/entrenamiento';
 import { Rutinas } from '../../../../core/rutinas/rutinas';
 import { etiquetaRol } from '../../../../core/usuario/usuario';
 import { Progresion } from '../../../components/progresion/progresion';
@@ -13,6 +17,7 @@ import { DiaRutinaResponse, DIAS_SEMANA, etiquetaDia, RutinaResponse } from '../
 import { catchError, forkJoin, of } from 'rxjs';
 
 interface RecordDerivado {
+  ejercicioId: number;
   nombreEjercicio: string;
   pesoMaximo: number;
   fechaLogro: string;
@@ -71,14 +76,15 @@ export class AlumnoDetalle {
   );
 
   protected readonly records = computed<RecordDerivado[]>(() => {
-    const porEjercicio = new Map<string, RecordDerivado>();
+    const porEjercicio = new Map<number, RecordDerivado>();
 
     for (const log of this.logs()) {
       for (const marca of log.marcasEjercicio) {
-        const actual = porEjercicio.get(marca.nombreEjercicio);
+        const actual = porEjercicio.get(marca.ejercicioId);
 
         if (!actual || marca.pesoLevantado > actual.pesoMaximo) {
-          porEjercicio.set(marca.nombreEjercicio, {
+          porEjercicio.set(marca.ejercicioId, {
+            ejercicioId: marca.ejercicioId,
             nombreEjercicio: marca.nombreEjercicio,
             pesoMaximo: marca.pesoLevantado,
             fechaLogro: log.fecha,
@@ -143,31 +149,27 @@ export class AlumnoDetalle {
 
   protected readonly etiquetaDia = etiquetaDia;
 
-  protected readonly ejercicioAbierto = signal<string | null>(null);
+  protected readonly ejercicioAbierto = signal<number | null>(null);
 
-  protected readonly puntosProgresion = computed(() => {
-    const nombre = this.ejercicioAbierto();
-    if (!nombre) return [];
-
-    const porFecha = new Map<string, number>();
-
-    for (const log of this.logs()) {
-      for (const marca of log.marcasEjercicio) {
-        if (marca.nombreEjercicio !== nombre) continue;
-
-        const actual = porFecha.get(log.fecha);
-        if (actual === undefined || marca.pesoLevantado > actual) {
-          porFecha.set(log.fecha, marca.pesoLevantado);
-        }
-      }
-    }
-
-    return [...porFecha.entries()].map(([fecha, pesoMaximo]) => ({ fecha, pesoMaximo }))
-      .sort((a, b) => a.fecha.localeCompare(b.fecha));
+  /** La serie la arma el backend (máximo por día); acá solo se pide cuando se abre un ejercicio. */
+  protected readonly progresion = rxResource({
+    params: () => {
+      const alumno = this.alumno();
+      const ejercicioId = this.ejercicioAbierto();
+      return alumno && ejercicioId !== null
+        ? { idUsuario: alumno.id, idEjercicio: ejercicioId }
+        : undefined;
+    },
+    stream: ({ params }) =>
+      this.entrenamientoService.getProgresionEjercicio(params.idUsuario, params.idEjercicio),
   });
 
-  protected alternarProgresion(nombreEjercicio: string): void {
-    this.ejercicioAbierto.update((abierto) => abierto === nombreEjercicio ? null : nombreEjercicio);
+  protected readonly puntosProgresion = computed<PuntoProgresion[]>(() =>
+    this.progresion.hasValue() ? this.progresion.value() : [],
+  );
+
+  protected alternarProgresion(ejercicioId: number): void {
+    this.ejercicioAbierto.update((abierto) => (abierto === ejercicioId ? null : ejercicioId));
   }
 
   protected readonly etiquetaRol = etiquetaRol;

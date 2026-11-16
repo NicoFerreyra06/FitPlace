@@ -184,10 +184,10 @@
         <ul class="records">
           @for (
             record of recordsVisibles();
-            track record.nombreEjercicio;
+            track record.ejercicioId;
             let i = $index
           ) {
-            @let abierto = ejercicioAbierto() === record.nombreEjercicio;
+            @let abierto = ejercicioAbierto() === record.ejercicioId;
 
             <li class="record">
               <button
@@ -195,7 +195,7 @@
                 class="record-cabecera"
                 [attr.aria-expanded]="abierto"
                 [attr.aria-controls]="'progresion-alumno-' + i"
-                (click)="alternarProgresion(record.nombreEjercicio)"
+                (click)="alternarProgresion(record.ejercicioId)"
               >
                 <span>{{ record.nombreEjercicio }}</span>
                 <strong class="peso">{{ record.pesoMaximo }} kg</strong>
@@ -209,7 +209,11 @@
 
               @if (abierto) {
                 <div class="record-progresion" [id]="'progresion-alumno-' + i">
-                  @if (puntosProgresion().length > 0) {
+                  @if (progresion.isLoading()) {
+                    <p class="muted" role="status">Cargando progresión…</p>
+                  } @else if (progresion.error()) {
+                    <p class="error-msg">No se pudo cargar la progresión.</p>
+                  } @else if (puntosProgresion().length > 0) {
                     <app-progresion [puntos]="puntosProgresion()" />
                   } @else {
                     <p class="muted">

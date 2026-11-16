@@ -7,6 +7,7 @@ import { Usuario } from '../usuario/usuario';
 export interface MarcaEjercicio {
   id: number;
   ejercicioRutinaId: number;
+  ejercicioId: number;
   nombreEjercicio: string;
   pesoLevantado: number;
   repeticionesLogradas: number;

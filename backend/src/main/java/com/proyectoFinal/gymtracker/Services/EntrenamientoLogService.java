@@ -310,6 +310,7 @@ public class EntrenamientoLogService {
         return MarcaEjercicioResponse.builder()
                 .id(marcaEjercicio.getId())
                 .ejercicioRutinaId(marcaEjercicio.getEjercicioRutina().getId())
+                .ejercicioId(marcaEjercicio.getEjercicioRutina().getEjercicio().getId())
                 .nombreEjercicio(marcaEjercicio.getEjercicioRutina().getEjercicio().getNombre())
                 .pesoLevantado(marcaEjercicio.getPesoLevantado())
                 .repeticionesLogradas(marcaEjercicio.getRepeticionesLogradas()).build();
