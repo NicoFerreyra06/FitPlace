@@ -208,6 +208,26 @@ button {
   text-underline-offset: 3px;
 }
 
+::view-transition-group(contenido) {
+  animation: none
+}
+
+::view-transition-old(contenido) {
+  animation: 120ms ease-out both salir;
+}
+
+::view-transition-new(contenido) {
+  animation: 220ms ease-out both entrar;
+}
+
+::view-transition-group(item-activo) {
+  animation-duration: 320ms;
+  animation-timing-function: cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+@keyframes salir  { to   { opacity: 0; } }
+@keyframes entrar { from { opacity: 0; transform: translateY(8px); } }
+
 @media (prefers-reduced-motion: reduce) {
   .btn,
   .link .flecha {

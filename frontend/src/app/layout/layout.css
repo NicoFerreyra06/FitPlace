@@ -8,6 +8,7 @@
 
 .contenido {
   margin-left: calc(var(--sidebar-width) + var(--gap) * 2);
+  view-transition-name: contenido;
 }
 
 @media (max-width: 768px) {

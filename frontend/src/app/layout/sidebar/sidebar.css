@@ -112,6 +112,7 @@
   background: var(--surface-hover);
   border-color: var(--border);
   box-shadow: var(--glass-highlight);
+  view-transition-name: item-activo;
 }
 
 .item.activo::before {
