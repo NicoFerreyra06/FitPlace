@@ -1,3 +1,4 @@
+import { environment } from '../../../../environments/environment';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
@@ -22,7 +23,7 @@ describe('UsuariosAdmin', () => {
     const fixture = TestBed.createComponent(UsuariosAdmin);
     fixture.detectChanges();
 
-    http.expectOne('http://localhost:8080/usuarios?page=0').flush({
+    http.expectOne(`${environment.apiUrl}/usuarios?page=0`).flush({
       content: [{ id: 7, username: 'demo', email: 'demo@test.com', rol: 'USUARIO' }],
       totalElements: 1,
       totalPages: 1,
@@ -39,7 +40,7 @@ describe('UsuariosAdmin', () => {
     detailButton.click();
     fixture.detectChanges();
 
-    http.expectOne('http://localhost:8080/usuarios/7').flush({
+    http.expectOne(`${environment.apiUrl}/usuarios/7`).flush({
       id: 7,
       username: 'demo',
       email: 'demo@test.com',
@@ -64,14 +65,14 @@ describe('UsuariosAdmin', () => {
     saveButton.click();
     fixture.detectChanges();
 
-    http.expectOne('http://localhost:8080/usuarios/7/rol?nuevoRol=ENTRENADOR').flush({
+    http.expectOne(`${environment.apiUrl}/usuarios/7/rol?nuevoRol=ENTRENADOR`).flush({
       id: 7,
       username: 'demo',
       email: 'demo@test.com',
       rol: 'ENTRENADOR',
     });
     fixture.detectChanges();
-    http.expectOne('http://localhost:8080/usuarios?page=0').flush({
+    http.expectOne(`${environment.apiUrl}/usuarios?page=0`).flush({
       content: [{ id: 7, username: 'demo', email: 'demo@test.com', rol: 'ENTRENADOR' }],
       totalElements: 1,
       totalPages: 1,

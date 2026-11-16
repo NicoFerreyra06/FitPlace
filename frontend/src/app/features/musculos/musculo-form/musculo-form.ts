@@ -1,8 +1,8 @@
 import { Component, computed, input, OnInit, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Musculo } from '../../../model/musculo';
-import { GRUPOS_MUSCULARES, MusculoRequest } from '../../../core/services/musculo-service';
+import { Musculo } from '../../../core/musculos/musculo.model';
+import { GRUPOS_MUSCULARES, MusculoRequest } from '../../../core/musculos/musculo-service';
 
 @Component({
   selector: 'app-musculo-form',

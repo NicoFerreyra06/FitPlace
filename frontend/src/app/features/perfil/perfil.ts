@@ -4,7 +4,7 @@ import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Usuario, UsuarioPerfil } from '../../core/usuario/usuario';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Rachas } from '../components/rachas/rachas';
+import { Rachas } from '../../shared/components/rachas/rachas';
 
 @Component({
   imports: [DecimalPipe, ReactiveFormsModule, RouterLink, Rachas],

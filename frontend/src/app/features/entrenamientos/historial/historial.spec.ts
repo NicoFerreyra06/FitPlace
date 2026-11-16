@@ -1,3 +1,4 @@
+import { environment } from '../../../../environments/environment';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
@@ -23,7 +24,7 @@ describe('Historial', () => {
   async function cargarPerfil() {
     fixture.detectChanges();
     TestBed.tick();
-    httpMock.expectOne('http://localhost:8080/usuarios/me').flush({ id: 5 });
+    httpMock.expectOne(`${environment.apiUrl}/usuarios/me`).flush({ id: 5 });
     // el resource actualiza su valor de forma asíncrona: espero un ciclo y disparo los efectos
     await new Promise((resolve) => setTimeout(resolve));
     TestBed.tick();
@@ -31,7 +32,7 @@ describe('Historial', () => {
 
   function responderHistorial(content: unknown[]) {
     httpMock
-      .expectOne((r) => r.url === 'http://localhost:8080/entrenamientos/usuario/5')
+      .expectOne((r) => r.url === `${environment.apiUrl}/entrenamientos/usuario/5`)
       .flush(paginaCon(content));
   }
 

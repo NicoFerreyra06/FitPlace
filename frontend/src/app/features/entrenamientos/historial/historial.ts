@@ -16,6 +16,7 @@ import {
   EntrenamientoLog,
   MarcaEjercicio,
 } from '../../../core/entrenamiento/entrenamiento';
+import { Paginacion } from '../../../shared/components/paginacion/paginacion';
 
 type MarcaForm = FormGroup<{
   ejercicioRutinaId: FormControl<number>;
@@ -27,7 +28,7 @@ type MarcaForm = FormGroup<{
 const DIAS_EDITABLES = 7;
 
 @Component({
-  imports: [DatePipe, ReactiveFormsModule, RouterLink],
+  imports: [DatePipe, ReactiveFormsModule, RouterLink, Paginacion],
   selector: 'app-historial',
   styleUrl: './historial.css',
   templateUrl: './historial.html',

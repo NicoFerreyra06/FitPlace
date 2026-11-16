@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { map, Observable } from 'rxjs';
@@ -18,8 +19,8 @@ export interface AlumnoResponse {
 @Service()
 export class AlumnoService {
     private readonly http = inject(HttpClient);
-    private readonly API_URL_ME = 'http://localhost:8080/usuarios/me';
-    private readonly API_URL_USERS = 'http://localhost:8080/usuarios';
+    private readonly API_URL_ME = `${environment.apiUrl}/usuarios/me`;
+    private readonly API_URL_USERS = `${environment.apiUrl}/usuarios`;
     
     getAlumnos(): Observable<AlumnoResponse[]> {
       return this.http.get<AlumnoResponse[]>(`${this.API_URL_ME}/alumnos`);

@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -26,11 +27,11 @@ export class Auth {
   private readonly usuarioService = inject(Usuario);
 
   login(authRequest: loginRequest): Observable<authResponse> {
-    return this.http.post<authResponse>('http://localhost:8080/usuarios/login', authRequest);
+    return this.http.post<authResponse>(`${environment.apiUrl}/usuarios/login`, authRequest);
   }
 
   register(registerRequest: registerRequest): Observable<authResponse> {
-    return this.http.post<authResponse>('http://localhost:8080/usuarios/registro', registerRequest);
+    return this.http.post<authResponse>(`${environment.apiUrl}/usuarios/registro`, registerRequest);
   }
 
   logOut() {

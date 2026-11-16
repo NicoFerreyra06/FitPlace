@@ -2,8 +2,8 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
-import { EjercicioService } from '../../../core/services/ejercicio-service';
-import { Ejercicio } from '../../../model/ejercicio';
+import { EjercicioService } from '../../../core/ejercicios/ejercicio-service';
+import { Ejercicio } from '../../../core/ejercicios/ejercicio.model';
 import {
   DIAS_SEMANA,
   DiaSemana,

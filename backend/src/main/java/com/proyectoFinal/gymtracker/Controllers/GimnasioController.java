@@ -54,6 +54,14 @@ public class GimnasioController {
         return ResponseEntity.ok(gimnasioService.actualizarGimnasio(request, usuario, idGimnasio));
     }
 
+    @PutMapping("/{idGimnasio}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<GimnasioResponse> editarCualquierGimnasio(
+            @Valid @RequestBody GimnasioUpdateRequest request,
+            @PathVariable Long idGimnasio) {
+        return ResponseEntity.ok(gimnasioService.actualizarCualquierGimnasio(request, idGimnasio));
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN_GIMNASIO') or hasRole('ADMIN')")
     public ResponseEntity<Void> deleteGimnasio(@PathVariable Long id, @AuthenticationPrincipal Usuario usuario){

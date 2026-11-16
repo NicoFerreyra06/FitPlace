@@ -279,3 +279,9 @@ h1 {
   padding: 32px 0;
   text-align: center;
 }
+
+.cargar-mas-contenedor {
+  display: flex;
+  justify-content: center;
+  margin-top: 18px;
+}

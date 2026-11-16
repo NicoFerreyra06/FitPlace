@@ -2,9 +2,9 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Rutinas } from '../../../core/rutinas/rutinas';
 import { DiaRutinaResponse, DIAS_SEMANA, etiquetaDia, RutinaResponse } from '../../../core/rutinas/rutinas.model';
-import { Ejercicio } from '../../../model/ejercicio';
-import { EjercicioDetails } from '../../components/ejercicios/ejercicio-details/ejercicio-details';
-import { EjercicioService } from '../../../core/services/ejercicio-service';
+import { Ejercicio } from '../../../core/ejercicios/ejercicio.model';
+import { EjercicioDetails } from '../../ejercicios/ejercicio-details/ejercicio-details';
+import { EjercicioService } from '../../../core/ejercicios/ejercicio-service';
 import { Usuario } from '../../../core/usuario/usuario';
 import { rxResource } from '@angular/core/rxjs-interop';
 

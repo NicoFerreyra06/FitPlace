@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
@@ -39,11 +40,30 @@ describe('Gimnasios', () => {
       completed = true;
     });
 
-    const request = httpTesting.expectOne('http://localhost:8080/gimnasios/me/7');
+    const request = httpTesting.expectOne(`${environment.apiUrl}/gimnasios/me/7`);
     expect(request.request.method).toBe('PUT');
     expect(request.request.body).toEqual(requestBody);
     request.flush({ id: 7, ...requestBody });
     expect(completed).toBe(true);
+  });
+
+  it('updates any gym through the admin endpoint', () => {
+    const requestBody: GimnasioUpdateRequest = {
+      nombre: 'FitPlace Actualizado',
+      direccion: 'Calle 456',
+      precioCuota: 15000,
+      horarioApertura: '09:00',
+      horarioCierre: '22:00',
+      diasAbierto: ['TUESDAY', 'THURSDAY'],
+      fotoUrl: null,
+    };
+
+    service.actualizarCualquierGimnasio(7, requestBody).subscribe();
+
+    const request = httpTesting.expectOne(`${environment.apiUrl}/gimnasios/7`);
+    expect(request.request.method).toBe('PUT');
+    expect(request.request.body).toEqual(requestBody);
+    request.flush({ id: 7, ...requestBody });
   });
 
   it('deletes a gym through the gym endpoint', () => {
@@ -53,7 +73,7 @@ describe('Gimnasios', () => {
       completed = true;
     });
 
-    const request = httpTesting.expectOne('http://localhost:8080/gimnasios/7');
+    const request = httpTesting.expectOne(`${environment.apiUrl}/gimnasios/7`);
     expect(request.request.method).toBe('DELETE');
     request.flush(null, { status: 204, statusText: 'No Content' });
     expect(completed).toBe(true);

@@ -1,10 +1,11 @@
+import { environment } from '../../../../environments/environment';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { RecordDetalle } from './record-detalle';
 
-const API = 'http://localhost:8080';
+const API = environment.apiUrl;
 
 const fila = (id: number, nombreUsuario: string, pesoMaximo: number) => ({
   id,
@@ -33,6 +34,14 @@ describe('RecordDetalle', () => {
   /** El resource actualiza su valor de forma asíncrona: espero un ciclo, disparo efectos y re-renderizo. */
   async function estabilizar() {
     await new Promise((resolve) => setTimeout(resolve));
+    TestBed.tick();
+
+    // La progresión depende del perfil: recién acá se pide. Tiene que terminar para que
+    // la app quede estable (los resources pendientes no dejan resolver whenStable).
+    httpMock
+      .match(`${API}/entrenamientos/usuario/5/ejercicio/1`)
+      .forEach((req) => req.flush([]));
+
     TestBed.tick();
     await fixture.whenStable();
   }

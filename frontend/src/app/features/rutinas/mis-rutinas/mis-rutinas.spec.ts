@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 import { MisRutinas } from './mis-rutinas';
 import { Rutinas } from '../../../core/rutinas/rutinas';
 import { Usuario } from '../../../core/usuario/usuario';
+import { EntrenadorService } from '../../../core/entrenador/entrenador';
 
 describe('MisRutinas', () => {
   let component: MisRutinas;
@@ -14,8 +15,15 @@ describe('MisRutinas', () => {
       imports: [MisRutinas],
       providers: [
         provideRouter([]),
-        { provide: Rutinas, useValue: { getMisRutinas: () => of({ content: [] }) } },
+        {
+          provide: Rutinas,
+          useValue: {
+            getMisRutinas: () => of({ content: [] }),
+            getRutinasPublicas: () => of({ content: [] }),
+          },
+        },
         { provide: Usuario, useValue: { getPerfilGuardado: () => of({ rutinaActivaId: null }) } },
+        { provide: EntrenadorService, useValue: { getMiEntrenador: () => of(null) } },
       ],
     })
       .compileComponents();

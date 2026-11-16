@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { EMPTY, of } from 'rxjs';
 import { RutinaForm } from './rutina-form';
-import { EjercicioService } from '../../../core/services/ejercicio-service';
+import { EjercicioService } from '../../../core/ejercicios/ejercicio-service';
 import { Rutinas } from '../../../core/rutinas/rutinas';
 import { RutinaRequest, RutinaResponse } from '../../../core/rutinas/rutinas.model';
 

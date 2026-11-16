@@ -1,0 +1,196 @@
+.ganancias-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 16px 48px;
+}
+
+.encabezado {
+  margin-bottom: 24px;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 8px;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  margin-bottom: 18px;
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.texto-secundario,
+.estado {
+  margin-bottom: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.panel,
+.tarjeta-resumen {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+}
+
+.panel {
+  padding: 22px;
+}
+
+.campos-fecha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 14px;
+}
+
+.campos-fecha label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 190px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.campos-fecha input {
+  min-height: 40px;
+  padding: 8px 10px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font: inherit;
+}
+
+.aviso {
+  margin: 14px 0 0;
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+}
+
+.aviso--error {
+  color: var(--danger);
+  background: rgb(248 113 113 / 0.1);
+  border: 1px solid var(--danger);
+}
+
+.estado {
+  margin: 20px 0;
+  padding: 20px;
+  text-align: center;
+}
+
+.resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px;
+  margin: 20px 0;
+}
+
+.tarjeta-resumen {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+}
+
+.tarjeta-resumen span {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.tarjeta-resumen strong {
+  color: var(--text);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.tarjeta-resumen--comision {
+  border-color: rgb(200 241 105 / 0.45);
+  background: linear-gradient(135deg, rgb(200 241 105 / 0.1), var(--surface));
+}
+
+.tarjeta-resumen--comision strong {
+  color: var(--primary);
+}
+
+.resultados {
+  margin-top: 20px;
+}
+
+.tabla-contenedor {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+caption {
+  padding-bottom: 16px;
+  color: var(--text-muted);
+  font-size: 14px;
+  text-align: left;
+}
+
+th,
+td {
+  padding: 13px 10px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+thead th {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+tbody th,
+td {
+  font-size: 14px;
+}
+
+tbody th {
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .panel {
+    padding: 16px;
+  }
+
+  .campos-fecha {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .campos-fecha label {
+    min-width: 0;
+  }
+
+  .campos-fecha button {
+    align-self: flex-start;
+  }
+
+  th,
+  td {
+    padding: 11px 8px;
+  }
+}

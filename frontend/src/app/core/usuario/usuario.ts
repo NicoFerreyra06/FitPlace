@@ -1,7 +1,8 @@
+import { environment } from '../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { Observable, shareReplay, tap } from 'rxjs';
-import { Page } from '../../model/page';
+import { Page } from '../../shared/models/page';
 
 export type RolUsuario = 'USUARIO' | 'ENTRENADOR' | 'ADMIN' | 'ADMIN_GIMNASIO';
 export type RolAsignable = Exclude<RolUsuario, 'ADMIN'>;
@@ -11,6 +12,13 @@ export interface UsuarioAdmin {
   username: string;
   email: string;
   rol: RolUsuario;
+}
+
+export interface GananciaGimnasio {
+  nombreGimnasio: string;
+  totalIngresosBrutos: number;
+  comisionFitPlace: number;
+  gananciaNetaGimnasio: number;
 }
 
 export interface UsuarioPerfil {
@@ -50,7 +58,7 @@ export interface PerfilUpdateRequest {
 @Service()
 export class Usuario {
   private readonly http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:8080/usuarios';
+  private readonly API_URL = `${environment.apiUrl}/usuarios`;
 
   private perfil: Observable<UsuarioPerfil> | null = null;
 
@@ -72,6 +80,11 @@ export class Usuario {
     return this.http.put<UsuarioAdmin>(`${this.API_URL}/${id}/rol`, null, { params });
   }
 
+  getGananciasPorGimnasio(desde: string, hasta: string): Observable<GananciaGimnasio[]> {
+    const params = new HttpParams().set('desde', desde).set('hasta', hasta);
+    return this.http.get<GananciaGimnasio[]>(`${this.API_URL}/ganancias`, { params });
+  }
+
   getPerfilGuardado (): Observable<UsuarioPerfil>{
     if(this.perfil === null) this.perfil = this.getMiPerfil().pipe(shareReplay(1));
 
@@ -79,15 +92,15 @@ export class Usuario {
   }
 
   updateMiPerfil(perfilUpdateRequest: PerfilUpdateRequest): Observable<UsuarioPerfil> {
-    return this.http.put<UsuarioPerfil>('http://localhost:8080/usuarios/me', perfilUpdateRequest).pipe(tap(()=> this.limpiarPerfil()));
+    return this.http.put<UsuarioPerfil>(`${environment.apiUrl}/usuarios/me`, perfilUpdateRequest).pipe(tap(()=> this.limpiarPerfil()));
   }
 
   activarRutina(idRutina: number): Observable<UsuarioPerfil> {
-    return this.http.put<UsuarioPerfil>(`http://localhost:8080/usuarios/me/rutina-activa/${idRutina}`, null).pipe(tap(() => this.limpiarPerfil()));
+    return this.http.put<UsuarioPerfil>(`${environment.apiUrl}/usuarios/me/rutina-activa/${idRutina}`, null).pipe(tap(() => this.limpiarPerfil()));
   }
 
   desactivarRutina(): Observable<UsuarioPerfil> {
-    return this.http.delete<UsuarioPerfil>('http://localhost:8080/usuarios/me/rutina-activa').pipe(tap(() => this.limpiarPerfil()));
+    return this.http.delete<UsuarioPerfil>(`${environment.apiUrl}/usuarios/me/rutina-activa`).pipe(tap(() => this.limpiarPerfil()));
   }
 
   limpiarPerfil(){

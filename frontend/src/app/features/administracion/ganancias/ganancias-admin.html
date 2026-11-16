@@ -1,0 +1,90 @@
+<main class="ganancias-page">
+  <header class="encabezado">
+    <h1>Ganancias por gimnasio</h1>
+    <p class="texto-secundario">
+      Consultá los ingresos, la comisión de FitPlace y la ganancia neta por gimnasio.
+    </p>
+  </header>
+
+  <section class="panel filtros" aria-labelledby="filtros-titulo">
+    <h2 id="filtros-titulo">Período de consulta</h2>
+    <form [formGroup]="formulario" (ngSubmit)="consultar()" novalidate>
+      <div class="campos-fecha">
+        <label>
+          Desde
+          <input type="date" formControlName="desde" required />
+        </label>
+        <label>
+          Hasta
+          <input type="date" formControlName="hasta" required />
+        </label>
+        <button class="btn" type="submit" [disabled]="cargando()">
+          {{ cargando() ? 'Consultando…' : 'Consultar ganancias' }}
+        </button>
+      </div>
+      @if (formulario.touched && formulario.controls.desde.hasError('required')) {
+        <p class="aviso aviso--error" role="alert">Ingresá la fecha desde.</p>
+      }
+      @if (formulario.touched && formulario.controls.hasta.hasError('required')) {
+        <p class="aviso aviso--error" role="alert">Ingresá la fecha hasta.</p>
+      }
+      @if (errorRango()) {
+        <p class="aviso aviso--error" role="alert">{{ errorRango() }}</p>
+      }
+    </form>
+  </section>
+
+  @if (cargando()) {
+    <p class="estado" role="status">Cargando reporte…</p>
+  } @else if (error()) {
+    <p class="aviso aviso--error" role="alert">{{ error() }}</p>
+  } @else if (resultados(); as filas) {
+    @if (filas.length === 0) {
+      <p class="estado panel" role="status">No hay ganancias para el período seleccionado.</p>
+    } @else {
+      <section class="resumen" aria-label="Totales del período">
+        <article class="tarjeta-resumen">
+          <span>Ingresos brutos</span>
+          <strong>{{ formatoMoneda.format(totalIngresosBrutos()) }}</strong>
+        </article>
+        <article class="tarjeta-resumen tarjeta-resumen--comision">
+          <span>Comisión FitPlace</span>
+          <strong>{{ formatoMoneda.format(totalComision()) }}</strong>
+        </article>
+        <article class="tarjeta-resumen">
+          <span>Ganancia neta de gimnasios</span>
+          <strong>{{ formatoMoneda.format(totalGananciaGimnasios()) }}</strong>
+        </article>
+      </section>
+
+      <section class="panel resultados" aria-labelledby="resultados-titulo">
+        <div class="tabla-contenedor">
+          <table>
+            <caption id="resultados-titulo">
+              Ganancias del {{ formulario.controls.desde.value }} al {{ formulario.controls.hasta.value }}
+              (incluye ambas fechas)
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Gimnasio</th>
+                <th scope="col">Ingresos brutos</th>
+                <th scope="col">Comisión FitPlace</th>
+                <th scope="col">Ganancia neta del gimnasio</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (fila of filas; track fila.nombreGimnasio) {
+                <tr>
+                  <th scope="row">{{ fila.nombreGimnasio }}</th>
+                  <td>{{ formatoMoneda.format(fila.totalIngresosBrutos) }}</td>
+                  <td>{{ formatoMoneda.format(fila.comisionFitPlace) }}</td>
+                  <td>{{ formatoMoneda.format(fila.gananciaNetaGimnasio) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+  }
+</main>

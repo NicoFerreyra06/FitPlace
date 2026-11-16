@@ -180,15 +180,6 @@ input.ng-invalid.ng-touched {
   padding-bottom: 9px;
 }
 
-/* ===== Paginación ===== */
-
-.paginacion {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
 @media (max-width: 520px) {
   .filtros {
     grid-template-columns: 1fr 1fr;
@@ -212,4 +203,8 @@ input.ng-invalid.ng-touched {
   input {
     transition: none;
   }
+}
+
+app-paginacion {
+  --paginacion-margen: 0;
 }

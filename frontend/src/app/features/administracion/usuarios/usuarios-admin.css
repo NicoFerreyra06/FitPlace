@@ -101,16 +101,6 @@ td {
   white-space: nowrap;
 }
 
-.paginacion {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 18px;
-  color: var(--text-muted);
-  font-size: 14px;
-}
-
 .estado--error {
   color: var(--danger);
 }
@@ -192,7 +182,7 @@ td {
   min-width: 190px;
   padding: 9px 12px;
   color: var(--text);
-  background: var(--surface);
+  background: var(--surface-raised);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
   font: inherit;
@@ -215,9 +205,5 @@ td {
   th,
   td {
     padding: 11px 8px;
-  }
-
-  .paginacion {
-    flex-wrap: wrap;
   }
 }

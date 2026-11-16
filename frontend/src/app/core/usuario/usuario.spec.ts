@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
@@ -26,7 +27,7 @@ describe('Usuario', () => {
   it('should fetch a page of users for administration', () => {
     service.getUsuarios(2).subscribe();
 
-    const request = http.expectOne('http://localhost:8080/usuarios?page=2');
+    const request = http.expectOne(`${environment.apiUrl}/usuarios?page=2`);
     expect(request.request.method).toBe('GET');
     request.flush({ content: [], totalPages: 0 });
   });
@@ -34,7 +35,7 @@ describe('Usuario', () => {
   it('should fetch a user detail for administration', () => {
     service.getUsuario(7).subscribe();
 
-    const request = http.expectOne('http://localhost:8080/usuarios/7');
+    const request = http.expectOne(`${environment.apiUrl}/usuarios/7`);
     expect(request.request.method).toBe('GET');
     request.flush({ id: 7, username: 'demo', email: 'demo@test.com', rol: 'USUARIO' });
   });
@@ -42,9 +43,19 @@ describe('Usuario', () => {
   it('should send an allowed role change', () => {
     service.cambiarRol(7, 'ENTRENADOR').subscribe();
 
-    const request = http.expectOne('http://localhost:8080/usuarios/7/rol?nuevoRol=ENTRENADOR');
+    const request = http.expectOne(`${environment.apiUrl}/usuarios/7/rol?nuevoRol=ENTRENADOR`);
     expect(request.request.method).toBe('PUT');
     expect(request.request.body).toBeNull();
     request.flush({ id: 7, username: 'demo', email: 'demo@test.com', rol: 'ENTRENADOR' });
+  });
+
+  it('should request gym earnings for an inclusive date range', () => {
+    service.getGananciasPorGimnasio('2026-01-01', '2026-01-31').subscribe();
+
+    const request = http.expectOne(
+      `${environment.apiUrl}/usuarios/ganancias?desde=2026-01-01&hasta=2026-01-31`,
+    );
+    expect(request.request.method).toBe('GET');
+    request.flush([]);
   });
 });

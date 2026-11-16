@@ -1,0 +1,11 @@
+@if (totalPaginas() > 1) {
+  <nav class="paginacion" aria-label="Paginación">
+    <button class="btn btn--sm btn--contorno" type="button" [disabled]="esPrimera()" (click)="cambiar.emit(-1)">
+      ← Anterior
+    </button>
+    <span>Página {{ pagina() + 1 }} de {{ totalPaginas() }}</span>
+    <button class="btn btn--sm btn--contorno" type="button" [disabled]="esUltima()" (click)="cambiar.emit(1)">
+      Siguiente →
+    </button>
+  </nav>
+}
