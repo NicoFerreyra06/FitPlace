@@ -35,9 +35,14 @@ export class EntrenamientoHoy {
   private readonly router = inject(Router);
 
   protected readonly errorMsg = signal<string | null>(null);
+  protected readonly guardando = signal(false);
 
   private readonly perfil = rxResource({
     stream: () => this.usuarioService.getPerfilGuardado(),
+  });
+
+  protected readonly yaEntrenoHoy = rxResource({
+    stream: () => this.entrenamientoService.entrenoHoy(),
   });
 
   protected readonly diaDeRutina = rxResource({
@@ -77,13 +82,20 @@ export class EntrenamientoHoy {
     const idRutina = this.perfil.value()?.rutinaActivaId;
     const marcasEjercicio = this.marcas.getRawValue();
 
-    if (idRutina) {
-      const entrenamientoLogRequest: EntrenamientoLogRequest = { idRutina, marcasEjercicio };
-      this.entrenamientoService.registrar(entrenamientoLogRequest).subscribe({
-        next: () => this.router.navigate(['/entrenamientos']),
-        error: (err) =>
-          this.errorMsg.set(err.error?.message ?? 'No se pudo guardar el entrenamiento'),
-      });
+    if (!idRutina || this.guardando()) {
+      return;
     }
+
+    this.guardando.set(true);
+    this.errorMsg.set(null);
+
+    const entrenamientoLogRequest: EntrenamientoLogRequest = { idRutina, marcasEjercicio };
+    this.entrenamientoService.registrar(entrenamientoLogRequest).subscribe({
+      next: () => this.router.navigate(['/entrenamientos']),
+      error: (err) => {
+        this.guardando.set(false);
+        this.errorMsg.set(err.error?.message ?? 'No se pudo guardar el entrenamiento');
+      },
+    });
   }
 }

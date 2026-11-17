@@ -43,6 +43,11 @@ public class EntrenamientoLogController {
                 .body(entrenamientoLogService.updateEntrenamiento(entrenamientoLogRequest, idEntrenamiento, usuarioLogueado));
     }
 
+    @GetMapping("/hoy")
+    public ResponseEntity<Boolean> entrenoHoy(@AuthenticationPrincipal Usuario usuarioLogueado) {
+        return ResponseEntity.ok(entrenamientoLogService.entrenoHoy(usuarioLogueado));
+    }
+
     @GetMapping("/{idEntrenamiento}")
     public ResponseEntity<EntrenamientoLogResponse> getEntrenamientoLogById(@PathVariable Long idEntrenamiento,
                                                                              @AuthenticationPrincipal Usuario usuario){

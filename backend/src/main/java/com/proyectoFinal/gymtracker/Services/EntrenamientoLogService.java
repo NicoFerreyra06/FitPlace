@@ -38,6 +38,12 @@ public class EntrenamientoLogService {
     public EntrenamientoLogResponse addEntrenamientoLog (EntrenamientoLogRequest entrenamientoLogRequest,
                                                          Usuario usuarioLogueado) {
 
+        LocalDate hoy = LocalDate.now();
+
+        if (entrenamientoLogRepository.existsByUsuarioIdAndFecha(usuarioLogueado.getId(), hoy)) {
+            throw new BusinessLogicException("Ya se registro el entrenamiento");
+        }
+
         Rutina rutina = rutinaRepository.findByIdAndActivaTrue(entrenamientoLogRequest.getIdRutina())
                 .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada"));
         validarAccesoRutina(rutina, usuarioLogueado);
@@ -46,7 +52,6 @@ public class EntrenamientoLogService {
                 .findFirstByUsuarioIdOrderByFechaDesc(usuarioLogueado.getId());
 
         LocalDate fechaUltimo = ultimoEntrenamiento != null ? ultimoEntrenamiento.getFecha() : null;
-        LocalDate hoy = LocalDate.now();
 
         EntrenamientoLog entrenamientoLog = EntrenamientoLog.builder()
                 .usuario(usuarioLogueado).fecha(hoy).rutinaEjecutada(rutina).build();
@@ -115,6 +120,10 @@ public class EntrenamientoLogService {
         recalcularRacha(usuarioLogueado);
 
         return mapEntrenamientoLogResponse(entrenamientoSaved);
+    }
+
+    public boolean entrenoHoy(Usuario usuarioLogueado) {
+        return entrenamientoLogRepository.existsByUsuarioIdAndFecha(usuarioLogueado.getId(), LocalDate.now());
     }
 
     public EntrenamientoLogResponse getEntrenamientoLogById (Long idEntrenamientoLog, Usuario usuario) {

@@ -142,6 +142,10 @@ export class Entrenamiento {
     );
   }
 
+  entrenoHoy(): Observable<boolean> {
+    return this.http.get<boolean>(`${this.API_URL}/hoy`);
+  }
+
   registrar(request: EntrenamientoLogRequest): Observable<EntrenamientoLog> {
     return this.http
       .post<EntrenamientoLog>(this.API_URL, request)
