@@ -321,3 +321,10 @@ input.ng-invalid.ng-touched {
     transition: none;
   }
 }
+
+.confirmar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}

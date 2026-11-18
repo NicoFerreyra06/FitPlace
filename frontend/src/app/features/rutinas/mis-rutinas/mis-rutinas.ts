@@ -28,6 +28,7 @@ export class MisRutinas implements OnInit {
   protected readonly miId = signal<number | null>(null);
   protected readonly entrenadorId = signal<number | null>(null);
   protected readonly errorMsg = signal<string | null>(null);
+  protected readonly confirmandoId = signal<number | null>(null);
 
   protected readonly pagina = signal(0);
   protected readonly cargandoMas = signal(false);
@@ -231,20 +232,19 @@ export class MisRutinas implements OnInit {
   }
 
   eliminar(rutina: RutinaResponse) {
-    if (!confirm(`¿Seguro que querés eliminar la rutina "${rutina.nombre}"?`)) {
-      return;
-    }
-
     this.errorMsg.set(null);
     this.rutinasService.eliminar(rutina.id).subscribe({
       next: () => {
+        this.confirmandoId.set(null);
         this.rutinas.update((lista) => lista.filter((r) => r.id !== rutina.id));
         if (this.rutinaActivaId() === rutina.id) {
           this.rutinaActivaId.set(null);
         }
       },
-      error: (err) =>
-        this.errorMsg.set(err.error?.message ?? 'No se pudo eliminar la rutina'),
+      error: (err) => {
+        this.confirmandoId.set(null);
+        this.errorMsg.set(err.error?.message ?? 'No se pudo eliminar la rutina');
+      },
     });
   }
 }
