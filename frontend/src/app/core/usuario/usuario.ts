@@ -66,8 +66,9 @@ export class Usuario {
     return this.http.get<UsuarioPerfil>(`${this.API_URL}/me`);
   }
 
-  getUsuarios(pagina: number): Observable<Page<UsuarioAdmin>> {
-    const params = new HttpParams().set('page', pagina);
+  getUsuarios(pagina: number, size?: number): Observable<Page<UsuarioAdmin>> {
+    let params = new HttpParams().set('page', pagina);
+    if (size) params = params.set('size', size);
     return this.http.get<Page<UsuarioAdmin>>(this.API_URL, { params });
   }
 

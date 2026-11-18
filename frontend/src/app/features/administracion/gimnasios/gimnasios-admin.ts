@@ -1,7 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { Gimnasios, gimnasioResponse } from '../../../core/gimnasios/gimnasios';
+import { map } from 'rxjs';
+import { Gimnasios, GimnasioUpdateRequest, gimnasioResponse } from '../../../core/gimnasios/gimnasios';
+import { Usuario } from '../../../core/usuario/usuario';
 import { Paginacion } from '../../../shared/components/paginacion/paginacion';
 
 const DIAS_SEMANA = [
@@ -30,7 +32,16 @@ const horarioValido: ValidatorFn = (control: AbstractControl): ValidationErrors 
 })
 export class GimnasiosAdmin {
   private readonly gimnasiosService = inject(Gimnasios);
+  private readonly usuarioService = inject(Usuario);
   private readonly fb = inject(NonNullableFormBuilder);
+
+  protected readonly creando = signal(false);
+  protected readonly candidatosAdmin = rxResource({
+    params: () => this.creando() || undefined,
+    stream: () => this.usuarioService.getUsuarios(0, 500).pipe(
+      map((page) => page.content.filter((u) => u.rol !== 'ADMIN')),
+    ),
+  });
 
   protected readonly pagina = signal(0);
   protected readonly gimnasios = rxResource({
@@ -53,11 +64,19 @@ export class GimnasiosAdmin {
     horarioCierre: ['', Validators.required],
     diasAbierto: this.fb.array<string>([], Validators.required),
     fotoUrl: ['', Validators.maxLength(255)],
+    adminId: this.fb.control<number | null>(null),
   }, { validators: horarioValido });
+
+  protected nuevo(): void {
+    this.cancelarEdicion();
+    this.exito.set(null);
+    this.creando.set(true);
+  }
 
   protected editar(gimnasio: gimnasioResponse): void {
     this.error.set(null);
     this.exito.set(null);
+    this.creando.set(false);
     this.gimnasioEditando.set(gimnasio);
     this.form.patchValue({
       nombre: gimnasio.nombre,
@@ -79,6 +98,7 @@ export class GimnasiosAdmin {
 
   protected cancelarEdicion(): void {
     this.gimnasioEditando.set(null);
+    this.creando.set(false);
     this.form.reset();
     this.form.controls.diasAbierto.clear();
     this.error.set(null);
@@ -96,27 +116,27 @@ export class GimnasiosAdmin {
 
   protected guardar(): void {
     const gimnasio = this.gimnasioEditando();
-    if (!gimnasio || this.guardando()) return;
+    const creando = this.creando();
+    if ((!gimnasio && !creando) || this.guardando()) return;
 
     this.form.markAllAsTouched();
-    if (this.form.invalid) return;
+    const adminId = this.form.controls.adminId.value;
+    if (this.form.invalid || (creando && adminId === null)) return;
 
-    const valor = this.form.getRawValue();
+    const request = this.armarRequest();
+    const peticion = creando
+      ? this.gimnasiosService.crearGimnasio({ ...request, adminId: adminId! })
+      : this.gimnasiosService.actualizarCualquierGimnasio(gimnasio!.id, request);
+
     this.guardando.set(true);
     this.error.set(null);
-    this.gimnasiosService.actualizarCualquierGimnasio(gimnasio.id, {
-      nombre: valor.nombre.trim(),
-      direccion: valor.direccion.trim(),
-      precioCuota: valor.precioCuota,
-      horarioApertura: valor.horarioApertura,
-      horarioCierre: valor.horarioCierre,
-      diasAbierto: valor.diasAbierto,
-      fotoUrl: valor.fotoUrl.trim() || null,
-    }).subscribe({
+    peticion.subscribe({
       next: () => {
         this.guardando.set(false);
-        this.gimnasioEditando.set(null);
-        this.exito.set('Los datos del gimnasio se actualizaron correctamente.');
+        this.cancelarEdicion();
+        this.exito.set(creando
+          ? 'El gimnasio se creó correctamente.'
+          : 'Los datos del gimnasio se actualizaron correctamente.');
         this.gimnasios.reload();
       },
       error: (err) => {
@@ -145,6 +165,19 @@ export class GimnasiosAdmin {
         this.error.set(err.error?.message ?? 'No se pudo eliminar el gimnasio.');
       },
     });
+  }
+
+  private armarRequest(): GimnasioUpdateRequest {
+    const valor = this.form.getRawValue();
+    return {
+      nombre: valor.nombre.trim(),
+      direccion: valor.direccion.trim(),
+      precioCuota: valor.precioCuota,
+      horarioApertura: valor.horarioApertura,
+      horarioCierre: valor.horarioCierre,
+      diasAbierto: valor.diasAbierto,
+      fotoUrl: valor.fotoUrl.trim() || null,
+    };
   }
 
   protected cambiarPagina(delta: number): void {

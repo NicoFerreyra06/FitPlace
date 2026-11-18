@@ -64,6 +64,10 @@ export class Gimnasios {
         return this.http.put<gimnasioResponse>(`${this.URL}/me/${idGimnasio}`, request);
     }
 
+    crearGimnasio(request: GimnasioUpdateRequest & { adminId: number }): Observable<gimnasioResponse> {
+        return this.http.post<gimnasioResponse>(this.URL, request);
+    }
+
     actualizarCualquierGimnasio(idGimnasio: number, request: GimnasioUpdateRequest): Observable<gimnasioResponse> {
         return this.http.put<gimnasioResponse>(`${this.URL}/${idGimnasio}`, request);
     }

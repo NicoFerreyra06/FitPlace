@@ -35,7 +35,7 @@ public class GimnasioService {
         Usuario adminGimnasio = usuarioRepository.findById(request.getAdminId())
                 .orElseThrow(()-> new UserNotFoundException("Usuario no encontrado"));
 
-        if (adminGimnasio.getRol() == Rol.USUARIO) {
+        if (adminGimnasio.getRol() != Rol.ADMIN && adminGimnasio.getRol() != Rol.ADMIN_GIMNASIO) {
             adminGimnasio.setRol(Rol.ADMIN_GIMNASIO);
             usuarioRepository.save(adminGimnasio);
         }

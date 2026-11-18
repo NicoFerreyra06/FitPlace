@@ -11,6 +11,8 @@ import java.util.Optional;
 public interface GimnasioRepository extends JpaRepository<Gimnasio, Long> {
     List<Gimnasio> findByAdminId(Long id);
 
+    boolean existsByAdminId(Long id);
+
     Optional<Gimnasio> findByMpUserId(String mpUserId);
 
 }

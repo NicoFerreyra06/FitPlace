@@ -13,6 +13,7 @@ import com.proyectoFinal.gymtracker.Exception.ResourceNotFoundException;
 import com.proyectoFinal.gymtracker.Exception.UserNotFoundException;
 import com.proyectoFinal.gymtracker.Modelo.Rutina;
 import com.proyectoFinal.gymtracker.Modelo.Usuario;
+import com.proyectoFinal.gymtracker.Repositories.GimnasioRepository;
 import com.proyectoFinal.gymtracker.Repositories.RutinaRepository;
 import com.proyectoFinal.gymtracker.Repositories.SuscripcionGimnasioRepository;
 import com.proyectoFinal.gymtracker.Repositories.UsuarioRepository;
@@ -33,6 +34,7 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final RutinaRepository rutinaRepository;
     private final SuscripcionGimnasioRepository suscripcionRepository;
+    private final GimnasioRepository gimnasioRepository;
 
     public UsuarioResponse verPerfilPropio(Usuario usuario) {
         return toResponse(usuario);
@@ -94,6 +96,10 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
         if (usuario.getRol() == Rol.ADMIN) {
             throw new BusinessLogicException("No se puede modificar el rol de un administrador");
+        }
+
+        if (nuevoRol != Rol.ADMIN_GIMNASIO && gimnasioRepository.existsByAdminId(idUsuario)) {
+            throw new BusinessLogicException("El usuario administra gimnasios; reasignalos o eliminalos antes de cambiarle el rol");
         }
 
         usuario.setRol(nuevoRol);

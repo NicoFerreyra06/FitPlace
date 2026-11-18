@@ -5,6 +5,11 @@
 }
 
 .encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
   margin-bottom: 24px;
 }
 
@@ -175,12 +180,13 @@ tbody th {
   font-weight: 500;
 }
 
-.campos input {
+.campos input,
+.campos select {
   width: 100%;
   min-height: 40px;
   padding: 9px 12px;
   color: var(--text);
-  background: transparent;
+  background-color: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   font: inherit;

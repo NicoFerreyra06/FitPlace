@@ -1,7 +1,10 @@
 <main class="gimnasios-admin-page">
   <header class="encabezado">
-    <h1>Administrar gimnasios</h1>
-    <p class="texto-secundario">Editá o eliminá gimnasios registrados en FitPlace.</p>
+    <div>
+      <h1>Administrar gimnasios</h1>
+      <p class="texto-secundario">Dá de alta, editá o eliminá gimnasios registrados en FitPlace.</p>
+    </div>
+    <button class="btn btn-nuevo" type="button" (click)="nuevo()">Nuevo gimnasio</button>
   </header>
 
   @if (error()) {
@@ -95,18 +98,36 @@
     }
   </section>
 
-  @if (gimnasioEditando(); as gimnasio) {
+  @if (gimnasioEditando() || creando()) {
     <section class="panel editor" aria-labelledby="editar-titulo">
       <div class="editor-encabezado">
         <div>
-          <h2 id="editar-titulo">Editar {{ gimnasio.nombre }}</h2>
-          <p class="texto-secundario">Actualizá la información del gimnasio.</p>
+          <h2 id="editar-titulo">{{ creando() ? 'Nuevo gimnasio' : 'Editar ' + gimnasioEditando()?.nombre }}</h2>
+          <p class="texto-secundario">
+            {{ creando() ? 'Completá los datos y asigná un administrador.' : 'Actualizá la información del gimnasio.' }}
+          </p>
         </div>
         <button class="btn-cerrar" type="button" aria-label="Cerrar edición" (click)="cancelarEdicion()">×</button>
       </div>
 
       <form [formGroup]="form" (ngSubmit)="guardar()">
         <div class="campos">
+          @if (creando()) {
+            <label class="campo-ancho">
+              Administrador del gimnasio
+              <select formControlName="adminId">
+                <option [ngValue]="null" disabled>
+                  {{ candidatosAdmin.isLoading() ? 'Cargando usuarios…' : 'Elegí un usuario' }}
+                </option>
+                @for (usuario of candidatosAdmin.value() ?? []; track usuario.id) {
+                  <option [ngValue]="usuario.id">{{ usuario.username }} ({{ usuario.email }})</option>
+                }
+              </select>
+              @if (form.controls.adminId.touched && form.controls.adminId.value === null) {
+                <span class="field-error">Elegí un administrador.</span>
+              }
+            </label>
+          }
           <label>
             Nombre
             <input type="text" formControlName="nombre" maxlength="60" />
@@ -172,7 +193,7 @@
 
         <div class="acciones">
           <button class="btn" type="submit" [disabled]="guardando()">
-            {{ guardando() ? 'Guardando…' : 'Guardar cambios' }}
+            {{ guardando() ? 'Guardando…' : creando() ? 'Crear gimnasio' : 'Guardar cambios' }}
           </button>
           <button class="btn btn--contorno" type="button" [disabled]="guardando()" (click)="cancelarEdicion()">
             Cancelar

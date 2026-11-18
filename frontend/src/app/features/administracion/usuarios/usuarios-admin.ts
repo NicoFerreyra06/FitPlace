@@ -80,8 +80,8 @@ export class UsuariosAdmin {
         this.usuarios.reload();
         this.guardandoRol.set(false);
       },
-      error: () => {
-        this.error.set('No se pudo actualizar el rol. Verificá los permisos e intentá de nuevo.');
+      error: (err) => {
+        this.error.set(err.error?.message ?? 'No se pudo actualizar el rol. Verificá los permisos e intentá de nuevo.');
         this.guardandoRol.set(false);
       },
     });
