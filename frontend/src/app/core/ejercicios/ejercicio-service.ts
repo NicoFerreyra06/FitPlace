@@ -25,8 +25,8 @@ export class EjercicioService {
     return this.http.get<Ejercicio>(`${this.apiUrl}/${id}`);
   }
 
-  getEjercicioByNombre(nombre: string): Observable<Ejercicio> {
-    return this.http.get<Ejercicio>(`${this.apiUrl}/${nombre}`);
+  buscarPorNombre(nombre: string): Observable<Ejercicio[]> {
+    return this.http.get<Ejercicio[]>(`${this.apiUrl}/buscar`, { params: { nombre } });
   }
 
   getEjerciciosPorMusculo(id: string | number): Observable<Ejercicio[]> {
