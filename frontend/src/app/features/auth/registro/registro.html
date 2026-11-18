@@ -65,7 +65,7 @@
     <div class="row">
       <div class="field">
         <label for="peso">Peso (kg)</label>
-        <input type="number" formControlName="peso" id="peso" step="0.1" />
+        <input type="number" formControlName="peso" id="peso" step="0.1" min="30" max="500" />
         @if (
           (formularioRegistro.get('peso')?.hasError('min') ||
             formularioRegistro.get('peso')?.hasError('max')) &&
@@ -77,7 +77,7 @@
 
       <div class="field">
         <label for="altura">Altura (m)</label>
-        <input type="number" formControlName="altura" id="altura" step="0.01" />
+        <input type="number" formControlName="altura" id="altura" step="0.01" min="0.5" max="3"/>
         @if (
           (formularioRegistro.get('altura')?.hasError('min') ||
             formularioRegistro.get('altura')?.hasError('max')) &&
