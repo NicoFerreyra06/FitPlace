@@ -5,17 +5,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Gimnasios } from '../../../core/gimnasios/gimnasios';
+import { DIAS_SEMANA } from '../../../core/rutinas/rutinas.model';
 import { estadoSuscripcion, SuscripcionGimnasioResponse, Suscripciones } from '../../../core/suscripciones/suscripciones';
-
-const DIAS_SEMANA = [
-  { valor: 'MONDAY', etiqueta: 'Lunes' },
-  { valor: 'TUESDAY', etiqueta: 'Martes' },
-  { valor: 'WEDNESDAY', etiqueta: 'Miércoles' },
-  { valor: 'THURSDAY', etiqueta: 'Jueves' },
-  { valor: 'FRIDAY', etiqueta: 'Viernes' },
-  { valor: 'SATURDAY', etiqueta: 'Sábado' },
-  { valor: 'SUNDAY', etiqueta: 'Domingo' },
-] as const;
 
 const horarioValido: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const apertura = control.get('horarioApertura')?.value;

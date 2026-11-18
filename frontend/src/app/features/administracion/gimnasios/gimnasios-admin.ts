@@ -4,17 +4,8 @@ import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, Validatio
 import { map } from 'rxjs';
 import { Gimnasios, GimnasioUpdateRequest, gimnasioResponse } from '../../../core/gimnasios/gimnasios';
 import { Usuario } from '../../../core/usuario/usuario';
+import { DIAS_SEMANA } from '../../../core/rutinas/rutinas.model';
 import { Paginacion } from '../../../shared/components/paginacion/paginacion';
-
-const DIAS_SEMANA = [
-  { valor: 'MONDAY', etiqueta: 'Lunes' },
-  { valor: 'TUESDAY', etiqueta: 'Martes' },
-  { valor: 'WEDNESDAY', etiqueta: 'Miércoles' },
-  { valor: 'THURSDAY', etiqueta: 'Jueves' },
-  { valor: 'FRIDAY', etiqueta: 'Viernes' },
-  { valor: 'SATURDAY', etiqueta: 'Sábado' },
-  { valor: 'SUNDAY', etiqueta: 'Domingo' },
-] as const;
 
 const horarioValido: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const apertura = control.get('horarioApertura')?.value;
@@ -89,10 +80,7 @@ export class GimnasiosAdmin {
 
     const dias = this.form.controls.diasAbierto;
     dias.clear();
-    gimnasio.diasDeApertura.forEach((dia) => {
-      const valor = DIAS_SEMANA.find((opcion) => opcion.etiqueta === dia)?.valor ?? dia;
-      dias.push(this.fb.control(valor));
-    });
+    gimnasio.diasDeApertura.forEach((dia) => dias.push(this.fb.control(dia)));
     this.form.markAsPristine();
   }
 
