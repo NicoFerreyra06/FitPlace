@@ -48,6 +48,12 @@ public class TutoriaService {
     public List<UsuarioResponse> getAlumnos(Long entrenadorId) {
         return usuarioRepository.findByEntrenadorId(entrenadorId).stream().map(usuarioService::toResponse).toList();
     }
+    
+    public UsuarioResponse getAlumno(Long entrenadorId, Long idAlumno) {
+        return usuarioRepository.findByIdAndEntrenadorId(idAlumno, entrenadorId)
+                .map(usuarioService::toResponse)
+                .orElseThrow(() -> new ResourceNotFoundException("Alumno no encontrado"));
+    }
 
     public UsuarioResponse verEntrenadorActual(Long idUsuario) {
         Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));

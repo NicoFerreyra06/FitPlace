@@ -60,7 +60,7 @@ export class AlumnoDetalle {
   protected readonly noEncontrado = computed(
     () =>
       !this.idValido ||
-      (this.resultado.hasValue() && this.resultado.value() === null),
+      (this.resultado.error() as HttpErrorResponse | undefined)?.status === 404,
   );
 
   protected readonly historial = rxResource({

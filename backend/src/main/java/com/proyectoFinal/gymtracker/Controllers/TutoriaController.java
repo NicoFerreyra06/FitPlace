@@ -34,6 +34,13 @@ public class TutoriaController {
         return ResponseEntity.ok(tutoriaService.getAlumnos(usuario.getId()));
     }
 
+    @PreAuthorize("hasRole('ENTRENADOR')")
+    @GetMapping("/me/alumnos/{idAlumno}")
+    public ResponseEntity<UsuarioResponse> getAlumno(@AuthenticationPrincipal Usuario entrenador,
+                                                     @PathVariable Long idAlumno) {
+        return ResponseEntity.ok(tutoriaService.getAlumno(entrenador.getId(), idAlumno));
+    }
+
     @GetMapping("/me/entrenador")
     public ResponseEntity<UsuarioResponse> getEntrenadorActual(@AuthenticationPrincipal Usuario usuario) {
         return ResponseEntity.ok(tutoriaService.verEntrenadorActual(usuario.getId()));

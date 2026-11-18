@@ -22,6 +22,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario,Long> {
 
     List<Usuario> findByEntrenadorId(Long entrenadorId);
 
+    Optional<Usuario> findByIdAndEntrenadorId(Long id, Long entrenadorId);
+
     @Query("SELECT u from Usuario u where u.gimnasio.id = :gimnasioId")
     List<Usuario> findAllByGimnasioId(Long gimnasioId);
 
