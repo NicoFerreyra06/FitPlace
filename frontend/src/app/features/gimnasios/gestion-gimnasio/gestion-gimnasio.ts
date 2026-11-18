@@ -67,6 +67,20 @@ export class GestionGimnasio {
     stream: ({ params }) => this.suscripcionService.getSuscripcionesGimnasio(this.idGimnasio, params),
   });
 
+  protected readonly activas = rxResource({
+    stream: () => this.suscripcionService.getSuscripcionesGimnasio(this.idGimnasio, 'ACTIVA'),
+  });
+
+  protected readonly ingresos = computed(() => {
+    const lista = this.activas.value() ?? [];
+    const total = lista.reduce((acumulado, suscripcion) => acumulado + suscripcion.costo, 0);
+    return Math.round((total + Number.EPSILON) * 100) / 100;
+  });
+
+  protected readonly ingresosFormateados = computed(() =>
+    new Intl.NumberFormat('es-AR').format(this.ingresos()),
+  );
+
   protected readonly miembros = rxResource({
     stream: () => this.gimnasiosService.getMiembros(this.idGimnasio),
   });
@@ -193,6 +207,7 @@ export class GestionGimnasio {
         this.aviso.set(`Activaste la suscripción de ${suscripcion.nombreUsuario}.`);
         this.pendientes.reload();
         this.suscripciones.reload();
+        this.activas.reload();
         this.miembros.reload();
       },
       error: (err) => {
