@@ -1,46 +1,39 @@
-<div class="modal-backdrop" (click)="onCerrar()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h2>{{ ejercicio().nombre }}</h2>
-      <button class="close-btn" (click)="onCerrar()">&times;</button>
-    </div>
+<app-modal [titulo]="ejercicio().nombre" (cerrar)="onCerrar()">
+  <div class="modal-body">
+    <section class="section">
+      <h3>Técnica y Ejecución</h3>
+      <p>{{ ejercicio().descripcion }}</p>
+    </section>
 
-    <div class="modal-body">
-      <section class="section">
-        <h3>Técnica y Ejecución</h3>
-        <p>{{ ejercicio().descripcion }}</p>
-      </section>
+    <section class="section">
+      <h3>Músculos Principales</h3>
+      <div class="tags">
+        @for (musculo of ejercicio().musculosPrincipales; track musculo.id) {
+          <span class="badge primary">{{ musculo.nombre }} ({{ musculo.grupoMuscular }})</span>
+        }
+      </div>
+    </section>
 
+    @if (ejercicio().musculosSecundarios && ejercicio().musculosSecundarios.length > 0) {
       <section class="section">
-        <h3>Músculos Principales</h3>
+        <h3>Músculos Secundarios</h3>
         <div class="tags">
-          @for (musculo of ejercicio().musculosPrincipales; track musculo.id) {
-            <span class="badge primary">{{ musculo.nombre }} ({{ musculo.grupoMuscular }})</span>
+          @for (musculo of ejercicio().musculosSecundarios; track musculo.id) {
+            <span class="badge secondary">{{ musculo.nombre }}</span>
           }
         </div>
       </section>
+    }
 
-      @if (ejercicio().musculosSecundarios && ejercicio().musculosSecundarios.length > 0) {
-        <section class="section">
-          <h3>Músculos Secundarios</h3>
-          <div class="tags">
-            @for (musculo of ejercicio().musculosSecundarios; track musculo.id) {
-              <span class="badge secondary">{{ musculo.nombre }}</span>
-            }
-          </div>
-        </section>
-      }
-
-      @if (esAdmin()) {
-        <footer class="modal-footer">
-          <button type="button" class="btn btn--vidrio btn--sm" (click)="onEditar()">
-            Editar ejercicio
-          </button>
-          <button type="button" class="btn btn--peligro btn--sm" (click)="onEliminar()">
-            Eliminar
-          </button>
-        </footer>
-      }
-    </div>
+    @if (esAdmin()) {
+      <footer class="modal-footer">
+        <button type="button" class="btn btn--vidrio btn--sm" (click)="onEditar()">
+          Editar ejercicio
+        </button>
+        <button type="button" class="btn btn--peligro btn--sm" (click)="onEliminar()">
+          Eliminar
+        </button>
+      </footer>
+    }
   </div>
-</div>
+</app-modal>

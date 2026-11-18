@@ -1,3 +1,4 @@
+import { Modal } from '../../../shared/components/modal/modal';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,7 +14,7 @@ import { Paginacion } from '../../../shared/components/paginacion/paginacion';
 
 @Component({
   selector: 'app-musculo-list',
-  imports: [CommonModule, FormsModule, MusculoForm, Paginacion],
+  imports: [CommonModule, FormsModule, Modal, MusculoForm, Paginacion],
   templateUrl: './musculo-list.html',
   styleUrl: './musculo-list.css',
 })
