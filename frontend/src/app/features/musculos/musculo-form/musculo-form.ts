@@ -1,3 +1,4 @@
+import { Modal } from '../../../shared/components/modal/modal';
 import { Component, computed, input, OnInit, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -6,7 +7,7 @@ import { GRUPOS_MUSCULARES, MusculoRequest } from '../../../core/musculos/muscul
 
 @Component({
   selector: 'app-musculo-form',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Modal],
   templateUrl: './musculo-form.html',
   styleUrl: './musculo-form.css',
 })

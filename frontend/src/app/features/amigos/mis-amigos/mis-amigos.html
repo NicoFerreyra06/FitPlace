@@ -115,14 +115,24 @@
               <span class="chevron" aria-hidden="true">›</span>
             </a>
 
-            <button
-              class="link link--peligro"
-              type="button"
-              [disabled]="eliminandoId() === amigo.id"
-              (click)="eliminar(amigo)"
-            >
-              {{ eliminandoId() === amigo.id ? 'Eliminando…' : 'Eliminar' }}
-            </button>
+            @if (confirmandoId() === amigo.id) {
+              <div class="confirmar">
+                <span class="muted">¿Eliminar a {{ amigo.username }}?</span>
+                <button
+                  class="btn btn--sm btn--peligro"
+                  type="button"
+                  [disabled]="eliminandoId() === amigo.id"
+                  (click)="eliminar(amigo)"
+                >
+                  {{ eliminandoId() === amigo.id ? 'Eliminando…' : 'Sí, eliminar' }}
+                </button>
+                <button class="link link--neutro" type="button" (click)="confirmandoId.set(null)">No</button>
+              </div>
+            } @else {
+              <button class="link link--peligro" type="button" (click)="confirmandoId.set(amigo.id)">
+                Eliminar
+              </button>
+            }
           </li>
         }
       </ul>

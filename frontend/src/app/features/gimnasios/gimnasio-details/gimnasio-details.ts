@@ -2,6 +2,7 @@ import { Component, DOCUMENT, DestroyRef, computed, inject, input, output, signa
 import { rxResource } from '@angular/core/rxjs-interop';
 import { gimnasioResponse } from '../../../core/gimnasios/gimnasios';
 import { Usuario } from '../../../core/usuario/usuario';
+import { etiquetaDia } from '../../../core/rutinas/rutinas.model';
 import { SuscripcionGimnasioResponse } from '../../../core/suscripciones/suscripciones';
 
 @Component({
@@ -57,7 +58,7 @@ export class GimnasioDetails {
 
   protected readonly precio = computed(() => new Intl.NumberFormat('es-AR').format(this.gimnasio().precioCuota));
 
-  protected readonly dias = computed(() => this.gimnasio().diasDeApertura.map((dia) => dia.slice(0, 3)).join(', '));
+  protected readonly dias = computed(() => this.gimnasio().diasDeApertura.map((dia) => etiquetaDia(dia).slice(0, 3)).join(', '));
 
   constructor() {
     this.document.body.style.overflow = 'hidden';

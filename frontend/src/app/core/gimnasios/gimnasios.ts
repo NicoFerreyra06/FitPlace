@@ -5,6 +5,7 @@ import { inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { Page } from '../../shared/models/page';
 import { UsuarioPerfil } from '../usuario/usuario';
+import { DiaSemana } from '../rutinas/rutinas.model';
 
 export interface gimnasioResponse {
     id: number,
@@ -13,7 +14,7 @@ export interface gimnasioResponse {
     precioCuota: number,
     idAdmin: number,
     nombreAdmin: string,
-    diasDeApertura: string[],
+    diasDeApertura: DiaSemana[],
     horarioApertura: string,
     horarioCierre: string,
     fotoUrl: string | null,
@@ -35,16 +36,6 @@ export class Gimnasios {
     private readonly http = inject(HttpClient);
     private readonly URL = `${environment.apiUrl}/gimnasios`;
     private readonly URL_MP = `${environment.apiUrl}/mercadopago`;
-
-    private readonly DIAS: Record<string, string> = {
-        MONDAY: 'Lunes',
-        TUESDAY: 'Martes',
-        WEDNESDAY: 'Miércoles',
-        THURSDAY: 'Jueves',
-        FRIDAY: 'Viernes',
-        SATURDAY: 'Sábado',
-        SUNDAY: 'Domingo',
-    };
 
     getUrlVinculacion(idGimnasio: number): Observable<string> {
         return this.http.get(`${this.URL_MP}/vincular/${idGimnasio}`, { responseType: 'text' });
@@ -93,7 +84,6 @@ export class Gimnasios {
     private formatearGimnasio(gimnasio: gimnasioResponse): gimnasioResponse {
         return {
             ...gimnasio,
-            diasDeApertura: gimnasio.diasDeApertura.map(dia => this.DIAS[dia]),
             horarioApertura: gimnasio.horarioApertura.slice(0, 5),
             horarioCierre: gimnasio.horarioCierre.slice(0, 5),
         };

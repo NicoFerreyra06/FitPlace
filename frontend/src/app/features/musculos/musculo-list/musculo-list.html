@@ -126,27 +126,21 @@
 
   <!-- Modal Confirmación Eliminación -->
   @if (musculoAEliminar(); as m) {
-    <div class="modal-backdrop" (click)="cerrarEliminar()">
-      <div class="modal-content modal-content--sm" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-          <h2>Eliminar músculo</h2>
-          <button class="close-btn" type="button" aria-label="Cerrar" (click)="cerrarEliminar()">&times;</button>
-        </div>
-        <div class="modal-body">
-          <p>¿Estás seguro de que deseas eliminar el músculo <strong>"{{ m.nombre }}"</strong>?</p>
-          <p class="ayuda-baja">
-            Por seguridad, si este músculo ya está asignado como principal o secundario en algún ejercicio del catálogo, el sistema rechazará la eliminación para mantener la consistencia de los ejercicios.
-          </p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn--vidrio" (click)="cerrarEliminar()" [disabled]="eliminandoMusculo()">
-            Cancelar
-          </button>
-          <button type="button" class="btn btn--peligro" (click)="confirmarEliminar()" [disabled]="eliminandoMusculo()">
-            {{ eliminandoMusculo() ? 'Eliminando...' : 'Eliminar' }}
-          </button>
-        </div>
+    <app-modal titulo="Eliminar músculo" ancho="440px" (cerrar)="cerrarEliminar()">
+      <div class="modal-body">
+        <p>¿Estás seguro de que deseas eliminar el músculo <strong>"{{ m.nombre }}"</strong>?</p>
+        <p class="ayuda-baja">
+          Por seguridad, si este músculo ya está asignado como principal o secundario en algún ejercicio del catálogo, el sistema rechazará la eliminación para mantener la consistencia de los ejercicios.
+        </p>
       </div>
-    </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn--vidrio" (click)="cerrarEliminar()" [disabled]="eliminandoMusculo()">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn--peligro" (click)="confirmarEliminar()" [disabled]="eliminandoMusculo()">
+          {{ eliminandoMusculo() ? 'Eliminando...' : 'Eliminar' }}
+        </button>
+      </div>
+    </app-modal>
   }
 </main>

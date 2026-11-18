@@ -1,3 +1,4 @@
+import { Modal } from '../../../shared/components/modal/modal';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
@@ -12,7 +13,7 @@ import { Musculo } from '../../../core/musculos/musculo.model';
 import { Paginacion } from '../../../shared/components/paginacion/paginacion';
 
 @Component({
-  imports: [EjercicioDetails, EjercicioForm, FormsModule, Paginacion],
+  imports: [EjercicioDetails, EjercicioForm, FormsModule, Modal, Paginacion],
   selector: 'app-ejercicio-list',
   styleUrl: './ejercicio-list.css',
   templateUrl: './ejercicio-list.html',

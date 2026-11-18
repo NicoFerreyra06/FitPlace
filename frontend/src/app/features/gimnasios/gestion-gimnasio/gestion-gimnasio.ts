@@ -5,17 +5,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Gimnasios } from '../../../core/gimnasios/gimnasios';
+import { DIAS_SEMANA } from '../../../core/rutinas/rutinas.model';
 import { estadoSuscripcion, SuscripcionGimnasioResponse, Suscripciones } from '../../../core/suscripciones/suscripciones';
-
-const DIAS_SEMANA = [
-  { valor: 'MONDAY', etiqueta: 'Lunes' },
-  { valor: 'TUESDAY', etiqueta: 'Martes' },
-  { valor: 'WEDNESDAY', etiqueta: 'Miércoles' },
-  { valor: 'THURSDAY', etiqueta: 'Jueves' },
-  { valor: 'FRIDAY', etiqueta: 'Viernes' },
-  { valor: 'SATURDAY', etiqueta: 'Sábado' },
-  { valor: 'SUNDAY', etiqueta: 'Domingo' },
-] as const;
 
 const horarioValido: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const apertura = control.get('horarioApertura')?.value;
@@ -75,6 +66,20 @@ export class GestionGimnasio {
     params: () => this.estado(),
     stream: ({ params }) => this.suscripcionService.getSuscripcionesGimnasio(this.idGimnasio, params),
   });
+
+  protected readonly activas = rxResource({
+    stream: () => this.suscripcionService.getSuscripcionesGimnasio(this.idGimnasio, 'ACTIVA'),
+  });
+
+  protected readonly ingresos = computed(() => {
+    const lista = this.activas.value() ?? [];
+    const total = lista.reduce((acumulado, suscripcion) => acumulado + suscripcion.costo, 0);
+    return Math.round((total + Number.EPSILON) * 100) / 100;
+  });
+
+  protected readonly ingresosFormateados = computed(() =>
+    new Intl.NumberFormat('es-AR').format(this.ingresos()),
+  );
 
   protected readonly miembros = rxResource({
     stream: () => this.gimnasiosService.getMiembros(this.idGimnasio),
@@ -202,6 +207,7 @@ export class GestionGimnasio {
         this.aviso.set(`Activaste la suscripción de ${suscripcion.nombreUsuario}.`);
         this.pendientes.reload();
         this.suscripciones.reload();
+        this.activas.reload();
         this.miembros.reload();
       },
       error: (err) => {

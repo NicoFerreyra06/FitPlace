@@ -40,8 +40,14 @@
                             <button type="button" class="btn btn--sm btn--contorno" (click)="desactivar()">Desactivar</button>  
                         }
                         @if (esMia(rutina)) {
-                            <a class="link link--neutro" [routerLink]="['/rutinas', rutina.id, 'editar']">Editar <span class="flecha">›</span></a>
-                            <button type="button" class="link link--peligro" (click)="eliminar(rutina)">Eliminar</button>
+                            @if (confirmandoId() === rutina.id) {
+                                <span class="muted">¿Eliminar "{{ rutina.nombre }}"?</span>
+                                <button type="button" class="btn btn--sm btn--peligro" (click)="eliminar(rutina)">Sí, eliminar</button>
+                                <button type="button" class="link link--neutro" (click)="confirmandoId.set(null)">No</button>
+                            } @else {
+                                <a class="link link--neutro" [routerLink]="['/rutinas', rutina.id, 'editar']">Editar <span class="flecha">›</span></a>
+                                <button type="button" class="link link--peligro" (click)="confirmandoId.set(rutina.id)">Eliminar</button>
+                            }
                         }
                     </div>
                 </li>

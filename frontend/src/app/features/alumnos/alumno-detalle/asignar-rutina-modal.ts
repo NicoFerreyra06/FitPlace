@@ -1,3 +1,4 @@
+import { Modal } from '../../../shared/components/modal/modal';
 import { Component, input, output } from '@angular/core';
 import { RutinaResponse, etiquetaDia } from '../../../core/rutinas/rutinas.model';
 
@@ -5,6 +6,7 @@ import { RutinaResponse, etiquetaDia } from '../../../core/rutinas/rutinas.model
   selector: 'app-asignar-rutina-modal',
   templateUrl: './asignar-rutina-modal.html',
   styleUrl: './asignar-rutina-modal.css',
+  imports: [Modal],
 })
 export class AsignarRutinaModal {
   readonly rutinas = input.required<RutinaResponse[]>();

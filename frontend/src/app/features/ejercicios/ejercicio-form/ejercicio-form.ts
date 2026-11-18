@@ -1,3 +1,4 @@
+import { Modal } from '../../../shared/components/modal/modal';
 import { Component, computed, effect, input, OnInit, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -25,7 +26,7 @@ const ORDEN_GRUPOS: Record<string, number> = {
 
 @Component({
   selector: 'app-ejercicio-form',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Modal],
   templateUrl: './ejercicio-form.html',
   styleUrl: './ejercicio-form.css',
 })

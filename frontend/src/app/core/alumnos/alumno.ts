@@ -1,7 +1,7 @@
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 export interface AlumnoResponse {
     id: number;
@@ -26,8 +26,9 @@ export class AlumnoService {
       return this.http.get<AlumnoResponse[]>(`${this.API_URL_ME}/alumnos`);
     }
 
-    getAlumnoById(id: string): Observable<AlumnoResponse | null> {
-      return this.getAlumnos().pipe(map((alumnos) => alumnos.find((alumno) => String(alumno.id) === id) ?? null));
+    /** Responde 404 si el alumno no existe o no está a cargo del entrenador logueado. */
+    getAlumnoById(id: string): Observable<AlumnoResponse> {
+      return this.http.get<AlumnoResponse>(`${this.API_URL_ME}/alumnos/${id}`);
     }
 
     asignarRutina(idAlumno: number, idRutina: number): Observable<AlumnoResponse> {

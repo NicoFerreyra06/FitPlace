@@ -1,8 +1,9 @@
+import { Modal } from '../../../shared/components/modal/modal';
 import { Component, input, output } from '@angular/core';
 import { Ejercicio } from '../../../core/ejercicios/ejercicio.model';
 
 @Component({
-  imports: [],
+  imports: [Modal],
   selector: 'app-ejercicio-details',
   styleUrl: './ejercicio-details.css',
   templateUrl: './ejercicio-details.html',

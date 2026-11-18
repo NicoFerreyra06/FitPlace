@@ -151,23 +151,17 @@
 
     <!-- Modal Confirmación Eliminación -->
     @if (ejercicioAEliminar(); as ej) {
-        <div class="modal-backdrop" (click)="cerrarEliminar()">
-            <div class="modal-content modal-content--sm" (click)="$event.stopPropagation()">
-                <div class="modal-header">
-                    <h2>Eliminar ejercicio</h2>
-                    <button class="close-btn" type="button" aria-label="Cerrar" (click)="cerrarEliminar()">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <p>¿Estás seguro de que deseas dar de baja el ejercicio <strong>"{{ ej.nombre }}"</strong>?</p>
-                    <p class="ayuda-baja">
-                        Se realizará una baja lógica: el ejercicio no aparecerá más en el catálogo ni podrá ser agregado a nuevas rutinas. Aquellos usuarios que ya lo tengan en sus rutinas o récords lo conservarán.
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn--vidrio" (click)="cerrarEliminar()">Cancelar</button>
-                    <button type="button" class="btn btn--peligro" (click)="confirmarEliminar()">Eliminar</button>
-                </div>
+        <app-modal titulo="Eliminar ejercicio" ancho="440px" (cerrar)="cerrarEliminar()">
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas dar de baja el ejercicio <strong>"{{ ej.nombre }}"</strong>?</p>
+                <p class="ayuda-baja">
+                    Se realizará una baja lógica: el ejercicio no aparecerá más en el catálogo ni podrá ser agregado a nuevas rutinas. Aquellos usuarios que ya lo tengan en sus rutinas o récords lo conservarán.
+                </p>
             </div>
-        </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn--vidrio" (click)="cerrarEliminar()">Cancelar</button>
+                <button type="button" class="btn btn--peligro" (click)="confirmarEliminar()">Eliminar</button>
+            </div>
+        </app-modal>
     }
 </main>

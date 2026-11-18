@@ -25,6 +25,7 @@ export class MisAmigos implements OnInit {
   protected readonly mensajeExito = signal<string | null>(null);
   protected readonly agregando = signal(false);
   protected readonly eliminandoId = signal<number | null>(null);
+  protected readonly confirmandoId = signal<number | null>(null);
 
   protected readonly totalAmigos = computed(() => this.amigos().length);
 
@@ -94,10 +95,6 @@ export class MisAmigos implements OnInit {
   }
 
   protected eliminar(amigo: AmigoResponse) {
-    if (!confirm(`¿Seguro que querés eliminar a ${amigo.username} de tu grupo?`)) {
-      return;
-    }
-
     this.eliminandoId.set(amigo.id);
     this.errorMsg.set(null);
     this.mensajeExito.set(null);
@@ -109,10 +106,12 @@ export class MisAmigos implements OnInit {
         next: () => {
           this.amigos.update((lista) => lista.filter((a) => a.id !== amigo.id));
           this.eliminandoId.set(null);
+          this.confirmandoId.set(null);
           this.mensajeExito.set(`Eliminaste a ${amigo.username} de tu grupo.`);
         },
         error: (err) => {
           this.eliminandoId.set(null);
+          this.confirmandoId.set(null);
           this.errorMsg.set(err.error?.message ?? 'No se pudo eliminar el amigo');
         },
       });
