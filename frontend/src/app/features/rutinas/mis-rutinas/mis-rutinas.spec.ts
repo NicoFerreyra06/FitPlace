@@ -18,8 +18,7 @@ describe('MisRutinas', () => {
         {
           provide: Rutinas,
           useValue: {
-            getMisRutinas: () => of({ content: [] }),
-            getRutinasPublicas: () => of({ content: [] }),
+            getRutinasDisponibles: () => of({ content: [], last: true }),
           },
         },
         { provide: Usuario, useValue: { getPerfilGuardado: () => of({ rutinaActivaId: null }) } },

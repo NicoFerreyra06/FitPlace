@@ -20,4 +20,13 @@ public interface RutinaRepository extends JpaRepository<Rutina,Long> {
     Page<Rutina> findByEsPublicaTrueAndActivaTrue(Pageable pageable);
     
     Page<Rutina> findByCreadorIdAndActivaTrue(Long creadorId, Pageable pageable);
+
+    @Query("SELECT r FROM Rutina r WHERE r.activa = true AND (" +
+            " r.creador.id = :usuarioId" +
+            " OR (r.esPublica = true AND r.creador.id = :entrenadorId)" +
+            " OR r.id = :rutinaActivaId)")
+    Page<Rutina> findDisponibles(@Param("usuarioId") Long usuarioId,
+                                 @Param("entrenadorId") Long entrenadorId,
+                                 @Param("rutinaActivaId") Long rutinaActivaId,
+                                 Pageable pageable);
 }

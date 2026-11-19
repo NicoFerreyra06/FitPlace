@@ -16,6 +16,10 @@ export class Rutinas {
     return this.http.get<Page<RutinaResponse>>(`${this.URL}/me`, { params: { page, size } });
   }
 
+  getRutinasDisponibles(page: number = 0, size: number = 10): Observable<Page<RutinaResponse>> {
+    return this.http.get<Page<RutinaResponse>>(`${this.URL}/me/disponibles`, { params: { page, size } });
+  }
+
   getRutinasPublicas(page: number = 0, size: number = 50): Observable<Page<RutinaResponse>> {
     return this.http.get<Page<RutinaResponse>>(this.URL, { params: { page, size } });
   }

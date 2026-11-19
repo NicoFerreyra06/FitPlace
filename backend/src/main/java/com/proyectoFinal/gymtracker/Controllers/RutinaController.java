@@ -67,6 +67,12 @@ public class RutinaController {
         return ResponseEntity.ok(rutinaService.getRutinasMe(usuario.getId(), pageable));
     }
 
+    @GetMapping("/me/disponibles")
+    public ResponseEntity<Page<RutinaResponse>> getRutinasDisponibles(@AuthenticationPrincipal Usuario usuario,
+                                                                      @PageableDefault(size = 10, sort = "id") Pageable pageable){
+        return ResponseEntity.ok(rutinaService.getRutinasDisponibles(usuario.getId(), pageable));
+    }
+
     @GetMapping("/alumno/{idAlumno}")
     public ResponseEntity<Page<RutinaResponse>> getRutinaAlumno(@PathVariable Long idAlumno,
                                                                 @AuthenticationPrincipal Usuario usuario,

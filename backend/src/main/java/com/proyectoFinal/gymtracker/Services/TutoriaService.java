@@ -35,14 +35,30 @@ public class TutoriaService {
         if (entrenadorId.equals(usuario.getId()))
             throw new BusinessLogicException("No se puede asignar a si mismo como entrenador");
 
+        if (usuario.getEntrenador() != null && !usuario.getEntrenador().getId().equals(entrenadorId)) {
+            quitarRutinaPrivadaDelEntrenador(usuario);
+        }
+
         usuario.setEntrenador(entrenador);
         return usuarioService.toResponse(usuarioRepository.save(usuario));
     }
 
     public UsuarioResponse eliminarEntrenador(Long usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+        quitarRutinaPrivadaDelEntrenador(usuario);
         usuario.setEntrenador(null);
         return usuarioService.toResponse(usuarioRepository.save(usuario));
+    }
+
+    private void quitarRutinaPrivadaDelEntrenador(Usuario usuario) {
+        Rutina activa = usuario.getRutinaActiva();
+        Usuario entrenador = usuario.getEntrenador();
+
+        if (activa != null && entrenador != null && !activa.isEsPublica()
+                && activa.getCreador().getId().equals(entrenador.getId())) {
+            usuario.setRutinaActiva(null);
+            usuario.setRutinaActivaDesde(null);
+        }
     }
 
     public List<UsuarioResponse> getAlumnos(Long entrenadorId) {

@@ -248,6 +248,17 @@ public class RutinaService {
         return misRutinas.map(this::mapRutinaResponse);
     }
 
+    public Page<RutinaResponse> getRutinasDisponibles(Long idUsuario, Pageable pageable) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+
+        Long entrenadorId = usuario.getEntrenador() != null ? usuario.getEntrenador().getId() : null;
+        Long rutinaActivaId = usuario.getRutinaActiva() != null ? usuario.getRutinaActiva().getId() : null;
+
+        return rutinaRepository.findDisponibles(usuario.getId(), entrenadorId, rutinaActivaId, pageable)
+                .map(this::mapRutinaResponse);
+    }
+
     public Page<RutinaResponse> getRutinaAlumno (Long idAlumno, Long idEntrenador, Pageable pageable) {
 
         Usuario entrenador = usuarioRepository.findById(idEntrenador)

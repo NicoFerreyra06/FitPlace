@@ -63,35 +63,6 @@ export class Entrenamiento {
     });
   }
 
-  /** Trae todas las páginas del historial propio (para descubrir rutinas usadas). */
-  getHistorialCompleto(idUsuario: number): Observable<EntrenamientoLog[]> {
-    const TAMANIO = 200;
-
-    return this.getHistorial(idUsuario, 0, undefined, undefined, TAMANIO).pipe(
-      switchMap((primera) => {
-        if (primera.last || primera.totalPages <= 1) {
-          return of(primera.content);
-        }
-
-        const paginas = Array.from(
-          { length: primera.totalPages - 1 },
-          (_, indice) => indice + 1,
-        );
-
-        return forkJoin(
-          paginas.map((pagina) =>
-            this.getHistorial(idUsuario, pagina, undefined, undefined, TAMANIO),
-          ),
-        ).pipe(
-          map((resto) => [
-            ...primera.content,
-            ...resto.flatMap((pagina) => pagina.content),
-          ]),
-        );
-      }),
-    );
-  }
-
   /**
    * Progresión de un usuario en un ejercicio, del entrenamiento más viejo al más nuevo.
    * El backend la manda como { [nombreEjercicio]: puntos }; acá se desenvuelve para que
