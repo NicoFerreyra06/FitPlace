@@ -3,8 +3,6 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Auth } from '../../core/auth/auth';
 import { Usuario } from '../../core/usuario/usuario';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, of } from 'rxjs';
 
 @Component({
   imports: [RouterLink, RouterLinkActive],
@@ -29,18 +27,13 @@ export class Sidebar {
 
   protected readonly menuAbierto = signal<boolean>(false);
 
-  protected readonly perfilActivo = toSignal(
-    this.usuarioService.getPerfilGuardado().pipe(catchError(() => of(null))),
-    { initialValue: null }
+  protected readonly esEntrenador = computed(() => 
+    this.perfil.hasValue() && this.perfil.value().rol === 'ENTRENADOR'
   );
 
-  protected readonly esEntrenador = computed(() => {
-    return this.perfilActivo()?.rol === 'ENTRENADOR'
-  });
-
-  protected readonly esAdmin = computed(() => {
-    return this.perfilActivo()?.rol === 'ADMIN'
-  });
+  protected readonly esAdmin = computed(() => 
+    this.perfil.hasValue() && this.perfil.value().rol === 'ADMIN'
+  );
 
   abrirMenu() {
     this.menuAbierto.set(true);
