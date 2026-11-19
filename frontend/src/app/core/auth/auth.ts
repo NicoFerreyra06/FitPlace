@@ -2,7 +2,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Usuario } from '../usuario/usuario';
+import { Usuario, UsuarioPerfil } from '../usuario/usuario';
 
 export interface authResponse {
   token: string;
@@ -30,8 +30,9 @@ export class Auth {
     return this.http.post<authResponse>(`${environment.apiUrl}/usuarios/login`, authRequest);
   }
 
-  register(registerRequest: registerRequest): Observable<authResponse> {
-    return this.http.post<authResponse>(`${environment.apiUrl}/usuarios/registro`, registerRequest);
+  /** El backend responde 201 con el usuario creado (no devuelve token: hay que loguearse después). */
+  register(registerRequest: registerRequest): Observable<UsuarioPerfil> {
+    return this.http.post<UsuarioPerfil>(`${environment.apiUrl}/usuarios/registro`, registerRequest);
   }
 
   logOut() {
