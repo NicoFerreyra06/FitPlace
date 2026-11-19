@@ -40,6 +40,8 @@ public class RutinaService {
 
     @Transactional
     public RutinaResponse createRutina(RutinaRequest rutinaRequest, Usuario creador) {
+        validarDiasSinRepetir(rutinaRequest.getDias());
+
         Rutina rutina = Rutina.builder()
                 .creador(creador)
                 .nombre(rutinaRequest.getNombre())
@@ -89,6 +91,8 @@ public class RutinaService {
         if(!rutinaExistente.getCreador().getId().equals(usuario.getId())) {
             throw new ForbiddenAccessException("No tienes permiso para editar esta rutina");
         }
+
+        validarDiasSinRepetir(rutinaRequest.getDias());
 
         rutinaExistente.setNombre(rutinaRequest.getNombre());
         if (rutinaRequest.getEsPublica() != null) {
@@ -270,6 +274,15 @@ public class RutinaService {
     // El @NotBlank del request garantiza que el nombre llega con texto; acá solo se recortan los espacios
     private String normalizarNombreDia(String nombre) {
         return nombre == null ? null : nombre.trim();
+    }
+    
+    private void validarDiasSinRepetir(List<DiaRutinaRequest> dias) {
+        if (dias == null) return;
+
+        long distintos = dias.stream().map(DiaRutinaRequest::getDiaDeLaSemana).distinct().count();
+        if (distintos != dias.size()) {
+            throw new BusinessLogicException("No se puede repetir un día de la semana en la rutina");
+        }
     }
 
     private RutinaResponse mapRutinaResponse(Rutina rutina){

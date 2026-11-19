@@ -2,6 +2,7 @@ package com.proyectoFinal.gymtracker.DTO.Request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
@@ -23,5 +24,6 @@ public class RutinaRequest {
 
     // Sin @Valid no se validaban los días (ni sus ejercicios) que vienen en la lista
     @Valid
+    @NotEmpty(message = "La rutina debe tener al menos un día")
     private List<DiaRutinaRequest> dias;
 }
